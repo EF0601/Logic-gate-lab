@@ -1,5 +1,7 @@
 let draggables = document.querySelectorAll('.draggable');
 let inout = document.querySelectorAll('.inout');
+let touchSensors = document.querySelectorAll('.touchSensor');
+
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
 
@@ -19,6 +21,27 @@ function addListeners() {
             if (isConnecting && !inout.classList.contains('connecting') && !inout.classList.contains('title')) {
                 inout.classList.add('connecting');
             }
+        });
+    });
+
+    touchSensors.forEach(touchSensor => {
+        touchSensor.addEventListener('mousedown', (e) => {
+            const parent = touchSensor.parentElement;
+            const output1 = document.getElementById(`${parent.id}-output-1`);
+            const output2 = document.getElementById(`${parent.id}-output-2`);
+
+            if(touchSensor.style.backgroundColor === "yellow"){
+                touchSensor.style.backgroundColor = "black";
+                output1.textContent = '0';
+                output2.textContent = '0';
+            }
+            else{
+                touchSensor.style.backgroundColor = "yellow";
+                output1.textContent = '1';
+                output2.textContent = '1';
+            }
+
+            syncConnections();
         });
     });
 }
@@ -65,6 +88,10 @@ function isColliding(el1, el2) {
 let counter = 0;
 
 document.addEventListener('keydown', (e) => {
+    createNewElement(e.key);
+});
+
+function createNewElement(key) {
     const fragment = document.createDocumentFragment();
 
     const newDraggable = document.createElement('div');
@@ -106,7 +133,7 @@ document.addEventListener('keydown', (e) => {
     newDraggable.appendChild(inout4);
 
 
-    switch (e.key) {
+    switch (key) {
         case "a":
             newDraggable.classList.add('value');
             title.textContent = 'value';
@@ -134,6 +161,18 @@ document.addEventListener('keydown', (e) => {
             newDraggable.classList.add('or');
             title.textContent = 'OR gate';
             break;
+        case "q":
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('switch');
+            title.textContent = 'switch';
+            inout1.remove();
+            inout2.remove();
+
+            const touchSensor = document.createElement('div');
+            touchSensor.classList.add('touchSensor');
+            touchSensor.id = (`draggable-${counter}-touchSensor`);
+            newDraggable.appendChild(touchSensor);
+            break;
 
         default:
             newDraggable.remove();
@@ -146,14 +185,11 @@ document.addEventListener('keydown', (e) => {
     document.getElementById("screen").appendChild(fragment);
     draggables = document.querySelectorAll('.draggable');
     inout = document.querySelectorAll('.inout');
+    touchSensors = document.querySelectorAll('.touchSensor');
 
     addListeners();
     counter++;
-
-    // if (newDraggable) {
-
-    // }
-});
+}
 
 addListeners();
 

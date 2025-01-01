@@ -44,3 +44,22 @@ dialog{
   width: 50%;
   overflow: scroll;
 }
+
+.touchSensor{
+  width: 100px;
+  height: 40px;
+  background-color: yellow;
+  cursor: pointer;
+}
+
+dialog button{
+  border: 1px solid black;
+  cursor: pointer;
+  background: none;
+  margin-left: 5px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+dialog button:hover{
+  background-color: yellow;
+}
