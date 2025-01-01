@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f0f0f0;
+  font-family: 'Courier New', Courier, monospace;
+
+  user-select: none;
+}
+
+.draggable {
+  position: absolute;
+  background-color: lightblue;
+  cursor: grab;
+}
+
+.value {
+  width: 100px;
+  height: 100px;
+}
+
+.gate {
+  width: 100px;
+  height: 200px;
+}
+
+.inout {
+  width: 100px;
+  height: 20%;
+  border-bottom: 1px solid black;
+  text-align: center;
+}
+
+.inout:hover {
+  border: 1px solid yellow;
+}
+
+dialog{
+  z-index: 100;
+  height: 300px;
+  width: 50%;
+  overflow: scroll;
+}
