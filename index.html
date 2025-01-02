@@ -53,6 +53,11 @@
             <td>Lights up if the input is 1</td>
             <td><button onclick="createNewElement('w')">Add</button></td>
         </tr>
+        <tr>
+            <td>Special: Comment</td>
+            <td>A comment block for anything you need to comment. Comes as a long textarea.</td>
+            <td><button onclick="createNewElement('c')">Add</button></td>
+        </tr>
     </table>
     <h3>Connect tool</h3>
     Press the spacebar to enable connect tool. Then, select two objects to connect.
@@ -61,15 +66,23 @@
     <h2>Wiki</h2>
     <p>Work in progress...</p>
     <h2>Updates</h2>
+    <a href="https://github.com/EF0601/Logic-gate-lab/releases">View all updates and better update logs. The below provides a simple summary.</a>
     <h3>Version 0.2.1-beta</h3>
-    <p><i>1/2/2025</i> Initial release. This version brings along the most basic logic gates such as AND, OR, XOR, and NOT. It also introduces binary values. It brings a simple connection tool and allows for interactions with switches and lamps. The menu, shown here, was also created.</p>
+    <p><i>1/2/2025</i> Initial release. This version brings along the most basic logic gates such as AND, OR, XOR, and
+        NOT. It also introduces binary values. It brings a simple connection tool and allows for interactions with
+        switches and lamps. The menu, shown here, was also created.</p>
+    <h3>Version 0.3.0-beta</h3>
+    <p><i>1/2/2025</i> This update brings comment blocks, menu upgrades, and a trash can. It also brings QOL updates, such as table row highlights on hover, and a bottom bar that tells you the input clicked and the hovered object. Also, connections are now updated every 500ms to remove bugs related to syncing.</p>
 </dialog>
 
 <body>
     <div id="screen">
+        <div id="trash" class="draggable nondraggable trash">Trash</div>
         Press M to open menu.
     </div>
 </body>
+<div id="bottomBar"><span id="inputDisplay">Awaiting input...</span><span id="currentElementDisplay">No element.</span>
+</div>
 <script src="main.js"></script>
 
 </html>

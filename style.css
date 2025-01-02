@@ -1,14 +1,35 @@
-body {
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body{
+  padding: 0;
+  height: 100vh;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: black;
+}
+#screen {
   margin: 0;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 95%;
   background: #f0f0f0;
   font-family: 'Courier New', Courier, monospace;
 
   user-select: none;
+}
+
+#bottomBar{
+  height: 5%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  background-color: rgb(84, 56, 56);
+  padding: 5px;
 }
 
 .draggable {
@@ -43,6 +64,10 @@ dialog{
   height: 300px;
   width: 50%;
   overflow: scroll;
+  margin: auto;
+  margin-top: 20vh;
+  padding: 20px;
+  display: none;
 }
 
 .touchSensor{
@@ -58,8 +83,28 @@ dialog button{
   background: none;
   margin-left: 5px;
   font-family: 'Courier New', Courier, monospace;
+  padding: 5px;
 }
 
 dialog button:hover{
   background-color: yellow;
+}
+
+tr:hover{
+  background-color: rgb(245, 241, 241);
+}
+
+#trash{
+  background-color: red;
+  color: white;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  bottom: 7vh;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  cursor: not-allowed;
 }

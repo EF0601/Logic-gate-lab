@@ -1,17 +1,36 @@
 let draggables = document.querySelectorAll('.draggable');
 let inout = document.querySelectorAll('.inout');
 
+let listenInput = true;
+
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
+
+// current element hovered
+let currentHoveredElement = "";
 
 function addListeners() {
     draggables.forEach(draggable => {
         draggable.addEventListener('mousedown', (e) => {
-            activeDraggable = draggable;
-            offsetX = Math.round((e.clientX - draggable.offsetLeft) / 10) * 10;
-            offsetY = Math.round((e.clientY - draggable.offsetTop) / 10) * 10;
-            offsetY = e.clientY - draggable.offsetTop;
-            draggable.style.cursor = 'grabbing';
+            if(draggable.classList.contains('nondraggable')) return;
+            else{
+                activeDraggable = draggable;
+                offsetX = Math.round((e.clientX - draggable.offsetLeft) / 10) * 10;
+                offsetY = Math.round((e.clientY - draggable.offsetTop) / 10) * 10;
+                offsetY = e.clientY - draggable.offsetTop;
+                draggable.style.cursor = 'grabbing';
+            }
+        });
+
+        draggable.addEventListener('mouseover', () => {
+            currentHoveredElement = draggable.classList;
+
+            document.getElementById('currentElementDisplay').textContent = `Current element: ${currentHoveredElement}`;
+        });
+        draggable.addEventListener('mouseout', () => {
+            currentHoveredElement = "";
+
+            document.getElementById('currentElementDisplay').textContent = `Current element: ${currentHoveredElement}`;
         });
     });
 
@@ -35,6 +54,9 @@ document.addEventListener('mousemove', (e) => {
             if (isColliding(activeDraggable, draggable)) {
                 draggable.classList.add('collided');
                 activeDraggable.classList.add('collided');
+                if(draggable.classList.contains('trash')){
+                    activeDraggable.remove();
+                }
             } else {
                 draggable.classList.remove('collided');
                 activeDraggable.classList.remove('collided');
@@ -65,8 +87,34 @@ function isColliding(el1, el2) {
 
 let counter = 0;
 
+// all key listeners
 document.addEventListener('keydown', (e) => {
-    createNewElement(e.key);
+    if(listenInput){
+        //input display
+        document.getElementById('inputDisplay').textContent = `Input: ${e.key}`;
+
+        createNewElement(e.key);
+
+        //connector tool
+        if (e.key === ' ') {
+            isConnecting = true;
+        }
+        //menu
+        if (e.key === 'm') {
+            if (document.getElementById('menu').style.display === 'block') {
+                document.getElementById('menu').style.display = 'none';
+            }
+            else {
+                document.getElementById('menu').style.display = 'block';
+            }
+        }
+
+        setTimeout(() => {
+            document.getElementById('inputDisplay').textContent = `Awaiting input...`;
+        }, 500);
+    }
+
+
 });
 
 function createNewElement(key) {
@@ -178,6 +226,32 @@ function createNewElement(key) {
                 syncConnections();
             });
             break;
+        case "c":
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('comment');
+            title.textContent = 'comment block';
+            inout1.remove();
+            inout2.remove();
+            inout3.remove();
+            inout4.remove();
+
+            newDraggable.style.height = '200px';
+
+            const textArea = document.createElement('textarea');
+            textArea.style.width = '100px';
+            textArea.style.height = '80%';
+            textArea.style.resize = 'none';
+            textArea.style.overflow = 'scroll';
+            newDraggable.appendChild(textArea);
+
+            textArea.addEventListener('focus', (e) => {
+                listenInput = false;
+            });
+            textArea.addEventListener('blur', (e) => {
+                listenInput = true;
+            });
+
+            break;
 
         default:
             newDraggable.remove();
@@ -201,22 +275,8 @@ let isConnecting = false;
 let startElement = null;
 let connections = [];
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === ' ') {
-        isConnecting = true;
-    }
-    if (e.key === 'm') {
-        if (document.getElementById('menu').style.display === 'block') {
-            document.getElementById('menu').style.display = 'none';
-        }
-        else {
-            document.getElementById('menu').style.display = 'block';
-        }
-    }
-});
-
 document.addEventListener('keyup', (e) => {
-    if (e.key === ' ') {
+    if (e.key === ' ' && listenInput) {
         isConnecting = false;
         startElement = null;
 
@@ -234,9 +294,6 @@ document.addEventListener('keyup', (e) => {
                 document.getElementById(connection).style.backgroundColor = color;
             });
             syncConnections();
-            setTimeout(() => {
-                syncConnections();
-            }, 500);
         }
         else {
             alert('Invalid connection. Please connect two elements.');
@@ -314,3 +371,9 @@ function notGate(input) {
 function andGate(input1, input2) {
     return input1 === '1' && input2 === '1' ? '1' : '0';
 }
+
+setInterval(() => {
+    syncConnections();
+    addListeners();
+    gateLogic();
+}, 500);
