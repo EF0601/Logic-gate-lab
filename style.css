@@ -108,3 +108,9 @@ tr:hover{
   justify-content: center;
   cursor: not-allowed;
 }
+
+textarea{
+  outline: none;
+  padding: 5px;
+  font-size: small;
+}
