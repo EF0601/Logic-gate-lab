@@ -1,6 +1,5 @@
 let draggables = document.querySelectorAll('.draggable');
 let inout = document.querySelectorAll('.inout');
-let touchSensors = document.querySelectorAll('.touchSensor');
 
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
@@ -21,27 +20,6 @@ function addListeners() {
             if (isConnecting && !inout.classList.contains('connecting') && !inout.classList.contains('title')) {
                 inout.classList.add('connecting');
             }
-        });
-    });
-
-    touchSensors.forEach(touchSensor => {
-        touchSensor.addEventListener('mousedown', (e) => {
-            const parent = touchSensor.parentElement;
-            const output1 = document.getElementById(`${parent.id}-output-1`);
-            const output2 = document.getElementById(`${parent.id}-output-2`);
-
-            if(touchSensor.style.backgroundColor === "yellow"){
-                touchSensor.style.backgroundColor = "black";
-                output1.textContent = '0';
-                output2.textContent = '0';
-            }
-            else{
-                touchSensor.style.backgroundColor = "yellow";
-                output1.textContent = '1';
-                output2.textContent = '1';
-            }
-
-            syncConnections();
         });
     });
 }
@@ -161,10 +139,17 @@ function createNewElement(key) {
             newDraggable.classList.add('or');
             title.textContent = 'OR gate';
             break;
+        case "h":
+            newDraggable.classList.add('gate');
+            newDraggable.classList.add('xor');
+            title.textContent = 'XOR gate';
+            break;
         case "q":
             newDraggable.classList.add('special');
             newDraggable.classList.add('switch');
             title.textContent = 'switch';
+            inout3.textContent = '1';
+            inout4.textContent = '1';
             inout1.remove();
             inout2.remove();
 
@@ -172,6 +157,26 @@ function createNewElement(key) {
             touchSensor.classList.add('touchSensor');
             touchSensor.id = (`draggable-${counter}-touchSensor`);
             newDraggable.appendChild(touchSensor);
+
+            touchSensor.addEventListener('click', (e) => {
+                const parent = touchSensor.parentElement;
+                const output1 = document.getElementById(`${parent.id}-output-1`);
+                const output2 = document.getElementById(`${parent.id}-output-2`);
+
+                console.log(output1.textContent == '1');
+
+                if (output1.textContent == '1') {
+                    touchSensor.style.backgroundColor = "black";
+                    output1.textContent = '0';
+                    output2.textContent = '0';
+                }
+                else if (output1.textContent == '0') {
+                    touchSensor.style.backgroundColor = "yellow";
+                    output1.textContent = '1';
+                    output2.textContent = '1';
+                }
+                syncConnections();
+            });
             break;
 
         default:
@@ -185,7 +190,6 @@ function createNewElement(key) {
     document.getElementById("screen").appendChild(fragment);
     draggables = document.querySelectorAll('.draggable');
     inout = document.querySelectorAll('.inout');
-    touchSensors = document.querySelectorAll('.touchSensor');
 
     addListeners();
     counter++;
@@ -261,6 +265,7 @@ function syncConnections() {
             input.textContent = output.textContent;
         }
     });
+    addListeners();
     gateLogic();
 }
 
@@ -289,6 +294,11 @@ function gateLogic() {
             case "or":
                 output1.textContent = input1.textContent === '1' || input2.textContent === '1' ? '1' : '0';
                 output2.textContent = input1.textContent === '1' || input2.textContent === '1' ? '1' : '0';
+                break;
+
+            case "xor":
+                output1.textContent = input1.textContent !== input2.textContent ? '1' : '0';
+                output2.textContent = input1.textContent !== input2.textContent ? '1' : '0';
                 break;
 
             default:
