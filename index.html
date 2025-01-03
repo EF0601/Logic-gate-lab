@@ -54,13 +54,18 @@
             <td><button onclick="createNewElement('w')">Add</button></td>
         </tr>
         <tr>
+            <td>Special: Push button</td>
+            <td>It is similar to the classic switch, but it needs to be continuously pushed to be activated.</td>
+            <td><button onclick="createNewElement('e')">Add</button></td>
+        </tr>
+        <tr>
             <td>Special: Comment</td>
             <td>A comment block for anything you need to comment. Comes as a long textarea.</td>
             <td><button onclick="createNewElement('c')">Add</button></td>
         </tr>
     </table>
     <h3>Connect tool</h3>
-    Press the spacebar to enable connect tool. Then, select two objects to connect.
+    Press the spacebar to enable connect tool. Then, select two objects to connect. You can also delete an existing connection by doing the same thing, holding spacebar and selecting two objects that are already connected.
     <h2>Credits</h2>
     <p>Created by <a href="">EF0601</a>. On December 31st, 2024</p>
     <h2>Wiki</h2>
@@ -73,6 +78,8 @@
         switches and lamps. The menu, shown here, was also created.</p>
     <h3>Version 0.3.0-beta</h3>
     <p><i>1/2/2025</i> This update brings comment blocks, menu upgrades, and a trash can. It also brings QOL updates, such as table row highlights on hover, and a bottom bar that tells you the input clicked and the hovered object. Also, connections are now updated every 500ms to remove bugs related to syncing.</p>
+    <h3>Version 0.4.0-beta</h3>
+    <p><i>1/3/2025</i> This update adds deleting connections as a functionality. No more errors related to a connection will be thrown if a deleted element was involved in that connection (connection automatically deleted.) The lamp part was also introduced, lighting up if inputted 1 and turning off if inputted 0. The push button was also added which is similar to the switch but needs constant user input to stay on.</p>
 </dialog>
 
 <body>

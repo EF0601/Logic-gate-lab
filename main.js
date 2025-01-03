@@ -12,8 +12,8 @@ let currentHoveredElement = "";
 function addListeners() {
     draggables.forEach(draggable => {
         draggable.addEventListener('mousedown', (e) => {
-            if(draggable.classList.contains('nondraggable')) return;
-            else{
+            if (draggable.classList.contains('nondraggable')) return;
+            else {
                 activeDraggable = draggable;
                 offsetX = Math.round((e.clientX - draggable.offsetLeft) / 10) * 10;
                 offsetY = Math.round((e.clientY - draggable.offsetTop) / 10) * 10;
@@ -54,7 +54,7 @@ document.addEventListener('mousemove', (e) => {
             if (isColliding(activeDraggable, draggable)) {
                 draggable.classList.add('collided');
                 activeDraggable.classList.add('collided');
-                if(draggable.classList.contains('trash')){
+                if (draggable.classList.contains('trash')) {
                     activeDraggable.remove();
                 }
             } else {
@@ -89,7 +89,7 @@ let counter = 0;
 
 // all key listeners
 document.addEventListener('keydown', (e) => {
-    if(listenInput){
+    if (listenInput) {
         //input display
         document.getElementById('inputDisplay').textContent = `Input: ${e.key}`;
 
@@ -211,8 +211,6 @@ function createNewElement(key) {
                 const output1 = document.getElementById(`${parent.id}-output-1`);
                 const output2 = document.getElementById(`${parent.id}-output-2`);
 
-                console.log(output1.textContent == '1');
-
                 if (output1.textContent == '1') {
                     touchSensor.style.backgroundColor = "black";
                     output1.textContent = '0';
@@ -225,6 +223,51 @@ function createNewElement(key) {
                 }
                 syncConnections();
             });
+            break;
+        case 'w':
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('light');
+            title.textContent = 'lamp';
+            inout2.remove();
+            inout3.remove();
+            inout4.remove();
+
+            const light = document.createElement('div');
+            light.style.height = '60px';
+            light.style.backgroundColor = 'black';
+            light.classList.add('lightPart');
+            newDraggable.appendChild(light);
+
+            break;
+        case 'e':
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('button');
+            title.textContent = 'button';
+            inout1.remove();
+            inout2.remove();
+            inout3.textContent = '1';
+            inout4.textContent = '1';
+
+            const pushSensor = document.createElement('div');
+            pushSensor.classList.add('pushSensor');
+            pushSensor.id = (`draggable-${counter}-pushSensor`);
+            newDraggable.appendChild(pushSensor);
+
+            const parent = pushSensor.parentElement;
+            console.log(parent.id);
+            const output1 = parent.querySelector(`#${parent.id}-output-1`);
+            const output2 = parent.querySelector(`#${parent.id}-output-2`);
+            pushSensor.addEventListener('mousedown', (e) => {
+                pushSensor.style.backgroundColor = "yellow";
+                output1.textContent = '1';
+                output2.textContent = '1';
+            });
+            pushSensor.addEventListener('mouseup', (e) => {
+                pushSensor.style.backgroundColor = "black";
+                output1.textContent = '0';
+                output2.textContent = '0';
+            });
+            syncConnections();
             break;
         case "c":
             newDraggable.classList.add('special');
@@ -275,6 +318,18 @@ let isConnecting = false;
 let startElement = null;
 let connections = [];
 
+function alreadyExists(newConnections) {
+    let exists = false;
+    for (let i = 0; i < connections.length; i++) {
+        if (connections[i][0] === newConnections[0] && connections[i][1] === newConnections[1]) {
+            return i;
+        }
+        else if (connections[i][0] === newConnections[1] && connections[i][1] === newConnections[0]) {
+            return i;
+        }
+    }
+}
+
 document.addEventListener('keyup', (e) => {
     if (e.key === ' ' && listenInput) {
         isConnecting = false;
@@ -288,15 +343,28 @@ document.addEventListener('keyup', (e) => {
             newConnections.push(draggable.id);
         });
 
-        if (newConnections.length === 2) {
-            connections.push(newConnections);
-            newConnections.forEach(connection => {
-                document.getElementById(connection).style.backgroundColor = color;
+        const index = alreadyExists(newConnections);
+
+
+        if (index !== undefined) {
+            newConnections.forEach(element => {
+                document.getElementById(element).style.backgroundColor = 'lightblue';
+
             });
-            syncConnections();
+            connections.splice(index, 1);
+
         }
         else {
-            alert('Invalid connection. Please connect two elements.');
+            if (newConnections.length === 2) {
+                connections.push(newConnections);
+                newConnections.forEach(connection => {
+                    document.getElementById(connection).style.backgroundColor = color;
+                });
+                syncConnections();
+            }
+            else {
+                alert('Invalid connection. Please connect two elements.');
+            }
         }
     }
 });
@@ -305,25 +373,32 @@ function syncConnections() {
     connections.forEach(connection => {
         const [ele1, ele2] = connection;
 
-        let input;
-        let output;
-
-        //which is input?
-        if (ele1.split("-")[2] === "input") {
-            output = document.getElementById(ele2);
-            input = document.getElementById(ele1);
-
-            input.textContent = output.textContent;
+        if (document.getElementById(ele1) == undefined || document.getElementById(ele2) == undefined) {
+            if (document.getElementById(ele1) != undefined){
+                document.getElementById(ele1).style.backgroundColor = 'lightblue';
+            }
+            else if (document.getElementById(ele2) != undefined){
+                document.getElementById(ele2).style.backgroundColor = 'lightblue';
+            }
+            connections.splice(connections.indexOf(connection), 1);
         }
-        else if (ele2.split("-")[2] === "input") {
-            output = document.getElementById(ele1);
-            input = document.getElementById(ele2);
+        else {
 
+            let input;
+            let output;
+
+            //which is input?
+            if (ele1.split("-")[2] === "input") {
+                output = document.getElementById(ele2);
+                input = document.getElementById(ele1);
+            }
+            else if (ele2.split("-")[2] === "input") {
+                output = document.getElementById(ele1);
+                input = document.getElementById(ele2);
+            }
             input.textContent = output.textContent;
         }
     });
-    addListeners();
-    gateLogic();
 }
 
 //end connection craziness
@@ -376,4 +451,10 @@ setInterval(() => {
     syncConnections();
     addListeners();
     gateLogic();
+
+    let lights = document.querySelectorAll('.lightPart');
+    lights.forEach(light => {
+        const input = document.getElementById(`${light.parentElement.id}-input-1`);
+        light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
+    });
 }, 500);
