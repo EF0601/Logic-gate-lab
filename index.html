@@ -9,66 +9,69 @@
 
   <dialog id="menu">
     <h1>Menu</h1>
-    <h2>Help</h2>
-    <h3>Add new</h3>
-    <table>
-      <tr>
-        <td>Value: 0</td>
-        <td>Represents a binary 0</td>
-        <td><button onclick="createNewElement('a')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Value: 1</td>
-        <td>Represents a binary 1</td>
-        <td><button onclick="createNewElement('s')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Gate: NOT</td>
-        <td>Inverts the input value</td>
-        <td><button onclick="createNewElement('d')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Gate: AND</td>
-        <td>Outputs true if both inputs are true</td>
-        <td><button onclick="createNewElement('f')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Gate: OR</td>
-        <td>Outputs true if at least one input is true</td>
-        <td><button onclick="createNewElement('g')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Gate: XOR</td>
-        <td>Outputs true if one input is true and the other is false.</td>
-        <td><button onclick="createNewElement('h')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Special: Switch</td>
-        <td>Can toggle between 0 and 1</td>
-        <td><button onclick="createNewElement('q')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Special: Lamp</td>
-        <td>Lights up if the input is 1</td>
-        <td><button onclick="createNewElement('w')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Special: Push button</td>
-        <td>
-          It is similar to the classic switch, but it needs to be continuously
-          pushed to be activated.
-        </td>
-        <td><button onclick="createNewElement('e')">Add</button></td>
-      </tr>
-      <tr>
-        <td>Special: Comment</td>
-        <td>
-          A comment block for anything you need to comment. Comes as a long
-          textarea.
-        </td>
-        <td><button onclick="createNewElement('c')">Add</button></td>
-      </tr>
-    </table>
+    <h2>Add new</h2>
+    <div id="gridContainer">
+      <button
+        class="gridItem"
+        onclick="createNewElement('a')"
+        title="Represents a binary 0">
+        Value: 0
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('s')"
+        title="Represents a binary 1">
+        Value: 1
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('d')"
+        title="Inverts the input value">
+        Gate: NOT
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('f')"
+        title="Outputs true if both inputs are true">
+        Gate: AND
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('g')"
+        title="Outputs true if at least one input is true">
+        Gate: OR
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('h')"
+        title="Outputs true if one input is true and the other is false">
+        Gate: XOR
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('q')"
+        title="Can toggle between 0 and 1">
+        Special: Switch
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('w')"
+        title="Lights up if the input is 1">
+        Special: Lamp
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('e')"
+        title="Needs to be continuously pushed to be activated">
+        Special: Push button
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('c')"
+        title="A comment block for anything you need to comment">
+        Special: Comment
+      </button>
+    </div>
     <h3>Connect tool</h3>
     Press the spacebar to enable connect tool. Then, select two objects to
     connect. You can also delete an existing connection by doing the same thing,
@@ -120,6 +123,9 @@
   <body>
     <div id="screen">
       <div id="trash" class="draggable nondraggable trash">Trash</div>
+      <button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">
+        Connector Tool
+      </button>
       Press M to open menu.
     </div>
   </body>

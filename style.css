@@ -61,7 +61,7 @@ body{
 
 dialog{
   z-index: 100;
-  height: 300px;
+  height: 50vh;
   width: 50%;
   overflow: scroll;
   margin: auto;
@@ -95,8 +95,33 @@ dialog button:hover{
   text-align: center;
 }
 
-tr:hover{
+/* tr:hover{
   background-color: rgb(245, 241, 241);
+} */
+
+/* New grid system: */
+#gridContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 23%);
+  gap: 10px;
+  margin: 10px;
+}
+
+.gridItem{
+  border: 1px solid black;
+  text-align: center;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+@media screen and (max-width: 800px){
+  #gridContainer{
+    display: block;
+  }
+  .gridItem{
+    margin: 10px;
+  }
 }
 
 #trash{
@@ -112,6 +137,23 @@ tr:hover{
   text-align: center;
   justify-content: center;
   cursor: not-allowed;
+}
+
+#mobileConnectorBtn{
+  background-color: red;
+  color: white;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  bottom: 7vh;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 textarea{

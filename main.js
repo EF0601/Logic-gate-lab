@@ -28,7 +28,17 @@ function addListeners() {
                 activeDraggable = draggable;
                 offsetX = Math.round((e.clientX - draggable.offsetLeft) / 10) * 10;
                 offsetY = Math.round((e.clientY - draggable.offsetTop) / 10) * 10;
-                offsetY = e.clientY - draggable.offsetTop;
+                draggable.style.cursor = 'grabbing';
+            }
+        });
+
+        draggable.addEventListener('touchstart', (e) => {
+            if (draggable.classList.contains('nondraggable')) return;
+            else {
+                activeDraggable = draggable;
+                const touch = e.touches[0];
+                offsetX = Math.round((touch.clientX - draggable.offsetLeft) / 10) * 10;
+                offsetY = Math.round((touch.clientY - draggable.offsetTop) / 10) * 10;
                 draggable.style.cursor = 'grabbing';
             }
         });
@@ -47,6 +57,12 @@ function addListeners() {
 
     inout.forEach(inout => {
         inout.addEventListener('mousedown', (e) => {
+            if (isConnecting && !inout.classList.contains('connecting') && !inout.classList.contains('title')) {
+                inout.classList.add('connecting');
+            }
+        });
+
+        inout.addEventListener('touchstart', (e) => {
             if (isConnecting && !inout.classList.contains('connecting') && !inout.classList.contains('title')) {
                 inout.classList.add('connecting');
             }
@@ -76,9 +92,38 @@ document.addEventListener('mousemove', (e) => {
     });
 });
 
+document.addEventListener('touchmove', (e) => {
+    if (!activeDraggable) return;
+    const touch = e.touches[0];
+    activeDraggable.style.left = `${Math.round((touch.clientX - offsetX) / 10) * 10}px`;
+    activeDraggable.style.top = `${Math.round((touch.clientY - offsetY) / 10) * 10}px`;
+
+    // Check collisions with all other draggables
+    draggables.forEach(draggable => {
+        if (draggable !== activeDraggable) {
+            if (isColliding(activeDraggable, draggable)) {
+                draggable.classList.add('collided');
+                activeDraggable.classList.add('collided');
+                if (draggable.classList.contains('trash')) {
+                    activeDraggable.remove();
+                }
+            } else {
+                draggable.classList.remove('collided');
+                activeDraggable.classList.remove('collided');
+            }
+        }
+    });
+});
+
 document.addEventListener('mouseup', () => {
     if (activeDraggable) {
+        activeDraggable.style.cursor = 'grab';
+        activeDraggable = null;
+    }
+});
 
+document.addEventListener('touchend', () => {
+    if (activeDraggable) {
         activeDraggable.style.cursor = 'grab';
         activeDraggable = null;
     }
@@ -128,6 +173,19 @@ document.addEventListener('keydown', (e) => {
 
 });
 
+function toggleMobileConnectorBtn(){
+    const button = document.getElementById('mobileConnectorBtn');
+    if (button.style.backgroundColor === 'green'){
+        button.style.backgroundColor = 'red';
+        isConnecting = false;
+        connectorTool();
+    }
+    else{
+        button.style.backgroundColor = 'green';
+        isConnecting = true;
+    }
+}
+
 function createNewElement(key) {
     const fragment = document.createDocumentFragment();
 
@@ -140,14 +198,14 @@ function createNewElement(key) {
     const inout1 = document.createElement('div');
     inout1.classList.add('inout');
     inout1.id = (`draggable-${counter}-input-1`);
-    inout1.textContent = 'in';
+    inout1.textContent = '0';
     newDraggable.appendChild(inout1);
 
 
     const inout2 = document.createElement('div');
     inout2.classList.add('inout');
     inout2.id = (`draggable-${counter}-input-2`);
-    inout2.textContent = 'in';
+    inout2.textContent = '0';
     newDraggable.appendChild(inout2);
 
     const title = document.createElement('div');
@@ -159,13 +217,13 @@ function createNewElement(key) {
     const inout3 = document.createElement('div');
     inout3.classList.add('inout');
     inout3.id = (`draggable-${counter}-output-1`);
-    inout3.textContent = 'out';
+    inout3.textContent = '0';
     newDraggable.appendChild(inout3);
 
     const inout4 = document.createElement('div');
     inout4.classList.add('inout');
     inout4.id = (`draggable-${counter}-output-2`);
-    inout4.textContent = 'out';
+    inout4.textContent = '0';
     inout4.style.border = "none";
     newDraggable.appendChild(inout4);
 
@@ -185,26 +243,26 @@ function createNewElement(key) {
             break;
         case "d":
             newDraggable.classList.add('binary');
-            newDraggable.classList.add('gate');
             newDraggable.classList.add('not');
+            newDraggable.classList.add('gate');
             title.textContent = 'NOT gate';
             break;
         case "f":
             newDraggable.classList.add('binary');
-            newDraggable.classList.add('gate');
             newDraggable.classList.add('and');
+            newDraggable.classList.add('gate');
             title.textContent = 'AND gate';
             break;
         case "g":
             newDraggable.classList.add('binary');
-            newDraggable.classList.add('gate');
             newDraggable.classList.add('or');
+            newDraggable.classList.add('gate');
             title.textContent = 'OR gate';
             break;
         case "h":
             newDraggable.classList.add('binary');
-            newDraggable.classList.add('gate');
             newDraggable.classList.add('xor');
+            newDraggable.classList.add('gate');
             title.textContent = 'XOR gate';
             break;
         case "q":
@@ -391,7 +449,6 @@ let startElement = null;
 let connections = [];
 
 function alreadyExists(newConnections) {
-    let exists = false;
     for (let i = 0; i < connections.length; i++) {
         if (connections[i][0] === newConnections[0] && connections[i][1] === newConnections[1]) {
             return i;
@@ -404,7 +461,12 @@ function alreadyExists(newConnections) {
 
 document.addEventListener('keyup', (e) => {
     if (e.key === ' ' && listenInput) {
-        isConnecting = false;
+        connectorTool();
+    }
+});
+
+function connectorTool(){
+    isConnecting = false;
         startElement = null;
 
         let newConnections = [];
@@ -438,8 +500,7 @@ document.addEventListener('keyup', (e) => {
                 displayAlert(`Invalid connection. Please connect two elements. Not sure how to use the connection tool? Check the menu.`);
             }
         }
-    }
-});
+}
 //how to pass values between connected elements
 function syncConnections() {
     connections.forEach(connection => {
@@ -528,7 +589,7 @@ function gateLogic() {
             }
         }
         else{
-            alertBox('Relay input is not binary. Please check your connections. The first input must be binary, the second should be the value to be relayed.');
+            displayAlert('Relay input is not binary. Please check your connections. The first input must be binary, the second should be the value to be relayed.');
         }
     });
 
