@@ -448,7 +448,7 @@ addListeners();
 
 //mobile?
 const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-return regex.test(navigator.userAgent) ? document.getElementById('mobileConnectorBtn').style.display = 'block' : null;
+regex.test(navigator.userAgent) ? document.getElementById('mobileConnectorBtn').style.display = 'block' : null;
 
 
 let isConnecting = false;
