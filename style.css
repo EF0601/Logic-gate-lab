@@ -154,6 +154,7 @@ dialog button:hover{
   cursor: pointer;
   border: none;
   font-family: 'Courier New', Courier, monospace;
+  display: none;
 }
 
 textarea{

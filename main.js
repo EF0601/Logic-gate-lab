@@ -442,7 +442,14 @@ function createNewElement(key) {
     counter++;
 }
 
+//on start
+
 addListeners();
+
+//mobile?
+const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+return regex.test(navigator.userAgent) ? document.getElementById('mobileConnectorBtn').style.display = 'block' : null;
+
 
 let isConnecting = false;
 let startElement = null;
@@ -612,6 +619,8 @@ function notGate(input) {
 function andGate(input1, input2) {
     return input1 === '1' && input2 === '1' ? '1' : '0';
 }
+
+//time loop
 
 setInterval(() => {
     syncConnections();
