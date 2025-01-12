@@ -91,6 +91,10 @@ dialog button:hover{
   background-color: yellow;
 }
 
+#alertBox{
+  text-align: center;
+}
+
 tr:hover{
   background-color: rgb(245, 241, 241);
 }
@@ -114,4 +118,11 @@ textarea{
   outline: none;
   padding: 5px;
   font-size: small;
+}
+
+.binaryInputContainer > div{
+  width: 20px;
+  height: 20px;
+  border: 1px solid black;
+  text-align: center;
 }

@@ -6,6 +6,17 @@ let listenInput = true;
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
 
+//display alert box
+const alertBox = document.getElementById('alertBox');
+const alertText = document.getElementById('alertText');
+function displayAlert(text) {
+    alertBox.style.display = 'block';
+    alertText.textContent = text;
+}
+
+//default welcome box
+displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
+
 // current element hovered
 let currentHoveredElement = "";
 
@@ -161,39 +172,43 @@ function createNewElement(key) {
 
     switch (key) {
         case "a":
-            newDraggable.classList.add('value');
+            newDraggable.classList.add('binary');
             title.textContent = 'value';
             inout3.textContent = '0';
             inout4.textContent = '0';
             break;
         case "s":
-            newDraggable.classList.add('value');
+            newDraggable.classList.add('binary');
             title.textContent = 'value';
             inout3.textContent = '1';
             inout4.textContent = '1';
             break;
         case "d":
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('gate');
             newDraggable.classList.add('not');
             title.textContent = 'NOT gate';
             break;
         case "f":
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('gate');
             newDraggable.classList.add('and');
             title.textContent = 'AND gate';
             break;
         case "g":
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('gate');
             newDraggable.classList.add('or');
             title.textContent = 'OR gate';
             break;
         case "h":
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('gate');
             newDraggable.classList.add('xor');
             title.textContent = 'XOR gate';
             break;
         case "q":
-            newDraggable.classList.add('special');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('switch');
             title.textContent = 'switch';
             inout3.textContent = '1';
@@ -225,7 +240,7 @@ function createNewElement(key) {
             });
             break;
         case 'w':
-            newDraggable.classList.add('special');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('light');
             title.textContent = 'lamp';
             inout2.remove();
@@ -240,7 +255,7 @@ function createNewElement(key) {
 
             break;
         case 'e':
-            newDraggable.classList.add('special');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('button');
             title.textContent = 'button';
             inout1.remove();
@@ -268,6 +283,63 @@ function createNewElement(key) {
                 output2.textContent = '0';
             });
             syncConnections();
+            break;
+        case 'r':
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('relay');
+            title.textContent = 'relay';
+
+            break;
+        case 't':
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('relay');
+            newDraggable.classList.add('memoryRelay');
+            title.textContent = 'memory relay';
+
+            break;
+        case 'y':
+            newDraggable.classList.add('decimal');
+            newDraggable.classList.add('binaryToDecimal');
+
+            newDraggable.style.width = '200px';
+            newDraggable.height = '50px';
+
+            title.textContent = 'Binary to Decimal';
+            title.style.width = '200px';
+
+            inout1.remove();
+            inout2.remove();
+            inout3.remove();
+            inout4.remove();
+
+            const binaryInputContainer = document.createElement('div');
+            binaryInputContainer.classList.add('binaryInputContainer');
+            binaryInputContainer.style.display = 'flex';
+            binaryInputContainer.style.justifyContent = 'center';
+
+            for(let i = 0; i < 8; i++){
+                const binaryInput = document.createElement('div');
+                binaryInput.classList.add('binaryInput');
+                binaryInput.classList.add('inout');
+                binaryInput.id = (`draggable-${counter}-input-${i}`);
+                binaryInput.textContent = '0';
+                binaryInputContainer.appendChild(binaryInput);
+            }
+
+            const equalsSign = document.createElement('div');
+            equalsSign.textContent = '=';
+            binaryInputContainer.appendChild(equalsSign);
+
+            const decimalOutput = document.createElement('div');
+            decimalOutput.textContent = '0';
+            decimalOutput.style.width = '50px';
+            decimalOutput.classList.add('decimalOutput');
+            decimalOutput.classList.add('inout');
+            decimalOutput.id = (`draggable-${counter}-output-1`);
+            binaryInputContainer.appendChild(decimalOutput);
+
+            newDraggable.appendChild(binaryInputContainer);
+
             break;
         case "c":
             newDraggable.classList.add('special');
@@ -363,7 +435,7 @@ document.addEventListener('keyup', (e) => {
                 syncConnections();
             }
             else {
-                alert('Invalid connection. Please connect two elements.');
+                displayAlert(`Invalid connection. Please connect two elements. Not sure how to use the connection tool? Check the menu.`);
             }
         }
     }
@@ -436,6 +508,39 @@ function gateLogic() {
             default:
                 break;
         }
+    });
+
+    let relays = document.querySelectorAll('.relay');
+    relays.forEach(relay => {
+        const input1 = document.getElementById(`${relay.id}-input-1`);
+        const input2 = document.getElementById(`${relay.id}-input-2`);
+        const output1 = document.getElementById(`${relay.id}-output-1`);
+        const output2 = document.getElementById(`${relay.id}-output-2`);
+
+        if(input1.textContent === '1' || input1.textContent === '0'){
+            if (input1.textContent === '1'){
+                output1.textContent = input2.textContent;
+                output2.textContent = input2.textContent;
+            }
+            else if(input1.textContent === '0' && !relay.classList.contains('memoryRelay')){
+                output1.textContent = '0';
+                output2.textContent = '0';
+            }
+        }
+        else{
+            alertBox('Relay input is not binary. Please check your connections. The first input must be binary, the second should be the value to be relayed.');
+        }
+    });
+
+    let decimalOutputs = document.querySelectorAll('.decimalOutput');
+    decimalOutputs.forEach(decimalOutput => {
+        let binaryInputs = decimalOutput.parentElement.querySelectorAll('.binaryInput');
+        let binaryString = '';
+        binaryInputs.forEach(binaryInput => {
+            binaryString += binaryInput.textContent;
+        });
+
+        decimalOutput.textContent = parseInt(binaryString, 2);
     });
 }
 
