@@ -71,6 +71,24 @@
         title="A comment block for anything you need to comment">
         Special: Comment
       </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('r')"
+        title="A relay switch that can be controlled by another circuit">
+        Special: Relay
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('t')"
+        title="A memory relay that retains its state">
+        Special: Memory Relay
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('y')"
+        title="Converts binary input to decimal output">
+        Special: Binary to Decimal
+      </button>
     </div>
     <h3>Connect tool</h3>
     Press the spacebar to enable connect tool. Then, select two objects to
@@ -109,6 +127,7 @@
       if inputted 0. The push button was also added which is similar to the
       switch but needs constant user input to stay on.
     </p>
+    <button style="width:90%;" onclick="document.getElementById('menu').style.display='none'"">Close</button>
   </dialog>
   <dialog id="alertBox">
     <h1>Alert!</h1>
@@ -128,7 +147,7 @@
                 File
             </button>
             <div class="dropdown-content">
-                <button href="#">Clear</button>
+                <button onclick="clearAllDraggables()">Clear</button>
             </div>
         </div>
         <div class="dropdown">
@@ -136,7 +155,7 @@
                 Edit
             </button>
             <div class="dropdown-content">
-                <button onclick="connections = []">Remove all connections</button>
+                <button onclick="clearAllConnections()">Remove all connections</button>
             </div>
         </div>
         <div class="dropdown">
@@ -153,10 +172,11 @@
                 Simulation
             </button>
             <div class="dropdown-content">
-                <button>Enable simulations</button>
-                <button>Increase time +1h</button>
-                <button>Decrease time -1h</button>
+                <hr>
+                <button>Increase time by 1 hour</button>
+                <button>Decrease time by 1 hour</button>
                 <button>Use real time</button>
+                <hr>
                 <button>Weather: sunny</button>
                 <button>Weather: rainy</button>
             </div>

@@ -1,9 +1,9 @@
-*{
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
-body{
+body {
   padding: 0;
   height: 100vh;
   font-family: 'Courier New', Courier, monospace;
@@ -22,7 +22,7 @@ body{
   user-select: none;
 }
 
-#bottomBar{
+#bottomBar {
   height: 5%;
   width: 100%;
   display: flex;
@@ -59,7 +59,7 @@ body{
   border: 1px solid yellow;
 }
 
-dialog{
+dialog {
   z-index: 100;
   height: 50vh;
   width: 50%;
@@ -71,14 +71,14 @@ dialog{
 }
 
 .touchSensor,
-.pushSensor{
+.pushSensor {
   width: 100px;
   height: 40px;
   background-color: yellow;
   cursor: pointer;
 }
 
-dialog button{
+dialog button {
   border: 1px solid black;
   cursor: pointer;
   background: none;
@@ -87,11 +87,11 @@ dialog button{
   padding: 5px;
 }
 
-dialog button:hover{
+dialog button:hover {
   background-color: yellow;
 }
 
-#alertBox{
+#alertBox {
   text-align: center;
 }
 
@@ -107,7 +107,7 @@ dialog button:hover{
   margin: 10px;
 }
 
-.gridItem{
+.gridItem {
   border: 1px solid black;
   text-align: center;
   padding: 10px;
@@ -115,16 +115,16 @@ dialog button:hover{
   height: 100%;
 }
 
-@media screen and (max-width: 800px){
-  #gridContainer{
+@media screen and (max-width: 800px) {
+  #gridContainer {
     display: block;
   }
-  .gridItem{
+  .gridItem {
     margin: 10px;
   }
 }
 
-#trash{
+#trash {
   background-color: red;
   color: white;
   width: 100px;
@@ -139,7 +139,7 @@ dialog button:hover{
   cursor: not-allowed;
 }
 
-#mobileConnectorBtn{
+#mobileConnectorBtn {
   background-color: red;
   color: white;
   width: 100px;
@@ -157,7 +157,7 @@ dialog button:hover{
   display: none;
 }
 
-textarea{
+textarea {
   outline: none;
   padding: 5px;
   font-size: small;
@@ -166,8 +166,8 @@ textarea{
 /* the menu bar */
 #topBar {
   overflow: hidden;
-  background-color: #333;
-  font-family: Arial;
+  background-color: rgb(84, 56, 56);
+  font-family: 'Courier new';
   height: 5%;
 }
 .topBar button {
@@ -177,6 +177,7 @@ textarea{
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 /* The dropdown container */
@@ -197,20 +198,21 @@ textarea{
   margin: 0;
 }
 
-.topBar button:hover, .dropdown:hover .dropbtn {
-  background-color: red;
+.topBar button:hover,
+.dropdown:hover .dropbtn {
+  background-color: rgb(109, 76, 76);
 }
 
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
+  background-color: rgb(109, 76, 76);
   min-width: 160px;
   z-index: 1;
-  border: 1px solid black;
 }
 
 .dropdown-content button {
+  border: none;
   float: none;
   color: black;
   padding: 12px 16px;
@@ -219,25 +221,27 @@ textarea{
   text-align: left;
   width: 100%;
   border-radius: 0;
-  border: none;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: rgb(109, 76, 76);
+  color: white;
 }
 
 .dropdown-content button:hover {
-  background-color: #ddd;
+  background-color: rgb(84, 56, 56);
 }
 
 .dropdown:hover .dropdown-content {
   display: block;
 }
 
-.binaryInputContainer > div{
+.binaryInputContainer > div {
   width: 20px;
   height: 20px;
   border: 1px solid black;
   text-align: center;
 }
 
-.binaryInputContainer > div{
+.binaryInputContainer > div {
   width: 20px;
   height: 20px;
   border: 1px solid black;

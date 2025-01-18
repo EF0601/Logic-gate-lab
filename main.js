@@ -442,6 +442,12 @@ function createNewElement(key) {
     counter++;
 }
 
+function clearAllDraggables(){
+    draggables.forEach(draggable =>{
+        draggable.remove();
+    });
+}
+
 //on start
 
 addListeners();
@@ -542,6 +548,14 @@ function syncConnections() {
             }
             input.textContent = output.textContent;
         }
+    });
+}
+
+function clearAllConnections(){
+    connections = [];
+    const inouts = document.querySelectorAll('.inout');
+    inouts.forEach(inout => {
+        inout.style.backgroundColor = 'lightblue';
     });
 }
 
