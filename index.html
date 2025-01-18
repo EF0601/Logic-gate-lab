@@ -121,6 +121,47 @@
   </dialog>
 
   <body>
+<body>
+    <div id="topBar">
+        <div class="dropdown">
+            <button class="dropbtn">
+                File
+            </button>
+            <div class="dropdown-content">
+                <button href="#">Clear</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">
+                Edit
+            </button>
+            <div class="dropdown-content">
+                <button onclick="connections = []">Remove all connections</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">
+                Help
+            </button>
+            <div class="dropdown-content">
+                <button onclick="document.getElementById('menu').style.display='block'">Menu</button>
+                <button onclick="window.open('https://github.com/EF0601/Logic-gate-lab/wiki', '_blank')">Wiki</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">
+                Simulation
+            </button>
+            <div class="dropdown-content">
+                <button>Enable simulations</button>
+                <button>Increase time +1h</button>
+                <button>Decrease time -1h</button>
+                <button>Use real time</button>
+                <button>Weather: sunny</button>
+                <button>Weather: rainy</button>
+            </div>
+        </div>
+    </div>
     <div id="screen">
       <div id="trash" class="draggable nondraggable trash">Trash</div>
       <button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">

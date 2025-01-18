@@ -15,7 +15,7 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 95%;
+  height: 90%;
   background: #f0f0f0;
   font-family: 'Courier New', Courier, monospace;
 
@@ -161,6 +161,80 @@ textarea{
   outline: none;
   padding: 5px;
   font-size: small;
+}
+
+/* the menu bar */
+#topBar {
+  overflow: hidden;
+  background-color: #333;
+  font-family: Arial;
+  height: 5%;
+}
+.topBar button {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.topBar button:hover, .dropdown:hover .dropbtn {
+  background-color: red;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  z-index: 1;
+  border: 1px solid black;
+}
+
+.dropdown-content button {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  width: 100%;
+  border-radius: 0;
+  border: none;
+}
+
+.dropdown-content button:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.binaryInputContainer > div{
+  width: 20px;
+  height: 20px;
+  border: 1px solid black;
+  text-align: center;
 }
 
 .binaryInputContainer > div{
