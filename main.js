@@ -327,7 +327,6 @@ function createNewElement(key) {
             newDraggable.appendChild(pushSensor);
 
             const parent = pushSensor.parentElement;
-            console.log(parent.id);
             const output1 = parent.querySelector(`#${parent.id}-output-1`);
             const output2 = parent.querySelector(`#${parent.id}-output-2`);
             pushSensor.addEventListener('mousedown', (e) => {
@@ -418,7 +417,19 @@ function createNewElement(key) {
             binaryOutputContainer.classList.add('binaryOutputContainer');
             binaryOutputContainer.style.display = 'flex';
             binaryOutputContainer.style.justifyContent = 'center';
-
+            
+            const decimalInput = document.createElement('div');
+            decimalInput.textContent = '0';
+            decimalInput.style.width = '50px';
+            decimalInput.classList.add('decimalInput');
+            decimalInput.classList.add('inout');
+            decimalInput.id = (`draggable-${counter}-input-1`);
+            binaryOutputContainer.appendChild(decimalInput);
+            
+            const equalSign = document.createElement('div');
+            equalSign.textContent = '=';
+            binaryOutputContainer.appendChild(equalSign);
+            
             for(let i = 0; i < 8; i++){
                 const binaryOutput = document.createElement('div');
                 binaryOutput.classList.add('inout');
@@ -427,23 +438,14 @@ function createNewElement(key) {
                 binaryOutput.textContent = '0';
                 binaryOutputContainer.appendChild(binaryOutput);
             }
-
-            const equalSign = document.createElement('div');
-            equalSign.textContent = '=';
-            binaryOutputContainer.appendChild(equalSign);
-
-            const decimalInput = document.createElement('div');
-            decimalInput.textContent = '0';
-            decimalInput.style.width = '50px';
-            decimalInput.classList.add('decimalInput');
-            decimalInput.classList.add('inout');
-            decimalInput.id = (`draggable-${counter}-input-1`);
-            binaryOutputContainer.appendChild(decimalInput);
-
+            
             newDraggable.appendChild(binaryOutputContainer);
 
             break;
         case "i":
+            newDraggable.classList.add('decimal');
+            newDraggable.classList.add('decimalValue');
+
             inout2.remove();
             inout1.textContent = null;
             const inputBlock = document.createElement('input');
@@ -611,6 +613,7 @@ function syncConnections() {
 }
 
 function clearAllConnections(){
+    counter = 0;
     connections = [];
     const inouts = document.querySelectorAll('.inout');
     inouts.forEach(inout => {
