@@ -234,16 +234,11 @@ textarea {
   display: block;
 }
 
-.binaryInputContainer > div {
+.binaryInputContainer > div,
+.binaryOutputContainer > div {
   width: 20px;
   height: 20px;
   border: 1px solid black;
   text-align: center;
 }
 
-.binaryInputContainer > div {
-  width: 20px;
-  height: 20px;
-  border: 1px solid black;
-  text-align: center;
-}

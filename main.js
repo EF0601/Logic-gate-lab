@@ -399,6 +399,65 @@ function createNewElement(key) {
             newDraggable.appendChild(binaryInputContainer);
 
             break;
+        case "u":
+            newDraggable.classList.add('decimal');
+            newDraggable.classList.add('decimalToBinary');
+
+            newDraggable.style.width = '200px';
+            newDraggable.height = '50px';
+
+            title.textContent = 'Decimal to Binary';
+            title.style.width = '200px';
+
+            inout1.remove();
+            inout2.remove();
+            inout3.remove();
+            inout4.remove();
+
+            const binaryOutputContainer = document.createElement('div');
+            binaryOutputContainer.classList.add('binaryOutputContainer');
+            binaryOutputContainer.style.display = 'flex';
+            binaryOutputContainer.style.justifyContent = 'center';
+
+            for(let i = 0; i < 8; i++){
+                const binaryOutput = document.createElement('div');
+                binaryOutput.classList.add('inout');
+                binaryOutput.classList.add('binaryOutput');
+                binaryOutput.id = (`draggable-${counter}-output-${i}`);
+                binaryOutput.textContent = '0';
+                binaryOutputContainer.appendChild(binaryOutput);
+            }
+
+            const equalSign = document.createElement('div');
+            equalSign.textContent = '=';
+            binaryOutputContainer.appendChild(equalSign);
+
+            const decimalInput = document.createElement('div');
+            decimalInput.textContent = '0';
+            decimalInput.style.width = '50px';
+            decimalInput.classList.add('decimalInput');
+            decimalInput.classList.add('inout');
+            decimalInput.id = (`draggable-${counter}-input-1`);
+            binaryOutputContainer.appendChild(decimalInput);
+
+            newDraggable.appendChild(binaryOutputContainer);
+
+            break;
+        case "i":
+            inout2.remove();
+            inout1.textContent = null;
+            const inputBlock = document.createElement('input');
+            inputBlock.type = 'number';
+            inputBlock.value = '0';
+            inputBlock.style.width = '100%';
+            inputBlock.addEventListener('input', (e) => {
+                inout3.textContent = e.target.value;
+                inout4.textContent = e.target.value;
+                syncConnections();
+            });
+            inout1.appendChild(inputBlock);
+            title.textContent = "Decimal value"
+            break;
         case "c":
             newDraggable.classList.add('special');
             newDraggable.classList.add('comment');
@@ -627,6 +686,26 @@ function gateLogic() {
         });
 
         decimalOutput.textContent = parseInt(binaryString, 2);
+    });
+
+    let binaryOutputs = document.querySelectorAll('.binaryOutputContainer');
+    binaryOutputs.forEach(binaryOutput => {
+        const decimalInput = binaryOutput.querySelector('.decimalInput');
+        const binaryOutputCells = Array.from(binaryOutput.querySelectorAll('.binaryOutput')).reverse();
+        const binaryString = (decimalInput.textContent >>> 0).toString(2).padStart(8, '0').split('').reverse();
+
+        for(let i = 0; i < binaryString.length; i++){
+            if(binaryOutputCells[i]){
+                binaryOutputCells[i].textContent = binaryString[i];
+            }
+            else{
+                displayAlert('There was an error. Perhaps the decimal value is too high? The maximum value is 255. Some digits might have not been displayed properly! For your convenience, the input cleared. Softlocked? Edit > Clear all connections. Here was the binary value: ' + binaryString.reverse().join(''));
+                binaryOutputCells.forEach(cell => {
+                    cell.textContent = '0';
+                });
+                decimalInput.textContent = '0';
+            }
+        }
     });
 }
 
