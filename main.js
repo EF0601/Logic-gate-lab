@@ -417,7 +417,7 @@ function createNewElement(key) {
             binaryOutputContainer.classList.add('binaryOutputContainer');
             binaryOutputContainer.style.display = 'flex';
             binaryOutputContainer.style.justifyContent = 'center';
-            
+
             const decimalInput = document.createElement('div');
             decimalInput.textContent = '0';
             decimalInput.style.width = '50px';
@@ -425,11 +425,11 @@ function createNewElement(key) {
             decimalInput.classList.add('inout');
             decimalInput.id = (`draggable-${counter}-input-1`);
             binaryOutputContainer.appendChild(decimalInput);
-            
+
             const equalSign = document.createElement('div');
             equalSign.textContent = '=';
             binaryOutputContainer.appendChild(equalSign);
-            
+
             for(let i = 0; i < 8; i++){
                 const binaryOutput = document.createElement('div');
                 binaryOutput.classList.add('inout');
@@ -438,7 +438,7 @@ function createNewElement(key) {
                 binaryOutput.textContent = '0';
                 binaryOutputContainer.appendChild(binaryOutput);
             }
-            
+
             newDraggable.appendChild(binaryOutputContainer);
 
             break;
@@ -458,7 +458,7 @@ function createNewElement(key) {
                 syncConnections();
             });
             inout1.appendChild(inputBlock);
-            title.textContent = "Decimal value"
+            title.textContent = "Decimal value";
             break;
         case "c":
             newDraggable.classList.add('special');
