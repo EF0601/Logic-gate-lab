@@ -1,95 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>Logic Gate Lab</title>
-</head>
+  </head>
 
-<dialog id="menu">
+  <dialog id="menu">
     <h1>Menu</h1>
-    <h2>Help</h2>
-    <h3>Add new</h3>
-    <table>
-        <tr>
-            <td>Value: 0</td>
-            <td>Represents a binary 0</td>
-            <td><button onclick="createNewElement('a')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Value: 1</td>
-            <td>Represents a binary 1</td>
-            <td><button onclick="createNewElement('s')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Gate: NOT</td>
-            <td>Inverts the input value</td>
-            <td><button onclick="createNewElement('d')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Gate: AND</td>
-            <td>Outputs true if both inputs are true</td>
-            <td><button onclick="createNewElement('f')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Gate: OR</td>
-            <td>Outputs true if at least one input is true</td>
-            <td><button onclick="createNewElement('g')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Gate: XOR</td>
-            <td>Outputs true if one input is true and the other is false.</td>
-            <td><button onclick="createNewElement('h')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Special: Switch</td>
-            <td>Can toggle between 0 and 1</td>
-            <td><button onclick="createNewElement('q')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Special: Lamp</td>
-            <td>Lights up if the input is 1</td>
-            <td><button onclick="createNewElement('w')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Special: Push button</td>
-            <td>It is similar to the classic switch, but it needs to be continuously pushed to be activated.</td>
-            <td><button onclick="createNewElement('e')">Add</button></td>
-        </tr>
-        <tr>
-            <td>Special: Comment</td>
-            <td>A comment block for anything you need to comment. Comes as a long textarea.</td>
-            <td><button onclick="createNewElement('c')">Add</button></td>
-        </tr>
-    </table>
+    <h2>Add new</h2>
+    <div id="gridContainer">
+      <button
+        class="gridItem"
+        onclick="createNewElement('a')"
+        title="Represents a binary 0">
+        Value: 0
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('s')"
+        title="Represents a binary 1">
+        Value: 1
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('d')"
+        title="Inverts the input value">
+        Gate: NOT
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('f')"
+        title="Outputs true if both inputs are true">
+        Gate: AND
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('g')"
+        title="Outputs true if at least one input is true">
+        Gate: OR
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('h')"
+        title="Outputs true if one input is true and the other is false">
+        Gate: XOR
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('q')"
+        title="Can toggle between 0 and 1">
+        Special: Switch
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('w')"
+        title="Lights up if the input is 1">
+        Special: Lamp
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('e')"
+        title="Needs to be continuously pushed to be activated">
+        Special: Push button
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('c')"
+        title="A comment block for anything you need to comment">
+        Special: Comment
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('r')"
+        title="A relay switch that can be controlled by another circuit">
+        Special: Relay
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('t')"
+        title="A memory relay that retains its state">
+        Special: Memory Relay
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('y')"
+        title="Converts binary input to decimal output">
+        Special: Binary to Decimal
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('u')"
+        title="Converts decimal input to binary output">
+        Special: Decimal to binary
+      </button>
+      <button
+        class="gridItem"
+        onclick="createNewElement('i')"
+        title="Similar to the value block, it represents an adjustable decimal value">
+        Decimal: Decimal Value
+      </button>
+    </div>
     <h3>Connect tool</h3>
-    Press the spacebar to enable connect tool. Then, select two objects to connect. You can also delete an existing connection by doing the same thing, holding spacebar and selecting two objects that are already connected.
+    Press the spacebar to enable connect tool. Then, select two objects to
+    connect. You can also delete an existing connection by doing the same thing,
+    holding spacebar and selecting two objects that are already connected.
     <h2>Credits</h2>
     <p>Created by <a href="">EF0601</a>. On December 31st, 2024</p>
     <h2>Wiki</h2>
     <p>Work in progress...</p>
     <h2>Updates</h2>
-    <a href="https://github.com/EF0601/Logic-gate-lab/releases">View all updates and better update logs. The below provides a simple summary.</a>
+    <a href="https://github.com/EF0601/Logic-gate-lab/releases"
+      >View all updates and better update logs. The below provides a simple
+      summary.</a
+    >
     <h3>Version 0.2.1-beta</h3>
-    <p><i>1/2/2025</i> Initial release. This version brings along the most basic logic gates such as AND, OR, XOR, and
-        NOT. It also introduces binary values. It brings a simple connection tool and allows for interactions with
-        switches and lamps. The menu, shown here, was also created.</p>
+    <p>
+      <i>1/2/2025</i> Initial release. This version brings along the most basic
+      logic gates such as AND, OR, XOR, and NOT. It also introduces binary
+      values. It brings a simple connection tool and allows for interactions
+      with switches and lamps. The menu, shown here, was also created.
+    </p>
     <h3>Version 0.3.0-beta</h3>
-    <p><i>1/2/2025</i> This update brings comment blocks, menu upgrades, and a trash can. It also brings QOL updates, such as table row highlights on hover, and a bottom bar that tells you the input clicked and the hovered object. Also, connections are now updated every 500ms to remove bugs related to syncing.</p>
+    <p>
+      <i>1/2/2025</i> This update brings comment blocks, menu upgrades, and a
+      trash can. It also brings QOL updates, such as table row highlights on
+      hover, and a bottom bar that tells you the input clicked and the hovered
+      object. Also, connections are now updated every 500ms to remove bugs
+      related to syncing.
+    </p>
     <h3>Version 0.4.0-beta</h3>
-    <p><i>1/3/2025</i> This update adds deleting connections as a functionality. No more errors related to a connection will be thrown if a deleted element was involved in that connection (connection automatically deleted.) The lamp part was also introduced, lighting up if inputted 1 and turning off if inputted 0. The push button was also added which is similar to the switch but needs constant user input to stay on.</p>
-</dialog>
+    <p>
+      <i>1/3/2025</i> This update adds deleting connections as a functionality.
+      No more errors related to a connection will be thrown if a deleted element
+      was involved in that connection (connection automatically deleted.) The
+      lamp part was also introduced, lighting up if inputted 1 and turning off
+      if inputted 0. The push button was also added which is similar to the
+      switch but needs constant user input to stay on.
+    </p>
+    <h3>Version 0.5.0-beta</h3>
+    <p>
+      <i>1/26/2025</i> This update brings the relay and memory relay. The relay
+      can be controlled by another circuit, and the memory relay retains its
+      state. The binary to decimal converter was also added, its counterpart,
+      and the decimal value block. There was also a revamp in terms of the UI,
+      with the addition of a top menu.
+    </p>
+    <button
+      style="width: 90%"
+      onclick="document.getElementById('menu').style.display='none'">
+      Close
+    </button>
+  </dialog>
+  <dialog id="alertBox">
+    <h1>Alert!</h1>
+    <p id="alertText">
+      This is an alert box. It is used to alert the user of something.
+    </p>
+    <button onclick="document.getElementById('alertBox').style.display='none'">
+      Close
+    </button>
+  </dialog>
 
-<body>
-    <div id="screen">
-        <div id="trash" class="draggable nondraggable trash">Trash</div>
-        Press M to open menu.
+  <div id="topBar">
+    <div class="dropdown">
+      <button class="dropbtn">File</button>
+      <div class="dropdown-content">
+        <button onclick="clearAllDraggables()">Clear</button>
+      </div>
     </div>
-</body>
-<div id="bottomBar"><span id="inputDisplay">Awaiting input...</span><span id="currentElementDisplay">No element.</span>
-</div>
-<script src="main.js"></script>
-
+    <div class="dropdown">
+      <button class="dropbtn">Edit</button>
+      <div class="dropdown-content">
+        <button onclick="clearAllConnections()">Remove all connections</button>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="dropbtn">Help</button>
+      <div class="dropdown-content">
+        <button onclick="document.getElementById('menu').style.display='block'">
+          Menu
+        </button>
+        <button
+          onclick="window.open('https://github.com/EF0601/Logic-gate-lab/wiki', '_blank')">
+          Wiki
+        </button>
+      </div>
+    </div>
+    <!-- <div class="dropdown">
+            <button class="dropbtn">
+                Simulation
+            </button>
+            <div class="dropdown-content">
+                <hr>
+                <button>Increase time by 1 hour</button>
+                <button>Decrease time by 1 hour</button>
+                <button>Use real time</button>
+                <hr>
+                <button>Weather: sunny</button>
+                <button>Weather: rainy</button>
+            </div>
+        </div> -->
+  </div>
+  <div id="screen">
+    <div id="trash" class="draggable nondraggable trash">Trash</div>
+    <button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">
+      Connector Tool
+    </button>
+    Press M to open menu.
+  </div>
+  <div id="bottomBar">
+    <span id="inputDisplay">Awaiting input...</span
+    ><span id="currentElementDisplay">No element.</span>
+  </div>
+  <script src="main.js"></script>
 </html>

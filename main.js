@@ -6,6 +6,17 @@ let listenInput = true;
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
 
+//display alert box
+const alertBox = document.getElementById('alertBox');
+const alertText = document.getElementById('alertText');
+function displayAlert(text) {
+    alertBox.style.display = 'block';
+    alertText.textContent = text;
+}
+
+//default welcome box
+displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
+
 // current element hovered
 let currentHoveredElement = "";
 
@@ -17,7 +28,17 @@ function addListeners() {
                 activeDraggable = draggable;
                 offsetX = Math.round((e.clientX - draggable.offsetLeft) / 10) * 10;
                 offsetY = Math.round((e.clientY - draggable.offsetTop) / 10) * 10;
-                offsetY = e.clientY - draggable.offsetTop;
+                draggable.style.cursor = 'grabbing';
+            }
+        });
+
+        draggable.addEventListener('touchstart', (e) => {
+            if (draggable.classList.contains('nondraggable')) return;
+            else {
+                activeDraggable = draggable;
+                const touch = e.touches[0];
+                offsetX = Math.round((touch.clientX - draggable.offsetLeft) / 10) * 10;
+                offsetY = Math.round((touch.clientY - draggable.offsetTop) / 10) * 10;
                 draggable.style.cursor = 'grabbing';
             }
         });
@@ -36,6 +57,12 @@ function addListeners() {
 
     inout.forEach(inout => {
         inout.addEventListener('mousedown', (e) => {
+            if (isConnecting && !inout.classList.contains('connecting') && !inout.classList.contains('title')) {
+                inout.classList.add('connecting');
+            }
+        });
+
+        inout.addEventListener('touchstart', (e) => {
             if (isConnecting && !inout.classList.contains('connecting') && !inout.classList.contains('title')) {
                 inout.classList.add('connecting');
             }
@@ -65,9 +92,38 @@ document.addEventListener('mousemove', (e) => {
     });
 });
 
+document.addEventListener('touchmove', (e) => {
+    if (!activeDraggable) return;
+    const touch = e.touches[0];
+    activeDraggable.style.left = `${Math.round((touch.clientX - offsetX) / 10) * 10}px`;
+    activeDraggable.style.top = `${Math.round((touch.clientY - offsetY) / 10) * 10}px`;
+
+    // Check collisions with all other draggables
+    draggables.forEach(draggable => {
+        if (draggable !== activeDraggable) {
+            if (isColliding(activeDraggable, draggable)) {
+                draggable.classList.add('collided');
+                activeDraggable.classList.add('collided');
+                if (draggable.classList.contains('trash')) {
+                    activeDraggable.remove();
+                }
+            } else {
+                draggable.classList.remove('collided');
+                activeDraggable.classList.remove('collided');
+            }
+        }
+    });
+});
+
 document.addEventListener('mouseup', () => {
     if (activeDraggable) {
+        activeDraggable.style.cursor = 'grab';
+        activeDraggable = null;
+    }
+});
 
+document.addEventListener('touchend', () => {
+    if (activeDraggable) {
         activeDraggable.style.cursor = 'grab';
         activeDraggable = null;
     }
@@ -117,6 +173,19 @@ document.addEventListener('keydown', (e) => {
 
 });
 
+function toggleMobileConnectorBtn(){
+    const button = document.getElementById('mobileConnectorBtn');
+    if (button.style.backgroundColor === 'green'){
+        button.style.backgroundColor = 'red';
+        isConnecting = false;
+        connectorTool();
+    }
+    else{
+        button.style.backgroundColor = 'green';
+        isConnecting = true;
+    }
+}
+
 function createNewElement(key) {
     const fragment = document.createDocumentFragment();
 
@@ -129,14 +198,14 @@ function createNewElement(key) {
     const inout1 = document.createElement('div');
     inout1.classList.add('inout');
     inout1.id = (`draggable-${counter}-input-1`);
-    inout1.textContent = 'in';
+    inout1.textContent = '0';
     newDraggable.appendChild(inout1);
 
 
     const inout2 = document.createElement('div');
     inout2.classList.add('inout');
     inout2.id = (`draggable-${counter}-input-2`);
-    inout2.textContent = 'in';
+    inout2.textContent = '0';
     newDraggable.appendChild(inout2);
 
     const title = document.createElement('div');
@@ -148,52 +217,56 @@ function createNewElement(key) {
     const inout3 = document.createElement('div');
     inout3.classList.add('inout');
     inout3.id = (`draggable-${counter}-output-1`);
-    inout3.textContent = 'out';
+    inout3.textContent = '0';
     newDraggable.appendChild(inout3);
 
     const inout4 = document.createElement('div');
     inout4.classList.add('inout');
     inout4.id = (`draggable-${counter}-output-2`);
-    inout4.textContent = 'out';
+    inout4.textContent = '0';
     inout4.style.border = "none";
     newDraggable.appendChild(inout4);
 
 
     switch (key) {
         case "a":
-            newDraggable.classList.add('value');
+            newDraggable.classList.add('binary');
             title.textContent = 'value';
             inout3.textContent = '0';
             inout4.textContent = '0';
             break;
         case "s":
-            newDraggable.classList.add('value');
+            newDraggable.classList.add('binary');
             title.textContent = 'value';
             inout3.textContent = '1';
             inout4.textContent = '1';
             break;
         case "d":
-            newDraggable.classList.add('gate');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('not');
+            newDraggable.classList.add('gate');
             title.textContent = 'NOT gate';
             break;
         case "f":
-            newDraggable.classList.add('gate');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('and');
+            newDraggable.classList.add('gate');
             title.textContent = 'AND gate';
             break;
         case "g":
-            newDraggable.classList.add('gate');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('or');
+            newDraggable.classList.add('gate');
             title.textContent = 'OR gate';
             break;
         case "h":
-            newDraggable.classList.add('gate');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('xor');
+            newDraggable.classList.add('gate');
             title.textContent = 'XOR gate';
             break;
         case "q":
-            newDraggable.classList.add('special');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('switch');
             title.textContent = 'switch';
             inout3.textContent = '1';
@@ -225,7 +298,7 @@ function createNewElement(key) {
             });
             break;
         case 'w':
-            newDraggable.classList.add('special');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('light');
             title.textContent = 'lamp';
             inout2.remove();
@@ -240,7 +313,7 @@ function createNewElement(key) {
 
             break;
         case 'e':
-            newDraggable.classList.add('special');
+            newDraggable.classList.add('binary');
             newDraggable.classList.add('button');
             title.textContent = 'button';
             inout1.remove();
@@ -254,7 +327,6 @@ function createNewElement(key) {
             newDraggable.appendChild(pushSensor);
 
             const parent = pushSensor.parentElement;
-            console.log(parent.id);
             const output1 = parent.querySelector(`#${parent.id}-output-1`);
             const output2 = parent.querySelector(`#${parent.id}-output-2`);
             pushSensor.addEventListener('mousedown', (e) => {
@@ -268,6 +340,125 @@ function createNewElement(key) {
                 output2.textContent = '0';
             });
             syncConnections();
+            break;
+        case 'r':
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('relay');
+            title.textContent = 'relay';
+
+            break;
+        case 't':
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('relay');
+            newDraggable.classList.add('memoryRelay');
+            title.textContent = 'memory relay';
+
+            break;
+        case 'y':
+            newDraggable.classList.add('decimal');
+            newDraggable.classList.add('binaryToDecimal');
+
+            newDraggable.style.width = '200px';
+            newDraggable.height = '50px';
+
+            title.textContent = 'Binary to Decimal';
+            title.style.width = '200px';
+
+            inout1.remove();
+            inout2.remove();
+            inout3.remove();
+            inout4.remove();
+
+            const binaryInputContainer = document.createElement('div');
+            binaryInputContainer.classList.add('binaryInputContainer');
+            binaryInputContainer.style.display = 'flex';
+            binaryInputContainer.style.justifyContent = 'center';
+
+            for(let i = 0; i < 8; i++){
+                const binaryInput = document.createElement('div');
+                binaryInput.classList.add('binaryInput');
+                binaryInput.classList.add('inout');
+                binaryInput.id = (`draggable-${counter}-input-${i}`);
+                binaryInput.textContent = '0';
+                binaryInputContainer.appendChild(binaryInput);
+            }
+
+            const equalsSign = document.createElement('div');
+            equalsSign.textContent = '=';
+            binaryInputContainer.appendChild(equalsSign);
+
+            const decimalOutput = document.createElement('div');
+            decimalOutput.textContent = '0';
+            decimalOutput.style.width = '50px';
+            decimalOutput.classList.add('decimalOutput');
+            decimalOutput.classList.add('inout');
+            decimalOutput.id = (`draggable-${counter}-output-1`);
+            binaryInputContainer.appendChild(decimalOutput);
+
+            newDraggable.appendChild(binaryInputContainer);
+
+            break;
+        case "u":
+            newDraggable.classList.add('decimal');
+            newDraggable.classList.add('decimalToBinary');
+
+            newDraggable.style.width = '200px';
+            newDraggable.height = '50px';
+
+            title.textContent = 'Decimal to Binary';
+            title.style.width = '200px';
+
+            inout1.remove();
+            inout2.remove();
+            inout3.remove();
+            inout4.remove();
+
+            const binaryOutputContainer = document.createElement('div');
+            binaryOutputContainer.classList.add('binaryOutputContainer');
+            binaryOutputContainer.style.display = 'flex';
+            binaryOutputContainer.style.justifyContent = 'center';
+
+            const decimalInput = document.createElement('div');
+            decimalInput.textContent = '0';
+            decimalInput.style.width = '50px';
+            decimalInput.classList.add('decimalInput');
+            decimalInput.classList.add('inout');
+            decimalInput.id = (`draggable-${counter}-input-1`);
+            binaryOutputContainer.appendChild(decimalInput);
+
+            const equalSign = document.createElement('div');
+            equalSign.textContent = '=';
+            binaryOutputContainer.appendChild(equalSign);
+
+            for(let i = 0; i < 8; i++){
+                const binaryOutput = document.createElement('div');
+                binaryOutput.classList.add('inout');
+                binaryOutput.classList.add('binaryOutput');
+                binaryOutput.id = (`draggable-${counter}-output-${i}`);
+                binaryOutput.textContent = '0';
+                binaryOutputContainer.appendChild(binaryOutput);
+            }
+
+            newDraggable.appendChild(binaryOutputContainer);
+
+            break;
+        case "i":
+            newDraggable.classList.add('decimal');
+            newDraggable.classList.add('decimalValue');
+
+            inout2.remove();
+            inout1.textContent = null;
+            const inputBlock = document.createElement('input');
+            inputBlock.type = 'number';
+            inputBlock.value = '0';
+            inputBlock.style.width = '100%';
+            inputBlock.addEventListener('input', (e) => {
+                inout3.textContent = e.target.value;
+                inout4.textContent = e.target.value;
+                syncConnections();
+            });
+            inout1.appendChild(inputBlock);
+            title.textContent = "Decimal value";
             break;
         case "c":
             newDraggable.classList.add('special');
@@ -312,14 +503,30 @@ function createNewElement(key) {
     counter++;
 }
 
+function clearAllDraggables(){
+    draggables.forEach(draggable =>{
+        draggable.remove();
+    });
+}
+
+//on start
+
 addListeners();
+
+//mobile?
+const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+if (regex.test(navigator.userAgent)) {
+    document.getElementById('mobileConnectorBtn').style.display = 'block';
+} else {
+    document.getElementById('mobileConnectorBtn').style.display = 'none';
+}
+
 
 let isConnecting = false;
 let startElement = null;
 let connections = [];
 
 function alreadyExists(newConnections) {
-    let exists = false;
     for (let i = 0; i < connections.length; i++) {
         if (connections[i][0] === newConnections[0] && connections[i][1] === newConnections[1]) {
             return i;
@@ -332,7 +539,12 @@ function alreadyExists(newConnections) {
 
 document.addEventListener('keyup', (e) => {
     if (e.key === ' ' && listenInput) {
-        isConnecting = false;
+        connectorTool();
+    }
+});
+
+function connectorTool(){
+    isConnecting = false;
         startElement = null;
 
         let newConnections = [];
@@ -363,11 +575,10 @@ document.addEventListener('keyup', (e) => {
                 syncConnections();
             }
             else {
-                alert('Invalid connection. Please connect two elements.');
+                displayAlert(`Invalid connection. Please connect two elements. Not sure how to use the connection tool? Check the menu.`);
             }
         }
-    }
-});
+}
 //how to pass values between connected elements
 function syncConnections() {
     connections.forEach(connection => {
@@ -398,6 +609,15 @@ function syncConnections() {
             }
             input.textContent = output.textContent;
         }
+    });
+}
+
+function clearAllConnections(){
+    counter = 0;
+    connections = [];
+    const inouts = document.querySelectorAll('.inout');
+    inouts.forEach(inout => {
+        inout.style.backgroundColor = 'lightblue';
     });
 }
 
@@ -437,6 +657,59 @@ function gateLogic() {
                 break;
         }
     });
+
+    let relays = document.querySelectorAll('.relay');
+    relays.forEach(relay => {
+        const input1 = document.getElementById(`${relay.id}-input-1`);
+        const input2 = document.getElementById(`${relay.id}-input-2`);
+        const output1 = document.getElementById(`${relay.id}-output-1`);
+        const output2 = document.getElementById(`${relay.id}-output-2`);
+
+        if(input1.textContent === '1' || input1.textContent === '0'){
+            if (input1.textContent === '1'){
+                output1.textContent = input2.textContent;
+                output2.textContent = input2.textContent;
+            }
+            else if(input1.textContent === '0' && !relay.classList.contains('memoryRelay')){
+                output1.textContent = '0';
+                output2.textContent = '0';
+            }
+        }
+        else{
+            displayAlert('Relay input is not binary. Please check your connections. The first input must be binary, the second should be the value to be relayed.');
+        }
+    });
+
+    let decimalOutputs = document.querySelectorAll('.decimalOutput');
+    decimalOutputs.forEach(decimalOutput => {
+        let binaryInputs = decimalOutput.parentElement.querySelectorAll('.binaryInput');
+        let binaryString = '';
+        binaryInputs.forEach(binaryInput => {
+            binaryString += binaryInput.textContent;
+        });
+
+        decimalOutput.textContent = parseInt(binaryString, 2);
+    });
+
+    let binaryOutputs = document.querySelectorAll('.binaryOutputContainer');
+    binaryOutputs.forEach(binaryOutput => {
+        const decimalInput = binaryOutput.querySelector('.decimalInput');
+        const binaryOutputCells = Array.from(binaryOutput.querySelectorAll('.binaryOutput')).reverse();
+        const binaryString = (decimalInput.textContent >>> 0).toString(2).padStart(8, '0').split('').reverse();
+
+        for(let i = 0; i < binaryString.length; i++){
+            if(binaryOutputCells[i]){
+                binaryOutputCells[i].textContent = binaryString[i];
+            }
+            else{
+                displayAlert('There was an error. Perhaps the decimal value is too high? The maximum value is 255. Some digits might have not been displayed properly! For your convenience, the input cleared. Softlocked? Edit > Clear all connections. Here was the binary value: ' + binaryString.reverse().join(''));
+                binaryOutputCells.forEach(cell => {
+                    cell.textContent = '0';
+                });
+                decimalInput.textContent = '0';
+            }
+        }
+    });
 }
 
 function notGate(input) {
@@ -446,6 +719,8 @@ function notGate(input) {
 function andGate(input1, input2) {
     return input1 === '1' && input2 === '1' ? '1' : '0';
 }
+
+//time loop
 
 setInterval(() => {
     syncConnections();

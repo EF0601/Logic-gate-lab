@@ -1,9 +1,9 @@
-*{
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
-body{
+body {
   padding: 0;
   height: 100vh;
   font-family: 'Courier New', Courier, monospace;
@@ -15,14 +15,14 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 95%;
+  height: 90%;
   background: #f0f0f0;
   font-family: 'Courier New', Courier, monospace;
 
   user-select: none;
 }
 
-#bottomBar{
+#bottomBar {
   height: 5%;
   width: 100%;
   display: flex;
@@ -59,9 +59,9 @@ body{
   border: 1px solid yellow;
 }
 
-dialog{
+dialog {
   z-index: 100;
-  height: 300px;
+  height: 50vh;
   width: 50%;
   overflow: scroll;
   margin: auto;
@@ -71,14 +71,14 @@ dialog{
 }
 
 .touchSensor,
-.pushSensor{
+.pushSensor {
   width: 100px;
   height: 40px;
   background-color: yellow;
   cursor: pointer;
 }
 
-dialog button{
+dialog button {
   border: 1px solid black;
   cursor: pointer;
   background: none;
@@ -87,15 +87,44 @@ dialog button{
   padding: 5px;
 }
 
-dialog button:hover{
+dialog button:hover {
   background-color: yellow;
 }
 
-tr:hover{
-  background-color: rgb(245, 241, 241);
+#alertBox {
+  text-align: center;
 }
 
-#trash{
+/* tr:hover{
+  background-color: rgb(245, 241, 241);
+} */
+
+/* New grid system: */
+#gridContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 23%);
+  gap: 10px;
+  margin: 10px;
+}
+
+.gridItem {
+  border: 1px solid black;
+  text-align: center;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+@media screen and (max-width: 800px) {
+  #gridContainer {
+    display: block;
+  }
+  .gridItem {
+    margin: 10px;
+  }
+}
+
+#trash {
   background-color: red;
   color: white;
   width: 100px;
@@ -110,8 +139,106 @@ tr:hover{
   cursor: not-allowed;
 }
 
-textarea{
+#mobileConnectorBtn {
+  background-color: red;
+  color: white;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  bottom: 7vh;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  font-family: 'Courier New', Courier, monospace;
+  display: none;
+}
+
+textarea {
   outline: none;
   padding: 5px;
   font-size: small;
 }
+
+/* the menu bar */
+#topBar {
+  overflow: hidden;
+  background-color: rgb(84, 56, 56);
+  font-family: 'Courier new';
+  height: 5%;
+}
+.topBar button {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.topBar button:hover,
+.dropdown:hover .dropbtn {
+  background-color: rgb(109, 76, 76);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: rgb(109, 76, 76);
+  min-width: 160px;
+  z-index: 1;
+}
+
+.dropdown-content button {
+  border: none;
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  width: 100%;
+  border-radius: 0;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: rgb(109, 76, 76);
+  color: white;
+}
+
+.dropdown-content button:hover {
+  background-color: rgb(84, 56, 56);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.binaryInputContainer > div,
+.binaryOutputContainer > div {
+  width: 20px;
+  height: 20px;
+  border: 1px solid black;
+  text-align: center;
+}
+
