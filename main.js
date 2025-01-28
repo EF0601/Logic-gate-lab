@@ -17,6 +17,94 @@ function displayAlert(text) {
 //default welcome box
 displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
 
+//sandbox saver and loader
+function saveSandbox() {
+    const information = document.createElement('div');
+    information.setAttribute('id', 'information');
+    information.textContent = `${connections.join('||')}`;
+    document.getElementById('screen').appendChild(information);
+    const innerHTML = document.getElementById('screen').innerHTML;
+
+    displayAlert('Information saved. Paste the code into the loader: ' + innerHTML);
+
+    document.getElementById('screen').removeChild(information);
+}
+
+function loadSandbox() {
+    clearAllDraggables();
+    clearAllConnections();
+
+    document.getElementById('screen').innerHTML = document.getElementById('loadSandboxInput').value;
+
+    counter = document.querySelectorAll('.draggable').length;
+
+    const information = document.querySelector('#information').textContent;
+
+    const loadedConnections = information.split("||");
+
+    for (let i = 0; i < loadedConnections.length; i++) {
+        const connection = loadedConnections[i].split(',');
+        document.getElementById(connection[0]).classList.add('connecting');
+        document.getElementById(connection[1]).classList.add('connecting');
+
+        connectorTool();
+    }
+
+    draggables = document.querySelectorAll('.draggable');
+    inout = document.querySelectorAll('.inout');
+
+    for (let i = 0; i < draggables.length; i++) {
+        if (draggables[i].classList.contains('switch')) {
+            draggables[i].querySelector('.touchSensor').addEventListener('click', (e) => {
+                const parent = draggables[i];
+                const output1 = document.getElementById(`${parent.id}-output-1`);
+                const output2 = document.getElementById(`${parent.id}-output-2`);
+
+                if (output1.textContent == '1') {
+                    draggables[i].querySelector('.touchSensor').style.backgroundColor = "black";
+                    output1.textContent = '0';
+                    output2.textContent = '0';
+                }
+                else if (output1.textContent == '0') {
+                    draggables[i].querySelector('.touchSensor').style.backgroundColor = "yellow";
+                    output1.textContent = '1';
+                    output2.textContent = '1';
+                }
+            });
+        }
+        if (draggables[i].classList.contains('button')) {
+            const parent = draggables[i];
+            const pushSensor = parent.querySelector('.pushSensor');
+            const output1 = parent.querySelector(`#${parent.id}-output-1`);
+            const output2 = parent.querySelector(`#${parent.id}-output-2`);
+            pushSensor.addEventListener('mousedown', (e) => {
+                pushSensor.style.backgroundColor = "yellow";
+                output1.textContent = '1';
+                output2.textContent = '1';
+            });
+            pushSensor.addEventListener('mouseup', (e) => {
+                pushSensor.style.backgroundColor = "black";
+                output1.textContent = '0';
+                output2.textContent = '0';
+            });
+        }
+        if (draggables[i].classList.contains('decimalValue')) {
+            const inout3 = document.getElementById(`${draggables[i].id}-output-1`);
+            const inout4 = document.getElementById(`${draggables[i].id}-output-2`);
+            const inputBlock = draggables[i].querySelector('input');
+
+            inputBlock.addEventListener('input', (e) => {
+                inout3.textContent = e.target.value;
+                inout4.textContent = e.target.value;
+                syncConnections();
+            });
+        }
+    }
+
+    document.querySelector('#information').remove();
+
+    counter++;
+}
 // current element hovered
 let currentHoveredElement = "";
 
@@ -173,14 +261,14 @@ document.addEventListener('keydown', (e) => {
 
 });
 
-function toggleMobileConnectorBtn(){
+function toggleMobileConnectorBtn() {
     const button = document.getElementById('mobileConnectorBtn');
-    if (button.style.backgroundColor === 'green'){
+    if (button.style.backgroundColor === 'green') {
         button.style.backgroundColor = 'red';
         isConnecting = false;
         connectorTool();
     }
-    else{
+    else {
         button.style.backgroundColor = 'green';
         isConnecting = true;
     }
@@ -374,7 +462,7 @@ function createNewElement(key) {
             binaryInputContainer.style.display = 'flex';
             binaryInputContainer.style.justifyContent = 'center';
 
-            for(let i = 0; i < 8; i++){
+            for (let i = 0; i < 8; i++) {
                 const binaryInput = document.createElement('div');
                 binaryInput.classList.add('binaryInput');
                 binaryInput.classList.add('inout');
@@ -430,7 +518,7 @@ function createNewElement(key) {
             equalSign.textContent = '=';
             binaryOutputContainer.appendChild(equalSign);
 
-            for(let i = 0; i < 8; i++){
+            for (let i = 0; i < 8; i++) {
                 const binaryOutput = document.createElement('div');
                 binaryOutput.classList.add('inout');
                 binaryOutput.classList.add('binaryOutput');
@@ -503,10 +591,18 @@ function createNewElement(key) {
     counter++;
 }
 
-function clearAllDraggables(){
-    draggables.forEach(draggable =>{
+function clearAllDraggables() {
+    draggables.forEach(draggable => {
         draggable.remove();
     });
+
+    const trashcan = document.createElement('div');
+    trashcan.setAttribute('id', 'trash');
+    trashcan.classList.add('draggable', 'nondraggable', 'trash');
+    trashcan.textContent = "Trash";
+    document.querySelector('body').appendChild(trashcan);
+
+    draggables = document.querySelectorAll('.draggable');
 }
 
 //on start
@@ -543,41 +639,43 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
-function connectorTool(){
+function connectorTool() {
     isConnecting = false;
-        startElement = null;
+    startElement = null;
 
-        let newConnections = [];
-        const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+    let newConnections = [];
+    const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
 
-        document.querySelectorAll('.connecting').forEach(draggable => {
-            draggable.classList.remove('connecting');
-            newConnections.push(draggable.id);
+    document.querySelectorAll('.connecting').forEach(inout => {
+        console.log(inout);
+        inout.classList.remove('connecting');
+        newConnections.push(inout.id);
+    });
+
+    const index = alreadyExists(newConnections);
+
+
+    if (index !== undefined) {
+        newConnections.forEach(element => {
+            document.getElementById(element).style.backgroundColor = 'lightblue';
+
         });
+        connections.splice(index, 1);
 
-        const index = alreadyExists(newConnections);
-
-
-        if (index !== undefined) {
-            newConnections.forEach(element => {
-                document.getElementById(element).style.backgroundColor = 'lightblue';
-
+    }
+    else {
+        if (newConnections.length === 2) {
+            connections.push(newConnections);
+            newConnections.forEach(connection => {
+                document.getElementById(connection).style.backgroundColor = color;
             });
-            connections.splice(index, 1);
-
+            syncConnections();
+            console.log('added connection');
         }
         else {
-            if (newConnections.length === 2) {
-                connections.push(newConnections);
-                newConnections.forEach(connection => {
-                    document.getElementById(connection).style.backgroundColor = color;
-                });
-                syncConnections();
-            }
-            else {
-                displayAlert(`Invalid connection. Please connect two elements. Not sure how to use the connection tool? Check the menu.`);
-            }
+            displayAlert(`Invalid connection. Please connect two elements. Not sure how to use the connection tool? Check the menu.`);
         }
+    }
 }
 //how to pass values between connected elements
 function syncConnections() {
@@ -585,10 +683,10 @@ function syncConnections() {
         const [ele1, ele2] = connection;
 
         if (document.getElementById(ele1) == undefined || document.getElementById(ele2) == undefined) {
-            if (document.getElementById(ele1) != undefined){
+            if (document.getElementById(ele1) != undefined) {
                 document.getElementById(ele1).style.backgroundColor = 'lightblue';
             }
-            else if (document.getElementById(ele2) != undefined){
+            else if (document.getElementById(ele2) != undefined) {
                 document.getElementById(ele2).style.backgroundColor = 'lightblue';
             }
             connections.splice(connections.indexOf(connection), 1);
@@ -612,7 +710,7 @@ function syncConnections() {
     });
 }
 
-function clearAllConnections(){
+function clearAllConnections() {
     counter = 0;
     connections = [];
     const inouts = document.querySelectorAll('.inout');
@@ -665,17 +763,17 @@ function gateLogic() {
         const output1 = document.getElementById(`${relay.id}-output-1`);
         const output2 = document.getElementById(`${relay.id}-output-2`);
 
-        if(input1.textContent === '1' || input1.textContent === '0'){
-            if (input1.textContent === '1'){
+        if (input1.textContent === '1' || input1.textContent === '0') {
+            if (input1.textContent === '1') {
                 output1.textContent = input2.textContent;
                 output2.textContent = input2.textContent;
             }
-            else if(input1.textContent === '0' && !relay.classList.contains('memoryRelay')){
+            else if (input1.textContent === '0' && !relay.classList.contains('memoryRelay')) {
                 output1.textContent = '0';
                 output2.textContent = '0';
             }
         }
-        else{
+        else {
             displayAlert('Relay input is not binary. Please check your connections. The first input must be binary, the second should be the value to be relayed.');
         }
     });
@@ -697,11 +795,11 @@ function gateLogic() {
         const binaryOutputCells = Array.from(binaryOutput.querySelectorAll('.binaryOutput')).reverse();
         const binaryString = (decimalInput.textContent >>> 0).toString(2).padStart(8, '0').split('').reverse();
 
-        for(let i = 0; i < binaryString.length; i++){
-            if(binaryOutputCells[i]){
+        for (let i = 0; i < binaryString.length; i++) {
+            if (binaryOutputCells[i]) {
                 binaryOutputCells[i].textContent = binaryString[i];
             }
-            else{
+            else {
                 displayAlert('There was an error. Perhaps the decimal value is too high? The maximum value is 255. Some digits might have not been displayed properly! For your convenience, the input cleared. Softlocked? Edit > Clear all connections. Here was the binary value: ' + binaryString.reverse().join(''));
                 binaryOutputCells.forEach(cell => {
                     cell.textContent = '0';
@@ -732,4 +830,5 @@ setInterval(() => {
         const input = document.getElementById(`${light.parentElement.id}-input-1`);
         light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
     });
+
 }, 500);

@@ -168,6 +168,9 @@
       <button class="dropbtn">File</button>
       <div class="dropdown-content">
         <button onclick="clearAllDraggables()">Clear</button>
+        <button onclick="saveSandbox()">Save</button>
+        <button onclick="loadSandbox()">Load</button>
+        <button><textarea name="" rows="10" style="resize: none; overflow:scroll;" onfocus="listenInput = false" onblur="listenInput = true" id="loadSandboxInput"></textarea></button>
       </div>
     </div>
     <div class="dropdown">
@@ -203,12 +206,12 @@
             </div>
         </div> -->
   </div>
+  <div id="trash" class="draggable nondraggable trash">Trash</div>
+  <button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">
+    Connector Tool
+  </button>
   <div id="screen">
-    <div id="trash" class="draggable nondraggable trash">Trash</div>
-    <button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">
-      Connector Tool
-    </button>
-    Press M to open menu.
+
   </div>
   <div id="bottomBar">
     <span id="inputDisplay">Awaiting input...</span
