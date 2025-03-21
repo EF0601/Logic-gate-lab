@@ -35,6 +35,11 @@ function loadSandbox() {
     clearAllConnections();
 
     document.getElementById('screen').innerHTML = document.getElementById('loadSandboxInput').value;
+    if (!document.querySelector('#information')) {
+        displayAlert('Load file corrupted. Do not use.');
+        document.getElementById('screen').innerHTML = '';
+        return;
+    }
 
     counter = document.querySelectorAll('.draggable').length;
 
@@ -647,7 +652,6 @@ function connectorTool() {
     const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
 
     document.querySelectorAll('.connecting').forEach(inout => {
-        console.log(inout);
         inout.classList.remove('connecting');
         newConnections.push(inout.id);
     });
@@ -670,7 +674,6 @@ function connectorTool() {
                 document.getElementById(connection).style.backgroundColor = color;
             });
             syncConnections();
-            console.log('added connection');
         }
         else {
             displayAlert(`Invalid connection. Please connect two elements. Not sure how to use the connection tool? Check the menu.`);
@@ -704,6 +707,14 @@ function syncConnections() {
             else if (ele2.split("-")[2] === "input") {
                 output = document.getElementById(ele1);
                 input = document.getElementById(ele2);
+            }
+            else{
+                displayAlert('Invalid connection. Please check your connections. The first element must be an input, the second must be an output.');
+                document.getElementById(ele1).style.backgroundColor = 'lightblue';
+                document.getElementById(ele2).style.backgroundColor = 'lightblue';
+
+                connections.splice(connections.indexOf(connection), 1);
+                return;
             }
             input.textContent = output.textContent;
         }
