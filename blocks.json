@@ -1,0 +1,62 @@
+{
+  "a": {
+    "title": "Binary Value 0",
+    "type": "Binary"
+  },
+  "b": {
+    "title": "Binary Value 1",
+    "type": "Binary"
+  },
+  "c": {
+    "title": "Gate: Not",
+    "type": "Gate"
+  },
+  "d": {
+    "title": "Gate: AND",
+    "type": "Gate"
+  },
+  "e": {
+    "title": "Gate: OR",
+    "type": "Gate"
+  },
+  "f": {
+    "title": "Gate: XOR",
+    "type": "Gate"
+  },
+  "g": {
+    "title": "Switch",
+    "type": "Special"
+  },
+  "h": {
+    "title": "Lamp",
+    "type": "Special"
+  },
+  "i": {
+    "title": "Push Button",
+    "type": "Special"
+  },
+  "j": {
+    "title": "Comment",
+    "type": "Special"
+  },
+  "k": {
+    "title": "Relay",
+    "type": "Gate"
+  },
+  "l": {
+    "title": "Memory Relay",
+    "type": "Gate"
+  },
+  "n": {
+    "title": "Binary to Decimal",
+    "type": "Special"
+  },
+  "o": {
+    "title": "Decimal to Binary",
+    "type": "Special"
+  },
+  "p": {
+    "title": "Decimal Value",
+    "type": "Decimal"
+  }
+}

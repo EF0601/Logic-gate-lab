@@ -1,10 +1,13 @@
 let draggables = document.querySelectorAll('.draggable');
 let inout = document.querySelectorAll('.inout');
+let blocksObject;
 
 let listenInput = true;
 
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
+
+let favoriteBlocks = [];
 
 //display alert box
 const alertBox = document.getElementById('alertBox');
@@ -15,7 +18,7 @@ function displayAlert(text) {
 }
 
 //default welcome box
-displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
+// displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
 
 //sandbox saver and loader
 function saveSandbox() {
@@ -163,6 +166,7 @@ function addListeners() {
     });
 }
 
+//moving blocks
 document.addEventListener('mousemove', (e) => {
     if (!activeDraggable) return;
     activeDraggable.style.left = `${Math.round((e.clientX - offsetX) / 10) * 10}px`;
@@ -184,7 +188,7 @@ document.addEventListener('mousemove', (e) => {
         }
     });
 });
-
+//mobile
 document.addEventListener('touchmove', (e) => {
     if (!activeDraggable) return;
     const touch = e.touches[0];
@@ -207,14 +211,14 @@ document.addEventListener('touchmove', (e) => {
         }
     });
 });
-
+//end moving blocks
 document.addEventListener('mouseup', () => {
     if (activeDraggable) {
         activeDraggable.style.cursor = 'grab';
         activeDraggable = null;
     }
 });
-
+//mobile
 document.addEventListener('touchend', () => {
     if (activeDraggable) {
         activeDraggable.style.cursor = 'grab';
@@ -242,7 +246,8 @@ document.addEventListener('keydown', (e) => {
         //input display
         document.getElementById('inputDisplay').textContent = `Input: ${e.key}`;
 
-        createNewElement(e.key);
+        // shortcut tool
+        createNewElement(favoriteBlocks[e.key]);
 
         //connector tool
         if (e.key === ' ') {
@@ -265,6 +270,16 @@ document.addEventListener('keydown', (e) => {
 
 
 });
+
+function addShortcut(block) {
+    favoriteBlocks.push(block);
+
+    if (favoriteBlocks.length > 10) {
+        favoriteBlocks.shift();
+
+        displayAlert('The favorites list has been shifted down!');
+    }
+}
 
 function toggleMobileConnectorBtn() {
     const button = document.getElementById('mobileConnectorBtn');
@@ -328,37 +343,37 @@ function createNewElement(key) {
             inout3.textContent = '0';
             inout4.textContent = '0';
             break;
-        case "s":
+        case "b":
             newDraggable.classList.add('binary');
             title.textContent = 'value';
             inout3.textContent = '1';
             inout4.textContent = '1';
             break;
-        case "d":
+        case "c":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('not');
             newDraggable.classList.add('gate');
             title.textContent = 'NOT gate';
             break;
-        case "f":
+        case "d":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('and');
             newDraggable.classList.add('gate');
             title.textContent = 'AND gate';
             break;
-        case "g":
+        case "e":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('or');
             newDraggable.classList.add('gate');
             title.textContent = 'OR gate';
             break;
-        case "h":
+        case "f":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('xor');
             newDraggable.classList.add('gate');
             title.textContent = 'XOR gate';
             break;
-        case "q":
+        case "g":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('switch');
             title.textContent = 'switch';
@@ -390,7 +405,7 @@ function createNewElement(key) {
                 syncConnections();
             });
             break;
-        case 'w':
+        case 'h':
             newDraggable.classList.add('binary');
             newDraggable.classList.add('light');
             title.textContent = 'lamp';
@@ -405,7 +420,7 @@ function createNewElement(key) {
             newDraggable.appendChild(light);
 
             break;
-        case 'e':
+        case 'i':
             newDraggable.classList.add('binary');
             newDraggable.classList.add('button');
             title.textContent = 'button';
@@ -434,20 +449,20 @@ function createNewElement(key) {
             });
             syncConnections();
             break;
-        case 'r':
-            newDraggable.classList.add('special');
+        case 'j':
+            newDraggable.classList.add('gate');
             newDraggable.classList.add('relay');
             title.textContent = 'relay';
 
             break;
-        case 't':
-            newDraggable.classList.add('special');
+        case 'k':
+            newDraggable.classList.add('gate');
             newDraggable.classList.add('relay');
             newDraggable.classList.add('memoryRelay');
             title.textContent = 'memory relay';
 
             break;
-        case 'y':
+        case 'l':
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('binaryToDecimal');
 
@@ -491,7 +506,7 @@ function createNewElement(key) {
             newDraggable.appendChild(binaryInputContainer);
 
             break;
-        case "u":
+        case "n":
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('decimalToBinary');
 
@@ -535,7 +550,7 @@ function createNewElement(key) {
             newDraggable.appendChild(binaryOutputContainer);
 
             break;
-        case "i":
+        case "o":
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('decimalValue');
 
@@ -553,7 +568,7 @@ function createNewElement(key) {
             inout1.appendChild(inputBlock);
             title.textContent = "Decimal value";
             break;
-        case "c":
+        case "p":
             newDraggable.classList.add('special');
             newDraggable.classList.add('comment');
             title.textContent = 'comment block';
@@ -613,6 +628,16 @@ function clearAllDraggables() {
 //on start
 
 addListeners();
+
+// fetch('./blocks.json')
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! Status: ${response.status}`);
+//         }
+//         return response.json();
+//     })
+//     .then(data => console.log(data))
+//     .catch(error => console.error('Failed to fetch data:', error));
 
 //mobile?
 const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
@@ -708,7 +733,7 @@ function syncConnections() {
                 output = document.getElementById(ele1);
                 input = document.getElementById(ele2);
             }
-            else{
+            else {
                 displayAlert('Invalid connection. Please check your connections. The first element must be an input, the second must be an output.');
                 document.getElementById(ele1).style.backgroundColor = 'lightblue';
                 document.getElementById(ele2).style.backgroundColor = 'lightblue';

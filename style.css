@@ -108,10 +108,16 @@ dialog button:hover {
 }
 
 .gridItem {
-  border: 1px solid black;
   text-align: center;
-  padding: 10px;
+  padding: 1px;
   width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.gridItemButton{
+  width: 60%;
   height: 100%;
 }
 
@@ -242,3 +248,13 @@ textarea {
   text-align: center;
 }
 
+.iconImage{
+  width: 15px;
+  height: 15px;
+  margin: 0;
+}
+
+.iconButton{
+  width: 20%;
+  height: 100%;
+}
