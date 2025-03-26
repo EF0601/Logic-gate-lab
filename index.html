@@ -15,7 +15,7 @@
         <button onclick="createNewElement('a')" title="Represents a binary 0" class="gridItemButton">
           Value: 0
         </button>
-        <button class="iconButton" onclick="addShortcut('a')">
+        <button class="iconButton" onclick="addShortcut('a', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -23,7 +23,7 @@
         <button onclick="createNewElement('b')" title="Represents a binary 1" class="gridItemButton">
           Value: 1
         </button>
-        <button class="iconButton" onclick="addShortcut('b')">
+        <button class="iconButton" onclick="addShortcut('b', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -31,7 +31,7 @@
         <button onclick="createNewElement('c')" title="Inverts the input value" class="gridItemButton">
           Gate: NOT
         </button>
-        <button class="iconButton" onclick="addShortcut('c')">
+        <button class="iconButton" onclick="addShortcut('c', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -39,7 +39,7 @@
         <button onclick="createNewElement('d')" title="Outputs true if both inputs are true" class="gridItemButton">
           Gate: AND
         </button>
-        <button class="iconButton" onclick="addShortcut('d')">
+        <button class="iconButton" onclick="addShortcut('d', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -47,7 +47,7 @@
         <button onclick="createNewElement('e')" title="Outputs true if at least one input is true" class="gridItemButton">
           Gate: OR
         </button>
-        <button class="iconButton" onclick="addShortcut('e')">
+        <button class="iconButton" onclick="addShortcut('e', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -55,7 +55,7 @@
         <button onclick="createNewElement('f')" title="Outputs true if one input is true and the other is false" class="gridItemButton">
           Gate: XOR
         </button>
-        <button class="iconButton" onclick="addShortcut('f')">
+        <button class="iconButton" onclick="addShortcut('f', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -63,7 +63,7 @@
         <button onclick="createNewElement('g')" title="Can toggle between 0 and 1" class="gridItemButton">
           Special: Switch
         </button>
-        <button class="iconButton" onclick="addShortcut('g')">
+        <button class="iconButton" onclick="addShortcut('g', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -71,7 +71,7 @@
         <button onclick="createNewElement('h')" title="Lights up if the input is 1" class="gridItemButton">
           Special: Lamp
         </button>
-        <button class="iconButton" onclick="addShortcut('h')">
+        <button class="iconButton" onclick="addShortcut('h', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -79,7 +79,7 @@
         <button onclick="createNewElement('i')" title="Needs to be continuously pushed to be activated" class="gridItemButton">
           Special: Push button
         </button>
-        <button class="iconButton" onclick="addShortcut('i')">
+        <button class="iconButton" onclick="addShortcut('i', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -87,7 +87,7 @@
         <button onclick="createNewElement('j')" title="A comment block for anything you need to comment" class="gridItemButton">
           Special: Comment
         </button>
-        <button class="iconButton" onclick="addShortcut('j')">
+        <button class="iconButton" onclick="addShortcut('j', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -95,7 +95,7 @@
         <button onclick="createNewElement('k')" title="A relay switch that can be controlled by another circuit" class="gridItemButton">
           Gate: Relay
         </button>
-        <button class="iconButton" onclick="addShortcut('k')">
+        <button class="iconButton" onclick="addShortcut('k', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -103,7 +103,7 @@
         <button onclick="createNewElement('l')" title="A memory relay that retains its state" class="gridItemButton">
           Gate: Memory Relay
         </button>
-        <button class="iconButton" onclick="addShortcut('l')">
+        <button class="iconButton" onclick="addShortcut('l', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -111,7 +111,7 @@
         <button onclick="createNewElement('n')" title="Converts binary input to decimal output" class="gridItemButton">
           Special: Binary to Decimal
         </button>
-        <button class="iconButton" onclick="addShortcut('n')">
+        <button class="iconButton" onclick="addShortcut('n', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -119,7 +119,7 @@
         <button onclick="createNewElement('o')" title="Converts decimal input to binary output" class="gridItemButton">
           Special: Decimal to binary
         </button>
-        <button class="iconButton" onclick="addShortcut('o')">
+        <button class="iconButton" onclick="addShortcut('o', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
@@ -127,7 +127,7 @@
         <button onclick="createNewElement('p')" title="Similar to the value block, it represents an adjustable decimal value" class="gridItemButton">
           Decimal: Decimal Value
         </button>
-        <button class="iconButton" onclick="addShortcut('p')">
+        <button class="iconButton" onclick="addShortcut('p', this)">
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>

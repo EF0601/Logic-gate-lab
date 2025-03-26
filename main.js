@@ -271,13 +271,20 @@ document.addEventListener('keydown', (e) => {
 
 });
 
-function addShortcut(block) {
-    favoriteBlocks.push(block);
+function addShortcut(block, caller) {
+    if (caller.style.backgroundColor != "green") {
+        caller.style.backgroundColor = "green";
+        favoriteBlocks.push(block);
 
-    if (favoriteBlocks.length > 10) {
-        favoriteBlocks.shift();
+        if (favoriteBlocks.length > 10) {
+            favoriteBlocks.shift();
 
-        displayAlert('The favorites list has been shifted down!');
+            displayAlert('The favorites list has been shifted down!');
+        }
+    }
+    else {
+        caller.style.backgroundColor = "white";
+        favoriteBlocks.splice(favoriteBlocks.indexOf(block), 1);
     }
 }
 
