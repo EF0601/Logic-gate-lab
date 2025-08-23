@@ -131,11 +131,29 @@
           <img src="./star.svg" alt="star image" class="iconImage">
         </button>
       </div>
-    </div>
-    <h3>Connect tool</h3>
-    Press the spacebar to enable connect tool. Then, select two objects to
-    connect. You can also delete an existing connection by doing the same thing,
-    holding spacebar and selecting two objects that are already connected.
+      <div class="gridItem">
+        <button onclick="createNewElement('q')" title="Alternates between 0 and 1 every tick."
+          class="gridItemButton">
+          Special: Pulser
+        </button>
+        <button class="iconButton" onclick="addShortcut('q', this)">
+          <img src="./star.svg" alt="star image" class="iconImage">
+        </button>
+      </div>
+      <div class="gridItem">
+        <button onclick="createNewElement('r')" title="Counts the number of input pulses and outputs the count as a decimal value."
+          class="gridItemButton">
+          Special: Counter
+        </button>
+        <button class="iconButton" onclick="addShortcut('r', this)">
+          <img src="./star.svg" alt="star image" class="iconImage">
+        </button>
+      </div>
+      </div>
+      <h3>Connect tool</h3>
+      Press the spacebar to enable connect tool. Then, select two objects to
+      connect. You can also delete an existing connection by doing the same thing,
+      holding spacebar and selecting two objects that are already connected.
     <h2>Credits</h2>
     <p>Created by <a href="">EF0601</a>. On December 31st, 2024</p>
     <h2>Wiki</h2>
@@ -207,6 +225,7 @@
       <button class="dropbtn">Edit</button>
       <div class="dropdown-content">
         <button onclick="clearAllConnections()">Remove all connections</button>
+        <button onclick="simrate = document.getElementById('simrateChanger').value /2">Set <input type="number" id="simrateChanger" value="500"> ms as sim rate</button>
       </div>
     </div>
     <div class="dropdown">

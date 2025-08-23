@@ -9,6 +9,8 @@ let offsetX = 0, offsetY = 0;
 
 let favoriteBlocks = [];
 
+let simrate = 250;
+
 //display alert box
 const alertBox = document.getElementById('alertBox');
 const alertText = document.getElementById('alertText');
@@ -456,20 +458,20 @@ function createNewElement(key) {
             });
             syncConnections();
             break;
-        case 'j':
+        case 'k':
             newDraggable.classList.add('gate');
             newDraggable.classList.add('relay');
             title.textContent = 'relay';
 
             break;
-        case 'k':
+        case 'l':
             newDraggable.classList.add('gate');
             newDraggable.classList.add('relay');
             newDraggable.classList.add('memoryRelay');
             title.textContent = 'memory relay';
 
             break;
-        case 'l':
+        case 'n':
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('binaryToDecimal');
 
@@ -513,7 +515,7 @@ function createNewElement(key) {
             newDraggable.appendChild(binaryInputContainer);
 
             break;
-        case "n":
+        case "o":
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('decimalToBinary');
 
@@ -557,7 +559,7 @@ function createNewElement(key) {
             newDraggable.appendChild(binaryOutputContainer);
 
             break;
-        case "o":
+        case "p":
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('decimalValue');
 
@@ -575,7 +577,7 @@ function createNewElement(key) {
             inout1.appendChild(inputBlock);
             title.textContent = "Decimal value";
             break;
-        case "p":
+        case "j":
             newDraggable.classList.add('special');
             newDraggable.classList.add('comment');
             title.textContent = 'comment block';
@@ -600,6 +602,16 @@ function createNewElement(key) {
                 listenInput = true;
             });
 
+            break;
+        case "q":
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('pulser');
+            title.textContent = 'pulser';
+            break;
+        case "r":
+            newDraggable.classList.add('decimal');
+            newDraggable.classList.add('counter');
+            title.textContent = 'counter';
             break;
 
         default:
@@ -765,7 +777,7 @@ function clearAllConnections() {
 //end connection craziness
 
 //Gate logic
-function gateLogic() {
+function updateBlocks() {
     let gates = document.querySelectorAll('.gate');
     gates.forEach(gate => {
         const input1 = document.getElementById(`${gate.id}-input-1`);
@@ -851,6 +863,40 @@ function gateLogic() {
             }
         }
     });
+
+    let pulsers = document.querySelectorAll('.pulser');
+    pulsers.forEach(pulser => {
+        if (document.getElementById(`${pulser.id}-input-1`).textContent === '1') {
+            const output1 = document.getElementById(`${pulser.id}-output-1`);
+            const output2 = document.getElementById(`${pulser.id}-output-2`);
+
+            output1.textContent = output1.textContent === '1' ? '0' : '1';
+            output2.textContent = output2.textContent === '1' ? '0' : '1';
+
+            document.getElementById(`${pulser.id}-input-1`).textContent = '0';
+        }
+    });
+
+    let counters = document.querySelectorAll('.counter');
+    counters.forEach(counter => {
+        const input1 = document.getElementById(`${counter.id}-input-1`);
+        const input2 = document.getElementById(`${counter.id}-input-2`);
+        const output1 = document.getElementById(`${counter.id}-output-1`);
+        const output2 = document.getElementById(`${counter.id}-output-2`);
+
+        if (counter.dataset.lastInput === undefined || counter.dataset.lastInput !== input1.textContent) {
+            counter.dataset.lastInput = input1.textContent;
+            output1.textContent = parseInt(output1.textContent) + 1;
+            output2.textContent = parseInt(output2.textContent) + 1;
+        }
+
+        if(input2.textContent === "1"){
+            output1.textContent = 0;
+            output2.textContent = 0;
+            counter.dataset.lastInput = undefined;
+            input2.textContent = 0;
+        }
+    });
 }
 
 function notGate(input) {
@@ -863,10 +909,10 @@ function andGate(input1, input2) {
 
 //time loop
 
-setInterval(() => {
+function runSimulation() {
     syncConnections();
     addListeners();
-    gateLogic();
+    updateBlocks();
 
     let lights = document.querySelectorAll('.lightPart');
     lights.forEach(light => {
@@ -874,4 +920,12 @@ setInterval(() => {
         light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
     });
 
-}, 500);
+    setTimeout(clock, simrate);
+
+
+}
+
+function clock(){
+    setTimeout(runSimulation, simrate);
+}
+clock();
