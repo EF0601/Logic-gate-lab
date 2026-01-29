@@ -58,5 +58,13 @@
   "p": {
     "title": "Decimal Value",
     "type": "Decimal"
+  },
+  "q": {
+    "title": "Pulser",
+    "type": "Special"
+  },
+  "r": {
+    "title": "Counter",
+    "type": "Decimal"
   }
 }

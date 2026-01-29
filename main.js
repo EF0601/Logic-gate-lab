@@ -8,6 +8,13 @@ let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
 
 let favoriteBlocks = [];
+let blocklist;
+fetch('./blocks.json')
+    .then(response => response.json())
+    .then(data => {
+        blocklist = data;
+    })
+    .catch(error => console.error('Failed to fetch data:', error));
 
 let simrate = 250;
 
@@ -18,6 +25,18 @@ function displayAlert(text) {
     alertBox.style.display = 'block';
     alertText.textContent = text;
 }
+
+// sidebar
+/* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
+
+onmousemove = function (e) {
+    if (e.clientX < 250) {
+        document.getElementById("sidebar").style.width = "250px";
+    }
+    else if (e.clientX > 300) {
+        document.getElementById("sidebar").style.width = "0";
+    }
+};
 
 //default welcome box
 // displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
@@ -190,7 +209,7 @@ document.addEventListener('mousemove', (e) => {
         }
     });
 });
-//mobile
+// mobile support
 document.addEventListener('touchmove', (e) => {
     if (!activeDraggable) return;
     const touch = e.touches[0];
@@ -213,15 +232,37 @@ document.addEventListener('touchmove', (e) => {
         }
     });
 });
-//end moving blocks
-document.addEventListener('mouseup', () => {
+
+function toggleMobileConnectorBtn() {
+    const button = document.getElementById('mobileConnectorBtn');
+    if (button.style.backgroundColor === 'green') {
+        button.style.backgroundColor = 'red';
+        isConnecting = false;
+        connectorTool();
+    }
+    else {
+        button.style.backgroundColor = 'green';
+        isConnecting = true;
+    }
+}
+
+document.addEventListener('touchend', () => {
     if (activeDraggable) {
         activeDraggable.style.cursor = 'grab';
         activeDraggable = null;
     }
 });
-//mobile
-document.addEventListener('touchend', () => {
+
+const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+if (regex.test(navigator.userAgent)) {
+    document.getElementById('mobileConnectorBtn').style.display = 'block';
+} else {
+    document.getElementById('mobileConnectorBtn').style.display = 'none';
+}
+
+
+//end moving blocks
+document.addEventListener('mouseup', () => {
     if (activeDraggable) {
         activeDraggable.style.cursor = 'grab';
         activeDraggable = null;
@@ -273,6 +314,13 @@ document.addEventListener('keydown', (e) => {
 
 });
 
+document.addEventListener('keyup', (e) => {
+    if (e.key === ' ' && listenInput) {
+        connectorTool();
+    }
+});
+
+// shortcuts
 function addShortcut(block, caller) {
     if (caller.style.backgroundColor != "green") {
         caller.style.backgroundColor = "green";
@@ -288,20 +336,35 @@ function addShortcut(block, caller) {
         caller.style.backgroundColor = "white";
         favoriteBlocks.splice(favoriteBlocks.indexOf(block), 1);
     }
+    setTimeout(updateToolbar, 10);
 }
+//update toolbar
 
-function toggleMobileConnectorBtn() {
-    const button = document.getElementById('mobileConnectorBtn');
-    if (button.style.backgroundColor === 'green') {
-        button.style.backgroundColor = 'red';
-        isConnecting = false;
-        connectorTool();
-    }
-    else {
-        button.style.backgroundColor = 'green';
-        isConnecting = true;
-    }
-}
+const template = document.getElementById('toolDisplayTemplate');
+function updateToolbar() {
+    const toolbar = document.getElementById('toolbar');
+    toolbar.innerHTML = '';
+
+    favoriteBlocks.forEach(favBlock => {
+        const newTool = template.cloneNode(true);
+        newTool.querySelector('#toolDisplayTemplateName').textContent = blocklist[favBlock].title;
+        newTool.querySelector('#toolDisplayTemplateButton').onclick = () => {
+            createNewElement(favBlock);
+        };
+        newTool.querySelector('#toolDisplayTemplateTrash').onclick = (e) => {
+            favoriteBlocks.splice(favoriteBlocks.indexOf(favBlock), 1);
+            e.target.parentElement.parentElement.remove();
+        };
+        newTool.style.display = 'block';
+        newTool.id = `toolDisplay-${favBlock}`;
+        newTool.querySelector('#toolDisplayTemplateName').id = `toolDisplayName-${favBlock}`;
+        newTool.querySelector('#toolDisplayTemplateButton').id = `toolDisplayButton-${favBlock}`;
+        newTool.querySelector('#toolDisplayTemplateTrash').id = `toolDisplayTrash-${favBlock}`;
+        toolbar.appendChild(newTool);
+    });
+};
+
+//create blocks
 
 function createNewElement(key) {
     const fragment = document.createDocumentFragment();
@@ -658,14 +721,6 @@ addListeners();
 //     .then(data => console.log(data))
 //     .catch(error => console.error('Failed to fetch data:', error));
 
-//mobile?
-const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-if (regex.test(navigator.userAgent)) {
-    document.getElementById('mobileConnectorBtn').style.display = 'block';
-} else {
-    document.getElementById('mobileConnectorBtn').style.display = 'none';
-}
-
 
 let isConnecting = false;
 let startElement = null;
@@ -681,12 +736,6 @@ function alreadyExists(newConnections) {
         }
     }
 }
-
-document.addEventListener('keyup', (e) => {
-    if (e.key === ' ' && listenInput) {
-        connectorTool();
-    }
-});
 
 function connectorTool() {
     isConnecting = false;
@@ -787,13 +836,13 @@ function updateBlocks() {
         const output2 = document.getElementById(`${gate.id}-output-2`);
         switch (gate.classList[2]) {
             case "not":
-                output1.textContent = notGate(input1.textContent);
-                output2.textContent = notGate(input1.textContent);
+                output1.textContent = input1.textContent === '1' ? '0' : '1';
+                output2.textContent = input1.textContent === '1' ? '0' : '1';
 
                 break;
             case "and":
-                output1.textContent = andGate(input1.textContent, input2.textContent);
-                output2.textContent = andGate(input1.textContent, input2.textContent);
+                output1.textContent = input1.textContent === '1' && input2.textContent === '1' ? '1' : '0';
+                output2.textContent = input1.textContent === '1' && input2.textContent === '1' ? '1' : '0';
                 break;
 
             case "or":
@@ -890,21 +939,13 @@ function updateBlocks() {
             output2.textContent = parseInt(output2.textContent) + 1;
         }
 
-        if(input2.textContent === "1"){
+        if (input2.textContent === "1") {
             output1.textContent = 0;
             output2.textContent = 0;
             counter.dataset.lastInput = undefined;
             input2.textContent = 0;
         }
     });
-}
-
-function notGate(input) {
-    return input === '0' ? '1' : '0';
-}
-
-function andGate(input1, input2) {
-    return input1 === '1' && input2 === '1' ? '1' : '0';
 }
 
 //time loop
@@ -919,13 +960,10 @@ function runSimulation() {
         const input = document.getElementById(`${light.parentElement.id}-input-1`);
         light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
     });
-
     setTimeout(clock, simrate);
-
-
 }
 
-function clock(){
+function clock() {
     setTimeout(runSimulation, simrate);
 }
 clock();
