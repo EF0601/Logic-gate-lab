@@ -32,5 +32,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: LGL-0-6-0b-${{ runner.os }} //TODO: change version number
+          name: LGL-${{ runner.os }}
           path: out/
