@@ -39,7 +39,7 @@ onmousemove = function (e) {
 };
 
 //default welcome box
-// displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
+displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
 
 //sandbox saver and loader
 function saveSandbox() {
