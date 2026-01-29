@@ -15,7 +15,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 90%;
+  height: 90vh;
   background: #f0f0f0;
   font-family: 'Courier New', Courier, monospace;
 
@@ -23,7 +23,7 @@ body {
 }
 
 #bottomBar {
-  height: 5%;
+  height: 5vh;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -108,10 +108,16 @@ dialog button:hover {
 }
 
 .gridItem {
-  border: 1px solid black;
   text-align: center;
-  padding: 10px;
+  padding: 1px;
   width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.gridItemButton{
+  width: 60%;
   height: 100%;
 }
 
@@ -168,14 +174,13 @@ textarea {
   overflow: hidden;
   background-color: rgb(84, 56, 56);
   font-family: 'Courier new';
-  height: 5%;
+  height: 50px;
 }
 .topBar button {
   float: left;
   font-size: 16px;
   color: white;
   text-align: center;
-  padding: 14px 16px;
   text-decoration: none;
   font-family: 'Courier New', Courier, monospace;
 }
@@ -196,6 +201,7 @@ textarea {
   background-color: inherit;
   font-family: inherit;
   margin: 0;
+  height: 50px;
 }
 
 .topBar button:hover,
@@ -209,6 +215,7 @@ textarea {
   background-color: rgb(109, 76, 76);
   min-width: 160px;
   z-index: 1;
+  top: 50px;
 }
 
 .dropdown-content button {
@@ -230,7 +237,9 @@ textarea {
   background-color: rgb(84, 56, 56);
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content,
+.dropdown:active .dropdown-content,
+.dropdown-content:hover {
   display: block;
 }
 
@@ -242,3 +251,71 @@ textarea {
   text-align: center;
 }
 
+.iconImage{
+  width: 15px;
+  height: 15px;
+  margin: 0;
+}
+
+.iconButton{
+  width: 20%;
+  height: 100%;
+}
+
+#sidebar{
+  height: 80%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 10%;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8); /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  overflow-y: scroll;
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+  border-radius: 0 5px 5px 0;
+  padding: 10px;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#toolbar > .tool{
+  margin: 5px;
+  background-color: rgb(84, 56, 56);
+  padding: 5px;
+}
+
+.toolActionsContainer{
+  display: flex;
+  justify-content: left;
+}
+
+.toolActionsContainer button{
+  margin: 2px;
+  width: 50%;
+  background-color: rgb(109, 76, 76);
+  border-radius: 0;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  border: none;
+}
+
+.toolActionsContainer button:hover{
+  background-color: rgb(84, 56, 56);
+}
+
+#sidebarMenuBtn{
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: rgb(109, 76, 76);
+  border: none;
+  color: white;
+  padding: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+}
+
+#sidebarMenuBtn:hover{
+  background-color: rgb(84, 56, 56);
+}

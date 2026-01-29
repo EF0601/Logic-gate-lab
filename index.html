@@ -1,194 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>Logic Gate Lab</title>
-  </head>
 
-  <dialog id="menu">
-    <h1>Menu</h1>
-    <h2>Add new</h2>
-    <div id="gridContainer">
-      <button
-        class="gridItem"
-        onclick="createNewElement('a')"
-        title="Represents a binary 0">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>LGL: Logic Gate Lab</title>
+</head>
+
+<div id="sidebar">
+  <button onclick="document.getElementById('menu').style.display = 'block'" id="sidebarMenuBtn">Menu</button>
+  <h2>Toolbar</h2>
+  <div id="toolbar">
+    <div class="tool" id="toolDisplayTemplate" style="display: none;">
+      <p id="toolDisplayTemplateName">Name</p>
+      <div class="toolActionsContainer">
+        <button id="toolDisplayTemplateButton">Use</button>
+        <button id="toolDisplayTemplateTrash">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<dialog id="menu">
+  <h1>Menu</h1>
+  <h2>Add new</h2>
+  <div id="gridContainer">
+    <div class="gridItem">
+      <button onclick="createNewElement('a')" title="Represents a binary 0" class="gridItemButton">
         Value: 0
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('s')"
-        title="Represents a binary 1">
+      <button class="iconButton" onclick="addShortcut('a', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('b')" title="Represents a binary 1" class="gridItemButton">
         Value: 1
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('d')"
-        title="Inverts the input value">
+      <button class="iconButton" onclick="addShortcut('b', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('c')" title="Inverts the input value" class="gridItemButton">
         Gate: NOT
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('f')"
-        title="Outputs true if both inputs are true">
+      <button class="iconButton" onclick="addShortcut('c', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('d')" title="Outputs true if both inputs are true" class="gridItemButton">
         Gate: AND
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('g')"
-        title="Outputs true if at least one input is true">
+      <button class="iconButton" onclick="addShortcut('d', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('e')" title="Outputs true if at least one input is true" class="gridItemButton">
         Gate: OR
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('h')"
-        title="Outputs true if one input is true and the other is false">
+      <button class="iconButton" onclick="addShortcut('e', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('f')" title="Outputs true if one input is true and the other is false"
+        class="gridItemButton">
         Gate: XOR
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('q')"
-        title="Can toggle between 0 and 1">
+      <button class="iconButton" onclick="addShortcut('f', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('g')" title="Can toggle between 0 and 1" class="gridItemButton">
         Special: Switch
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('w')"
-        title="Lights up if the input is 1">
+      <button class="iconButton" onclick="addShortcut('g', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('h')" title="Lights up if the input is 1" class="gridItemButton">
         Special: Lamp
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('e')"
-        title="Needs to be continuously pushed to be activated">
+      <button class="iconButton" onclick="addShortcut('h', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('i')" title="Needs to be continuously pushed to be activated"
+        class="gridItemButton">
         Special: Push button
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('c')"
-        title="A comment block for anything you need to comment">
+      <button class="iconButton" onclick="addShortcut('i', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('j')" title="A comment block for anything you need to comment"
+        class="gridItemButton">
         Special: Comment
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('r')"
-        title="A relay switch that can be controlled by another circuit">
-        Special: Relay
+      <button class="iconButton" onclick="addShortcut('j', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('t')"
-        title="A memory relay that retains its state">
-        Special: Memory Relay
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('k')" title="A relay switch that can be controlled by another circuit"
+        class="gridItemButton">
+        Gate: Relay
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('y')"
-        title="Converts binary input to decimal output">
+      <button class="iconButton" onclick="addShortcut('k', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('l')" title="A memory relay that retains its state" class="gridItemButton">
+        Gate: Memory Relay
+      </button>
+      <button class="iconButton" onclick="addShortcut('l', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('n')" title="Converts binary input to decimal output" class="gridItemButton">
         Special: Binary to Decimal
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('u')"
-        title="Converts decimal input to binary output">
+      <button class="iconButton" onclick="addShortcut('n', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('o')" title="Converts decimal input to binary output" class="gridItemButton">
         Special: Decimal to binary
       </button>
-      <button
-        class="gridItem"
-        onclick="createNewElement('i')"
-        title="Similar to the value block, it represents an adjustable decimal value">
-        Decimal: Decimal Value
+      <button class="iconButton" onclick="addShortcut('o', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
       </button>
     </div>
-    <h3>Connect tool</h3>
-    Press the spacebar to enable connect tool. Then, select two objects to
-    connect. You can also delete an existing connection by doing the same thing,
-    holding spacebar and selecting two objects that are already connected.
-    <h2>Credits</h2>
-    <p>Created by <a href="">EF0601</a>. On December 31st, 2024</p>
-    <h2>Wiki</h2>
-    <p>Work in progress...</p>
-    <h2>Updates</h2>
-    <a href="https://github.com/EF0601/Logic-gate-lab/releases"
-      >View all updates and better update logs. The below provides a simple
-      summary.</a
-    >
-    <h3>Version 0.2.1-beta</h3>
-    <p>
-      <i>1/2/2025</i> Initial release. This version brings along the most basic
-      logic gates such as AND, OR, XOR, and NOT. It also introduces binary
-      values. It brings a simple connection tool and allows for interactions
-      with switches and lamps. The menu, shown here, was also created.
-    </p>
-    <h3>Version 0.3.0-beta</h3>
-    <p>
-      <i>1/2/2025</i> This update brings comment blocks, menu upgrades, and a
-      trash can. It also brings QOL updates, such as table row highlights on
-      hover, and a bottom bar that tells you the input clicked and the hovered
-      object. Also, connections are now updated every 500ms to remove bugs
-      related to syncing.
-    </p>
-    <h3>Version 0.4.0-beta</h3>
-    <p>
-      <i>1/3/2025</i> This update adds deleting connections as a functionality.
-      No more errors related to a connection will be thrown if a deleted element
-      was involved in that connection (connection automatically deleted.) The
-      lamp part was also introduced, lighting up if inputted 1 and turning off
-      if inputted 0. The push button was also added which is similar to the
-      switch but needs constant user input to stay on.
-    </p>
-    <h3>Version 0.5.0-beta</h3>
-    <p>
-      <i>1/26/2025</i> This update brings the relay and memory relay. The relay
-      can be controlled by another circuit, and the memory relay retains its
-      state. The binary to decimal converter was also added, its counterpart,
-      and the decimal value block. There was also a revamp in terms of the UI,
-      with the addition of a top menu.
-    </p>
-    <button
-      style="width: 90%"
-      onclick="document.getElementById('menu').style.display='none'">
+    <div class="gridItem">
+      <button onclick="createNewElement('p')"
+        title="Similar to the value block, it represents an adjustable decimal value" class="gridItemButton">
+        Decimal: Decimal Value
+      </button>
+      <button class="iconButton" onclick="addShortcut('p', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('q')" title="Alternates between 0 and 1 every tick." class="gridItemButton">
+        Special: Pulser
+      </button>
+      <button class="iconButton" onclick="addShortcut('q', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+    <div class="gridItem">
+      <button onclick="createNewElement('r')"
+        title="Counts the number of input pulses and outputs the count as a decimal value." class="gridItemButton">
+        Special: Counter
+      </button>
+      <button class="iconButton" onclick="addShortcut('r', this)">
+        <img src="./star.svg" alt="star image" class="iconImage">
+      </button>
+    </div>
+  </div>
+  <h3>Connect tool</h3>
+  Press the spacebar to enable connect tool. Then, select two objects to
+  connect. You can also delete an existing connection by doing the same thing,
+  holding spacebar and selecting two objects that are already connected.
+  <h2>Credits</h2>
+  <p>Created by <a href="">EF0601</a>. On December 31st, 2024</p>
+  <h2>Wiki</h2>
+  <p>Work in progress...</p>
+  <h2>Updates</h2>
+  <a href="https://github.com/EF0601/Logic-gate-lab/releases">View all updates and better update logs.</a>
+  <h3>Version 0.6.0-beta</h3>
+  <p>
+    <i>1/29/2026</i> Almost a year after the last update, this version brings two more blocks: the pulser and the counter. There were several UI improvements and various bug fixes. The top bar should now be easier to access. The toolbar was also added, allowing quick access to up to 10 tools for convenience. Finally, users can now find the app as an executable. Check this out in the releases section.
+  </p>
+  <div class="container" style="display: flex; justify-content: center; margin-top: 10px">
+    <button style="width: 90vh" onclick="document.getElementById('menu').style.display='none'">
       Close
     </button>
-  </dialog>
-  <dialog id="alertBox">
-    <h1>Alert!</h1>
-    <p id="alertText">
-      This is an alert box. It is used to alert the user of something.
-    </p>
-    <button onclick="document.getElementById('alertBox').style.display='none'">
-      Close
-    </button>
-  </dialog>
+  </div>
+</dialog>
+<dialog id="alertBox">
+  <h1>Alert!</h1>
+  <p id="alertText">
+    This is an alert box. It is used to alert the user of something.
+  </p>
+  <button onclick="document.getElementById('alertBox').style.display='none'">
+    Close
+  </button>
+</dialog>
 
-  <div id="topBar">
-    <div class="dropdown">
-      <button class="dropbtn">File</button>
-      <div class="dropdown-content">
-        <button onclick="clearAllDraggables()">Clear</button>
-      </div>
+<div id="topBar">
+  <div class="dropdown">
+    <button class="dropbtn">File</button>
+    <div class="dropdown-content">
+      <button onclick="clearAllDraggables()">Clear</button>
+      <button onclick="saveSandbox()">Save</button>
+      <button onclick="loadSandbox()">Load</button>
+      <button><textarea name="loader-input" rows="10" style="resize: none; overflow:scroll;"
+          onfocus="listenInput = false" onblur="listenInput = true" id="loadSandboxInput"
+          placeholder="Type file data here to load..."></textarea></button>
     </div>
-    <div class="dropdown">
-      <button class="dropbtn">Edit</button>
-      <div class="dropdown-content">
-        <button onclick="clearAllConnections()">Remove all connections</button>
-      </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Edit</button>
+    <div class="dropdown-content">
+      <button onclick="clearAllConnections()">Remove all connections</button>
+      <button onclick="simrate = document.getElementById('simrateChanger').value /2">Set <input type="number"
+          id="simrateChanger" value="500"> ms as sim rate</button>
     </div>
-    <div class="dropdown">
-      <button class="dropbtn">Help</button>
-      <div class="dropdown-content">
-        <button onclick="document.getElementById('menu').style.display='block'">
-          Menu
-        </button>
-        <button
-          onclick="window.open('https://github.com/EF0601/Logic-gate-lab/wiki', '_blank')">
-          Wiki
-        </button>
-      </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Help</button>
+    <div class="dropdown-content">
+      <button onclick="document.getElementById('menu').style.display='block'">
+        Menu
+      </button>
+      <button onclick="window.open('https://github.com/EF0601/Logic-gate-lab/wiki', '_blank')">
+        Wiki
+      </button>
     </div>
-    <!-- <div class="dropdown">
+  </div>
+  <!-- <div class="dropdown">
             <button class="dropbtn">
                 Simulation
             </button>
@@ -202,17 +244,17 @@
                 <button>Weather: rainy</button>
             </div>
         </div> -->
-  </div>
-  <div id="screen">
-    <div id="trash" class="draggable nondraggable trash">Trash</div>
-    <button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">
-      Connector Tool
-    </button>
-    Press M to open menu.
-  </div>
-  <div id="bottomBar">
-    <span id="inputDisplay">Awaiting input...</span
-    ><span id="currentElementDisplay">No element.</span>
-  </div>
-  <script src="main.js"></script>
+</div>
+<div id="trash" class="draggable nondraggable trash">Trash</div>
+<button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">
+  Connector Tool
+</button>
+<div id="screen">
+
+</div>
+<div id="bottomBar">
+  <span id="inputDisplay">Awaiting input...</span><span id="currentElementDisplay">No element.</span>
+</div>
+<script src="main.js"></script>
+
 </html>

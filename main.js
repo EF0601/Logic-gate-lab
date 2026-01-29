@@ -1,10 +1,22 @@
 let draggables = document.querySelectorAll('.draggable');
 let inout = document.querySelectorAll('.inout');
+let blocksObject;
 
 let listenInput = true;
 
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
+
+let favoriteBlocks = [];
+let blocklist;
+fetch('./blocks.json')
+    .then(response => response.json())
+    .then(data => {
+        blocklist = data;
+    })
+    .catch(error => console.error('Failed to fetch data:', error));
+
+let simrate = 250;
 
 //display alert box
 const alertBox = document.getElementById('alertBox');
@@ -14,9 +26,114 @@ function displayAlert(text) {
     alertText.textContent = text;
 }
 
+// sidebar
+/* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
+
+onmousemove = function (e) {
+    if (e.clientX < 250) {
+        document.getElementById("sidebar").style.width = "250px";
+    }
+    else if (e.clientX > 300) {
+        document.getElementById("sidebar").style.width = "0";
+    }
+};
+
 //default welcome box
 displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
 
+//sandbox saver and loader
+function saveSandbox() {
+    const information = document.createElement('div');
+    information.setAttribute('id', 'information');
+    information.textContent = `${connections.join('||')}`;
+    document.getElementById('screen').appendChild(information);
+    const innerHTML = document.getElementById('screen').innerHTML;
+
+    displayAlert('Information saved. Paste the code into the loader: ' + innerHTML);
+
+    document.getElementById('screen').removeChild(information);
+}
+
+function loadSandbox() {
+    clearAllDraggables();
+    clearAllConnections();
+
+    document.getElementById('screen').innerHTML = document.getElementById('loadSandboxInput').value;
+    if (!document.querySelector('#information')) {
+        displayAlert('Load file corrupted. Do not use.');
+        document.getElementById('screen').innerHTML = '';
+        return;
+    }
+
+    counter = document.querySelectorAll('.draggable').length;
+
+    const information = document.querySelector('#information').textContent;
+
+    const loadedConnections = information.split("||");
+
+    for (let i = 0; i < loadedConnections.length; i++) {
+        const connection = loadedConnections[i].split(',');
+        document.getElementById(connection[0]).classList.add('connecting');
+        document.getElementById(connection[1]).classList.add('connecting');
+
+        connectorTool();
+    }
+
+    draggables = document.querySelectorAll('.draggable');
+    inout = document.querySelectorAll('.inout');
+
+    for (let i = 0; i < draggables.length; i++) {
+        if (draggables[i].classList.contains('switch')) {
+            draggables[i].querySelector('.touchSensor').addEventListener('click', (e) => {
+                const parent = draggables[i];
+                const output1 = document.getElementById(`${parent.id}-output-1`);
+                const output2 = document.getElementById(`${parent.id}-output-2`);
+
+                if (output1.textContent == '1') {
+                    draggables[i].querySelector('.touchSensor').style.backgroundColor = "black";
+                    output1.textContent = '0';
+                    output2.textContent = '0';
+                }
+                else if (output1.textContent == '0') {
+                    draggables[i].querySelector('.touchSensor').style.backgroundColor = "yellow";
+                    output1.textContent = '1';
+                    output2.textContent = '1';
+                }
+            });
+        }
+        if (draggables[i].classList.contains('button')) {
+            const parent = draggables[i];
+            const pushSensor = parent.querySelector('.pushSensor');
+            const output1 = parent.querySelector(`#${parent.id}-output-1`);
+            const output2 = parent.querySelector(`#${parent.id}-output-2`);
+            pushSensor.addEventListener('mousedown', (e) => {
+                pushSensor.style.backgroundColor = "yellow";
+                output1.textContent = '1';
+                output2.textContent = '1';
+            });
+            pushSensor.addEventListener('mouseup', (e) => {
+                pushSensor.style.backgroundColor = "black";
+                output1.textContent = '0';
+                output2.textContent = '0';
+            });
+        }
+        if (draggables[i].classList.contains('decimalValue')) {
+            const inout3 = document.getElementById(`${draggables[i].id}-output-1`);
+            const inout4 = document.getElementById(`${draggables[i].id}-output-2`);
+            const inputBlock = draggables[i].querySelector('input');
+
+            inputBlock.addEventListener('input', (e) => {
+                inout3.textContent = e.target.value;
+                inout4.textContent = e.target.value;
+                syncConnections();
+            });
+        }
+    }
+
+    document.querySelector('#information').remove();
+
+    counter++;
+}
 // current element hovered
 let currentHoveredElement = "";
 
@@ -70,6 +187,7 @@ function addListeners() {
     });
 }
 
+//moving blocks
 document.addEventListener('mousemove', (e) => {
     if (!activeDraggable) return;
     activeDraggable.style.left = `${Math.round((e.clientX - offsetX) / 10) * 10}px`;
@@ -91,7 +209,7 @@ document.addEventListener('mousemove', (e) => {
         }
     });
 });
-
+// mobile support
 document.addEventListener('touchmove', (e) => {
     if (!activeDraggable) return;
     const touch = e.touches[0];
@@ -115,14 +233,36 @@ document.addEventListener('touchmove', (e) => {
     });
 });
 
-document.addEventListener('mouseup', () => {
+function toggleMobileConnectorBtn() {
+    const button = document.getElementById('mobileConnectorBtn');
+    if (button.style.backgroundColor === 'green') {
+        button.style.backgroundColor = 'red';
+        isConnecting = false;
+        connectorTool();
+    }
+    else {
+        button.style.backgroundColor = 'green';
+        isConnecting = true;
+    }
+}
+
+document.addEventListener('touchend', () => {
     if (activeDraggable) {
         activeDraggable.style.cursor = 'grab';
         activeDraggable = null;
     }
 });
 
-document.addEventListener('touchend', () => {
+const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+if (regex.test(navigator.userAgent)) {
+    document.getElementById('mobileConnectorBtn').style.display = 'block';
+} else {
+    document.getElementById('mobileConnectorBtn').style.display = 'none';
+}
+
+
+//end moving blocks
+document.addEventListener('mouseup', () => {
     if (activeDraggable) {
         activeDraggable.style.cursor = 'grab';
         activeDraggable = null;
@@ -149,7 +289,8 @@ document.addEventListener('keydown', (e) => {
         //input display
         document.getElementById('inputDisplay').textContent = `Input: ${e.key}`;
 
-        createNewElement(e.key);
+        // shortcut tool
+        createNewElement(favoriteBlocks[e.key]);
 
         //connector tool
         if (e.key === ' ') {
@@ -173,18 +314,57 @@ document.addEventListener('keydown', (e) => {
 
 });
 
-function toggleMobileConnectorBtn(){
-    const button = document.getElementById('mobileConnectorBtn');
-    if (button.style.backgroundColor === 'green'){
-        button.style.backgroundColor = 'red';
-        isConnecting = false;
+document.addEventListener('keyup', (e) => {
+    if (e.key === ' ' && listenInput) {
         connectorTool();
     }
-    else{
-        button.style.backgroundColor = 'green';
-        isConnecting = true;
+});
+
+// shortcuts
+function addShortcut(block, caller) {
+    if (caller.style.backgroundColor != "green") {
+        caller.style.backgroundColor = "green";
+        favoriteBlocks.push(block);
+
+        if (favoriteBlocks.length > 10) {
+            favoriteBlocks.shift();
+
+            displayAlert('The favorites list has been shifted down!');
+        }
     }
+    else {
+        caller.style.backgroundColor = "white";
+        favoriteBlocks.splice(favoriteBlocks.indexOf(block), 1);
+    }
+    setTimeout(updateToolbar, 10);
 }
+//update toolbar
+
+const template = document.getElementById('toolDisplayTemplate');
+function updateToolbar() {
+    const toolbar = document.getElementById('toolbar');
+    toolbar.innerHTML = '';
+
+    favoriteBlocks.forEach(favBlock => {
+        const newTool = template.cloneNode(true);
+        newTool.querySelector('#toolDisplayTemplateName').textContent = blocklist[favBlock].title;
+        newTool.querySelector('#toolDisplayTemplateButton').onclick = () => {
+            createNewElement(favBlock);
+        };
+        newTool.querySelector('#toolDisplayTemplateTrash').onclick = (e) => {
+            favoriteBlocks.splice(favoriteBlocks.indexOf(favBlock), 1);
+            e.target.parentElement.parentElement.remove();
+        };
+        newTool.style.display = 'block';
+        newTool.id = `toolDisplay-${favBlock}`;
+        newTool.querySelector('#toolDisplayTemplateName').id = `toolDisplayName-${favBlock}`;
+        newTool.querySelector('#toolDisplayTemplateButton').id = `toolDisplayButton-${favBlock}`;
+        newTool.querySelector('#toolDisplayTemplateTrash').id = `toolDisplayTrash-${favBlock}`;
+        toolbar.appendChild(newTool);
+    });
+};
+
+//create blocks
 
 function createNewElement(key) {
     const fragment = document.createDocumentFragment();
@@ -235,37 +415,37 @@ function createNewElement(key) {
             inout3.textContent = '0';
             inout4.textContent = '0';
             break;
-        case "s":
+        case "b":
             newDraggable.classList.add('binary');
             title.textContent = 'value';
             inout3.textContent = '1';
             inout4.textContent = '1';
             break;
-        case "d":
+        case "c":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('not');
             newDraggable.classList.add('gate');
             title.textContent = 'NOT gate';
             break;
-        case "f":
+        case "d":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('and');
             newDraggable.classList.add('gate');
             title.textContent = 'AND gate';
             break;
-        case "g":
+        case "e":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('or');
             newDraggable.classList.add('gate');
             title.textContent = 'OR gate';
             break;
-        case "h":
+        case "f":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('xor');
             newDraggable.classList.add('gate');
             title.textContent = 'XOR gate';
             break;
-        case "q":
+        case "g":
             newDraggable.classList.add('binary');
             newDraggable.classList.add('switch');
             title.textContent = 'switch';
@@ -297,7 +477,7 @@ function createNewElement(key) {
                 syncConnections();
             });
             break;
-        case 'w':
+        case 'h':
             newDraggable.classList.add('binary');
             newDraggable.classList.add('light');
             title.textContent = 'lamp';
@@ -312,7 +492,7 @@ function createNewElement(key) {
             newDraggable.appendChild(light);
 
             break;
-        case 'e':
+        case 'i':
             newDraggable.classList.add('binary');
             newDraggable.classList.add('button');
             title.textContent = 'button';
@@ -341,20 +521,20 @@ function createNewElement(key) {
             });
             syncConnections();
             break;
-        case 'r':
-            newDraggable.classList.add('special');
+        case 'k':
+            newDraggable.classList.add('gate');
             newDraggable.classList.add('relay');
             title.textContent = 'relay';
 
             break;
-        case 't':
-            newDraggable.classList.add('special');
+        case 'l':
+            newDraggable.classList.add('gate');
             newDraggable.classList.add('relay');
             newDraggable.classList.add('memoryRelay');
             title.textContent = 'memory relay';
 
             break;
-        case 'y':
+        case 'n':
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('binaryToDecimal');
 
@@ -374,7 +554,7 @@ function createNewElement(key) {
             binaryInputContainer.style.display = 'flex';
             binaryInputContainer.style.justifyContent = 'center';
 
-            for(let i = 0; i < 8; i++){
+            for (let i = 0; i < 8; i++) {
                 const binaryInput = document.createElement('div');
                 binaryInput.classList.add('binaryInput');
                 binaryInput.classList.add('inout');
@@ -398,7 +578,7 @@ function createNewElement(key) {
             newDraggable.appendChild(binaryInputContainer);
 
             break;
-        case "u":
+        case "o":
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('decimalToBinary');
 
@@ -430,7 +610,7 @@ function createNewElement(key) {
             equalSign.textContent = '=';
             binaryOutputContainer.appendChild(equalSign);
 
-            for(let i = 0; i < 8; i++){
+            for (let i = 0; i < 8; i++) {
                 const binaryOutput = document.createElement('div');
                 binaryOutput.classList.add('inout');
                 binaryOutput.classList.add('binaryOutput');
@@ -442,7 +622,7 @@ function createNewElement(key) {
             newDraggable.appendChild(binaryOutputContainer);
 
             break;
-        case "i":
+        case "p":
             newDraggable.classList.add('decimal');
             newDraggable.classList.add('decimalValue');
 
@@ -460,7 +640,7 @@ function createNewElement(key) {
             inout1.appendChild(inputBlock);
             title.textContent = "Decimal value";
             break;
-        case "c":
+        case "j":
             newDraggable.classList.add('special');
             newDraggable.classList.add('comment');
             title.textContent = 'comment block';
@@ -486,6 +666,16 @@ function createNewElement(key) {
             });
 
             break;
+        case "q":
+            newDraggable.classList.add('special');
+            newDraggable.classList.add('pulser');
+            title.textContent = 'pulser';
+            break;
+        case "r":
+            newDraggable.classList.add('decimal');
+            newDraggable.classList.add('counter');
+            title.textContent = 'counter';
+            break;
 
         default:
             newDraggable.remove();
@@ -503,23 +693,33 @@ function createNewElement(key) {
     counter++;
 }
 
-function clearAllDraggables(){
-    draggables.forEach(draggable =>{
+function clearAllDraggables() {
+    draggables.forEach(draggable => {
         draggable.remove();
     });
+
+    const trashcan = document.createElement('div');
+    trashcan.setAttribute('id', 'trash');
+    trashcan.classList.add('draggable', 'nondraggable', 'trash');
+    trashcan.textContent = "Trash";
+    document.querySelector('body').appendChild(trashcan);
+
+    draggables = document.querySelectorAll('.draggable');
 }
 
 //on start
 
 addListeners();
 
-//mobile?
-const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-if (regex.test(navigator.userAgent)) {
-    document.getElementById('mobileConnectorBtn').style.display = 'block';
-} else {
-    document.getElementById('mobileConnectorBtn').style.display = 'none';
-}
+// fetch('./blocks.json')
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! Status: ${response.status}`);
+//         }
+//         return response.json();
+//     })
+//     .then(data => console.log(data))
+//     .catch(error => console.error('Failed to fetch data:', error));
 
 
 let isConnecting = false;
@@ -537,47 +737,41 @@ function alreadyExists(newConnections) {
     }
 }
 
-document.addEventListener('keyup', (e) => {
-    if (e.key === ' ' && listenInput) {
-        connectorTool();
-    }
-});
-
-function connectorTool(){
+function connectorTool() {
     isConnecting = false;
-        startElement = null;
+    startElement = null;
 
-        let newConnections = [];
-        const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+    let newConnections = [];
+    const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
 
-        document.querySelectorAll('.connecting').forEach(draggable => {
-            draggable.classList.remove('connecting');
-            newConnections.push(draggable.id);
+    document.querySelectorAll('.connecting').forEach(inout => {
+        inout.classList.remove('connecting');
+        newConnections.push(inout.id);
+    });
+
+    const index = alreadyExists(newConnections);
+
+
+    if (index !== undefined) {
+        newConnections.forEach(element => {
+            document.getElementById(element).style.backgroundColor = 'lightblue';
+
         });
+        connections.splice(index, 1);
 
-        const index = alreadyExists(newConnections);
-
-
-        if (index !== undefined) {
-            newConnections.forEach(element => {
-                document.getElementById(element).style.backgroundColor = 'lightblue';
-
+    }
+    else {
+        if (newConnections.length === 2) {
+            connections.push(newConnections);
+            newConnections.forEach(connection => {
+                document.getElementById(connection).style.backgroundColor = color;
             });
-            connections.splice(index, 1);
-
+            syncConnections();
         }
         else {
-            if (newConnections.length === 2) {
-                connections.push(newConnections);
-                newConnections.forEach(connection => {
-                    document.getElementById(connection).style.backgroundColor = color;
-                });
-                syncConnections();
-            }
-            else {
-                displayAlert(`Invalid connection. Please connect two elements. Not sure how to use the connection tool? Check the menu.`);
-            }
+            displayAlert(`Invalid connection. Please connect two elements. Not sure how to use the connection tool? Check the menu.`);
         }
+    }
 }
 //how to pass values between connected elements
 function syncConnections() {
@@ -585,10 +779,10 @@ function syncConnections() {
         const [ele1, ele2] = connection;
 
         if (document.getElementById(ele1) == undefined || document.getElementById(ele2) == undefined) {
-            if (document.getElementById(ele1) != undefined){
+            if (document.getElementById(ele1) != undefined) {
                 document.getElementById(ele1).style.backgroundColor = 'lightblue';
             }
-            else if (document.getElementById(ele2) != undefined){
+            else if (document.getElementById(ele2) != undefined) {
                 document.getElementById(ele2).style.backgroundColor = 'lightblue';
             }
             connections.splice(connections.indexOf(connection), 1);
@@ -607,12 +801,20 @@ function syncConnections() {
                 output = document.getElementById(ele1);
                 input = document.getElementById(ele2);
             }
+            else {
+                displayAlert('Invalid connection. Please check your connections. The first element must be an input, the second must be an output.');
+                document.getElementById(ele1).style.backgroundColor = 'lightblue';
+                document.getElementById(ele2).style.backgroundColor = 'lightblue';
+
+                connections.splice(connections.indexOf(connection), 1);
+                return;
+            }
             input.textContent = output.textContent;
         }
     });
 }
 
-function clearAllConnections(){
+function clearAllConnections() {
     counter = 0;
     connections = [];
     const inouts = document.querySelectorAll('.inout');
@@ -624,7 +826,7 @@ function clearAllConnections(){
 //end connection craziness
 
 //Gate logic
-function gateLogic() {
+function updateBlocks() {
     let gates = document.querySelectorAll('.gate');
     gates.forEach(gate => {
         const input1 = document.getElementById(`${gate.id}-input-1`);
@@ -634,13 +836,13 @@ function gateLogic() {
         const output2 = document.getElementById(`${gate.id}-output-2`);
         switch (gate.classList[2]) {
             case "not":
-                output1.textContent = notGate(input1.textContent);
-                output2.textContent = notGate(input1.textContent);
+                output1.textContent = input1.textContent === '1' ? '0' : '1';
+                output2.textContent = input1.textContent === '1' ? '0' : '1';
 
                 break;
             case "and":
-                output1.textContent = andGate(input1.textContent, input2.textContent);
-                output2.textContent = andGate(input1.textContent, input2.textContent);
+                output1.textContent = input1.textContent === '1' && input2.textContent === '1' ? '1' : '0';
+                output2.textContent = input1.textContent === '1' && input2.textContent === '1' ? '1' : '0';
                 break;
 
             case "or":
@@ -665,17 +867,17 @@ function gateLogic() {
         const output1 = document.getElementById(`${relay.id}-output-1`);
         const output2 = document.getElementById(`${relay.id}-output-2`);
 
-        if(input1.textContent === '1' || input1.textContent === '0'){
-            if (input1.textContent === '1'){
+        if (input1.textContent === '1' || input1.textContent === '0') {
+            if (input1.textContent === '1') {
                 output1.textContent = input2.textContent;
                 output2.textContent = input2.textContent;
             }
-            else if(input1.textContent === '0' && !relay.classList.contains('memoryRelay')){
+            else if (input1.textContent === '0' && !relay.classList.contains('memoryRelay')) {
                 output1.textContent = '0';
                 output2.textContent = '0';
             }
         }
-        else{
+        else {
             displayAlert('Relay input is not binary. Please check your connections. The first input must be binary, the second should be the value to be relayed.');
         }
     });
@@ -697,11 +899,11 @@ function gateLogic() {
         const binaryOutputCells = Array.from(binaryOutput.querySelectorAll('.binaryOutput')).reverse();
         const binaryString = (decimalInput.textContent >>> 0).toString(2).padStart(8, '0').split('').reverse();
 
-        for(let i = 0; i < binaryString.length; i++){
-            if(binaryOutputCells[i]){
+        for (let i = 0; i < binaryString.length; i++) {
+            if (binaryOutputCells[i]) {
                 binaryOutputCells[i].textContent = binaryString[i];
             }
-            else{
+            else {
                 displayAlert('There was an error. Perhaps the decimal value is too high? The maximum value is 255. Some digits might have not been displayed properly! For your convenience, the input cleared. Softlocked? Edit > Clear all connections. Here was the binary value: ' + binaryString.reverse().join(''));
                 binaryOutputCells.forEach(cell => {
                     cell.textContent = '0';
@@ -710,26 +912,58 @@ function gateLogic() {
             }
         }
     });
-}
 
-function notGate(input) {
-    return input === '0' ? '1' : '0';
-}
+    let pulsers = document.querySelectorAll('.pulser');
+    pulsers.forEach(pulser => {
+        if (document.getElementById(`${pulser.id}-input-1`).textContent === '1') {
+            const output1 = document.getElementById(`${pulser.id}-output-1`);
+            const output2 = document.getElementById(`${pulser.id}-output-2`);
 
-function andGate(input1, input2) {
-    return input1 === '1' && input2 === '1' ? '1' : '0';
+            output1.textContent = output1.textContent === '1' ? '0' : '1';
+            output2.textContent = output2.textContent === '1' ? '0' : '1';
+
+            document.getElementById(`${pulser.id}-input-1`).textContent = '0';
+        }
+    });
+
+    let counters = document.querySelectorAll('.counter');
+    counters.forEach(counter => {
+        const input1 = document.getElementById(`${counter.id}-input-1`);
+        const input2 = document.getElementById(`${counter.id}-input-2`);
+        const output1 = document.getElementById(`${counter.id}-output-1`);
+        const output2 = document.getElementById(`${counter.id}-output-2`);
+
+        if (counter.dataset.lastInput === undefined || counter.dataset.lastInput !== input1.textContent) {
+            counter.dataset.lastInput = input1.textContent;
+            output1.textContent = parseInt(output1.textContent) + 1;
+            output2.textContent = parseInt(output2.textContent) + 1;
+        }
+
+        if (input2.textContent === "1") {
+            output1.textContent = 0;
+            output2.textContent = 0;
+            counter.dataset.lastInput = undefined;
+            input2.textContent = 0;
+        }
+    });
 }
 
 //time loop
 
-setInterval(() => {
+function runSimulation() {
     syncConnections();
     addListeners();
-    gateLogic();
+    updateBlocks();
 
     let lights = document.querySelectorAll('.lightPart');
     lights.forEach(light => {
         const input = document.getElementById(`${light.parentElement.id}-input-1`);
         light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
     });
-}, 500);
+    setTimeout(clock, simrate);
+}
+
+function clock() {
+    setTimeout(runSimulation, simrate);
+}
+clock();
