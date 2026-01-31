@@ -30,7 +30,7 @@ function displayAlert(text) {
 /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
 
 onmousemove = function (e) {
-    if (e.clientX < 250) {
+    if (e.clientX < 70) {
         document.getElementById("sidebar").style.width = "250px";
     }
     else if (e.clientX > 300) {
@@ -290,7 +290,7 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('inputDisplay').textContent = `Input: ${e.key}`;
 
         // shortcut tool
-        createNewElement(favoriteBlocks[e.key]);
+        createNewElement(e.key);
 
         //connector tool
         if (e.key === ' ') {
@@ -434,7 +434,7 @@ function createNewElement(key) {
     }
 
     document.getElementById('screen').appendChild(newElement);
-    
+
     draggables = document.querySelectorAll('.draggable');
     inout = document.querySelectorAll('.inout');
 
@@ -459,17 +459,6 @@ function clearAllDraggables() {
 //on start
 
 addListeners();
-
-// fetch('./blocks.json')
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! Status: ${response.status}`);
-//         }
-//         return response.json();
-//     })
-//     .then(data => console.log(data))
-//     .catch(error => console.error('Failed to fetch data:', error));
-
 
 let isConnecting = false;
 let startElement = null;
@@ -512,6 +501,25 @@ function connectorTool() {
     else {
         if (newConnections.length === 2) {
             connections.push(newConnections);
+
+            //validate connection compatibility
+            const [ele1, ele2] = newConnections;
+            const inout1 = document.getElementById(ele1);
+            const inout2 = document.getElementById(ele2);
+
+            if (inout1.classList.contains('binary') && inout2.classList.contains('binary')) {
+                // Both are binary, so they are compatible
+            } else if (inout1.classList.contains('decimal') && inout2.classList.contains('decimal')) {
+                // Both are decimal, so they are compatible
+            } else if (inout1.classList.contains('any') || inout2.classList.contains('any')) {
+                // One is any, so they are compatible
+            }
+            else{
+                displayAlert("Incompatible connection types.");
+                connections.pop(); // Remove the invalid connection
+                return;
+            }
+
             newConnections.forEach(connection => {
                 document.getElementById(connection).style.backgroundColor = color;
             });
