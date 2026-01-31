@@ -367,325 +367,74 @@ function updateToolbar() {
 //create blocks
 
 function createNewElement(key) {
-    const fragment = document.createDocumentFragment();
 
-    const newDraggable = document.createElement('div');
-    newDraggable.classList.add('draggable');
-    newDraggable.style.top = '200px';
-    newDraggable.style.left = '200px';
-    newDraggable.id = `draggable-${counter}`;
+    // const newElement = document.createElement('div');
+    // newElement.innerHTML = blocklist[key].structure;
+    // document.getElementById('screen').appendChild(newElement);
 
-    const inout1 = document.createElement('div');
-    inout1.classList.add('inout');
-    inout1.id = (`draggable-${counter}-input-1`);
-    inout1.textContent = '0';
-    newDraggable.appendChild(inout1);
+    if (blocklist[key] === undefined) { return; }
 
+    let newElement = document.createElement('div');
 
-    const inout2 = document.createElement('div');
-    inout2.classList.add('inout');
-    inout2.id = (`draggable-${counter}-input-2`);
-    inout2.textContent = '0';
-    newDraggable.appendChild(inout2);
+    newElement.insertAdjacentHTML('beforeend', blocklist[key].structure.replace(/draggable-default/g, `draggable-${counter}`));
+    newElement = newElement.children[0];
 
-    const title = document.createElement('div');
-    title.classList.add('inout');
-    title.classList.add('title');
-    title.textContent = 'title';
-    newDraggable.appendChild(title);
+    const parent = newElement;
 
-    const inout3 = document.createElement('div');
-    inout3.classList.add('inout');
-    inout3.id = (`draggable-${counter}-output-1`);
-    inout3.textContent = '0';
-    newDraggable.appendChild(inout3);
+    //final processing
 
-    const inout4 = document.createElement('div');
-    inout4.classList.add('inout');
-    inout4.id = (`draggable-${counter}-output-2`);
-    inout4.textContent = '0';
-    inout4.style.border = "none";
-    newDraggable.appendChild(inout4);
+    //touch sensors
+    if (newElement.querySelector('.touchSensor')) {
+        const touchSensor = newElement.querySelector('.touchSensor');
+        newElement.querySelector('.touchSensor').addEventListener('click', (e) => {
+            const parent = touchSensor.parentElement;
+            const output1 = document.getElementById(`${parent.id}-output-1`);
+            const output2 = document.getElementById(`${parent.id}-output-2`);
 
-
-    switch (key) {
-        case "a":
-            newDraggable.classList.add('binary');
-            title.textContent = 'value';
-            inout3.textContent = '0';
-            inout4.textContent = '0';
-            break;
-        case "b":
-            newDraggable.classList.add('binary');
-            title.textContent = 'value';
-            inout3.textContent = '1';
-            inout4.textContent = '1';
-            break;
-        case "c":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('not');
-            newDraggable.classList.add('gate');
-            title.textContent = 'NOT gate';
-            break;
-        case "d":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('and');
-            newDraggable.classList.add('gate');
-            title.textContent = 'AND gate';
-            break;
-        case "e":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('or');
-            newDraggable.classList.add('gate');
-            title.textContent = 'OR gate';
-            break;
-        case "f":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('xor');
-            newDraggable.classList.add('gate');
-            title.textContent = 'XOR gate';
-            break;
-        case "g":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('switch');
-            title.textContent = 'switch';
-            inout3.textContent = '1';
-            inout4.textContent = '1';
-            inout1.remove();
-            inout2.remove();
-
-            const touchSensor = document.createElement('div');
-            touchSensor.classList.add('touchSensor');
-            touchSensor.id = (`draggable-${counter}-touchSensor`);
-            newDraggable.appendChild(touchSensor);
-
-            touchSensor.addEventListener('click', (e) => {
-                const parent = touchSensor.parentElement;
-                const output1 = document.getElementById(`${parent.id}-output-1`);
-                const output2 = document.getElementById(`${parent.id}-output-2`);
-
-                if (output1.textContent == '1') {
-                    touchSensor.style.backgroundColor = "black";
-                    output1.textContent = '0';
-                    output2.textContent = '0';
-                }
-                else if (output1.textContent == '0') {
-                    touchSensor.style.backgroundColor = "yellow";
-                    output1.textContent = '1';
-                    output2.textContent = '1';
-                }
-                syncConnections();
-            });
-            break;
-        case 'h':
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('light');
-            title.textContent = 'lamp';
-            inout2.remove();
-            inout3.remove();
-            inout4.remove();
-
-            const light = document.createElement('div');
-            light.style.height = '60px';
-            light.style.backgroundColor = 'black';
-            light.classList.add('lightPart');
-            newDraggable.appendChild(light);
-
-            break;
-        case 'i':
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('button');
-            title.textContent = 'button';
-            inout1.remove();
-            inout2.remove();
-            inout3.textContent = '1';
-            inout4.textContent = '1';
-
-            const pushSensor = document.createElement('div');
-            pushSensor.classList.add('pushSensor');
-            pushSensor.id = (`draggable-${counter}-pushSensor`);
-            newDraggable.appendChild(pushSensor);
-
-            const parent = pushSensor.parentElement;
-            const output1 = parent.querySelector(`#${parent.id}-output-1`);
-            const output2 = parent.querySelector(`#${parent.id}-output-2`);
-            pushSensor.addEventListener('mousedown', (e) => {
-                pushSensor.style.backgroundColor = "yellow";
-                output1.textContent = '1';
-                output2.textContent = '1';
-            });
-            pushSensor.addEventListener('mouseup', (e) => {
-                pushSensor.style.backgroundColor = "black";
+            if (output1.textContent == '1') {
+                touchSensor.style.backgroundColor = "black";
                 output1.textContent = '0';
                 output2.textContent = '0';
-            });
+            }
+            else if (output1.textContent == '0') {
+                touchSensor.style.backgroundColor = "yellow";
+                output1.textContent = '1';
+                output2.textContent = '1';
+            }
             syncConnections();
-            break;
-        case 'k':
-            newDraggable.classList.add('gate');
-            newDraggable.classList.add('relay');
-            title.textContent = 'relay';
-
-            break;
-        case 'l':
-            newDraggable.classList.add('gate');
-            newDraggable.classList.add('relay');
-            newDraggable.classList.add('memoryRelay');
-            title.textContent = 'memory relay';
-
-            break;
-        case 'n':
-            newDraggable.classList.add('decimal');
-            newDraggable.classList.add('binaryToDecimal');
-
-            newDraggable.style.width = '200px';
-            newDraggable.height = '50px';
-
-            title.textContent = 'Binary to Decimal';
-            title.style.width = '200px';
-
-            inout1.remove();
-            inout2.remove();
-            inout3.remove();
-            inout4.remove();
-
-            const binaryInputContainer = document.createElement('div');
-            binaryInputContainer.classList.add('binaryInputContainer');
-            binaryInputContainer.style.display = 'flex';
-            binaryInputContainer.style.justifyContent = 'center';
-
-            for (let i = 0; i < 8; i++) {
-                const binaryInput = document.createElement('div');
-                binaryInput.classList.add('binaryInput');
-                binaryInput.classList.add('inout');
-                binaryInput.id = (`draggable-${counter}-input-${i}`);
-                binaryInput.textContent = '0';
-                binaryInputContainer.appendChild(binaryInput);
-            }
-
-            const equalsSign = document.createElement('div');
-            equalsSign.textContent = '=';
-            binaryInputContainer.appendChild(equalsSign);
-
-            const decimalOutput = document.createElement('div');
-            decimalOutput.textContent = '0';
-            decimalOutput.style.width = '50px';
-            decimalOutput.classList.add('decimalOutput');
-            decimalOutput.classList.add('inout');
-            decimalOutput.id = (`draggable-${counter}-output-1`);
-            binaryInputContainer.appendChild(decimalOutput);
-
-            newDraggable.appendChild(binaryInputContainer);
-
-            break;
-        case "o":
-            newDraggable.classList.add('decimal');
-            newDraggable.classList.add('decimalToBinary');
-
-            newDraggable.style.width = '200px';
-            newDraggable.height = '50px';
-
-            title.textContent = 'Decimal to Binary';
-            title.style.width = '200px';
-
-            inout1.remove();
-            inout2.remove();
-            inout3.remove();
-            inout4.remove();
-
-            const binaryOutputContainer = document.createElement('div');
-            binaryOutputContainer.classList.add('binaryOutputContainer');
-            binaryOutputContainer.style.display = 'flex';
-            binaryOutputContainer.style.justifyContent = 'center';
-
-            const decimalInput = document.createElement('div');
-            decimalInput.textContent = '0';
-            decimalInput.style.width = '50px';
-            decimalInput.classList.add('decimalInput');
-            decimalInput.classList.add('inout');
-            decimalInput.id = (`draggable-${counter}-input-1`);
-            binaryOutputContainer.appendChild(decimalInput);
-
-            const equalSign = document.createElement('div');
-            equalSign.textContent = '=';
-            binaryOutputContainer.appendChild(equalSign);
-
-            for (let i = 0; i < 8; i++) {
-                const binaryOutput = document.createElement('div');
-                binaryOutput.classList.add('inout');
-                binaryOutput.classList.add('binaryOutput');
-                binaryOutput.id = (`draggable-${counter}-output-${i}`);
-                binaryOutput.textContent = '0';
-                binaryOutputContainer.appendChild(binaryOutput);
-            }
-
-            newDraggable.appendChild(binaryOutputContainer);
-
-            break;
-        case "p":
-            newDraggable.classList.add('decimal');
-            newDraggable.classList.add('decimalValue');
-
-            inout2.remove();
-            inout1.textContent = null;
-            const inputBlock = document.createElement('input');
-            inputBlock.type = 'number';
-            inputBlock.value = '0';
-            inputBlock.style.width = '100%';
-            inputBlock.addEventListener('input', (e) => {
-                inout3.textContent = e.target.value;
-                inout4.textContent = e.target.value;
-                syncConnections();
-            });
-            inout1.appendChild(inputBlock);
-            title.textContent = "Decimal value";
-            break;
-        case "j":
-            newDraggable.classList.add('special');
-            newDraggable.classList.add('comment');
-            title.textContent = 'comment block';
-            inout1.remove();
-            inout2.remove();
-            inout3.remove();
-            inout4.remove();
-
-            newDraggable.style.height = '200px';
-
-            const textArea = document.createElement('textarea');
-            textArea.style.width = '100px';
-            textArea.style.height = '80%';
-            textArea.style.resize = 'none';
-            textArea.style.overflow = 'scroll';
-            newDraggable.appendChild(textArea);
-
-            textArea.addEventListener('focus', (e) => {
-                listenInput = false;
-            });
-            textArea.addEventListener('blur', (e) => {
-                listenInput = true;
-            });
-
-            break;
-        case "q":
-            newDraggable.classList.add('special');
-            newDraggable.classList.add('pulser');
-            title.textContent = 'pulser';
-            break;
-        case "r":
-            newDraggable.classList.add('decimal');
-            newDraggable.classList.add('counter');
-            title.textContent = 'counter';
-            break;
-
-        default:
-            newDraggable.remove();
-            return;
+        });
     }
 
-    // Append newDraggable to the fragment
-    fragment.appendChild(newDraggable);
+    //decimal value
+    if (newElement.classList.contains('decimalValue')) {
+        console.log(newElement);
+        newElement.querySelector('input').addEventListener('input', (e) => {
+            parent.querySelector(`#${parent.id}-output-1`).textContent = e.target.value;
+            parent.querySelector(`#${parent.id}-output-2`).textContent = e.target.value;
+            syncConnections();
+        });
+    }
 
-    document.getElementById("screen").appendChild(fragment);
+    //push sensors
+    if (newElement.querySelector('.pushSensor')) {
+        const pushSensor = newElement.querySelector('.pushSensor');
+        const output1 = parent.querySelector(`#${parent.id}-output-1`);
+        const output2 = parent.querySelector(`#${parent.id}-output-2`);
+        pushSensor.addEventListener('mousedown', (e) => {
+            pushSensor.style.backgroundColor = "yellow";
+            output1.textContent = '1';
+            output2.textContent = '1';
+        });
+        pushSensor.addEventListener('mouseup', (e) => {
+            pushSensor.style.backgroundColor = "black";
+            output1.textContent = '0';
+            output2.textContent = '0';
+        });
+        syncConnections();
+    }
+
+    document.getElementById('screen').appendChild(newElement);
+    
     draggables = document.querySelectorAll('.draggable');
     inout = document.querySelectorAll('.inout');
 
