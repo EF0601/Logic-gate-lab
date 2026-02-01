@@ -174,7 +174,7 @@ textarea {
   overflow: hidden;
   background-color: rgb(84, 56, 56);
   font-family: 'Courier new';
-  height: 50px;
+  height: 5vh;
 }
 .topBar button {
   float: left;
@@ -201,7 +201,7 @@ textarea {
   background-color: inherit;
   font-family: inherit;
   margin: 0;
-  height: 50px;
+  height: 5vh;
 }
 
 .topBar button:hover,
@@ -215,7 +215,7 @@ textarea {
   background-color: rgb(109, 76, 76);
   min-width: 160px;
   z-index: 1;
-  top: 50px;
+  top: 5vh;
 }
 
 .dropdown-content button {
@@ -241,6 +241,25 @@ textarea {
 .dropdown:active .dropdown-content,
 .dropdown-content:hover {
   display: block;
+}
+
+/* too small screen */
+@media screen and (max-height: 600px) {
+  #topBar button,
+  .dropdown .dropbtn {
+    font-size: 12px;
+    padding: 10px 10px;
+  }
+  #screen {
+    height: 80vh;
+  }
+  #bottomBar,
+  #topBar {
+    height: 10vh;
+  }
+  .dropdown-content {
+    top: 10vh;
+  }
 }
 
 .binaryInputContainer > div,

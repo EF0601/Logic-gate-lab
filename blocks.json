@@ -47,7 +47,7 @@
   "j": {
     "title": "Comment",
     "type": "Special",
-    "structure": "<div class=\"draggable special comment\" style=\"top: 200px; left: 200px; height: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout title\">comment block</div><textarea style=\"width: 100px; height: 80%; resize: none; overflow: scroll;\"></textarea></div>"
+    "structure": "<div class=\"draggable special comment\" style=\"top: 200px; left: 200px; height: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout title\">comment block</div><textarea style=\"width: 100px; height: 80%; resize: none; overflow: scroll;\" onfocus=\"listenInput = false\" onblur=\"listenInput = true\"></textarea></div>"
   },
   "k": {
     "title": "Relay",

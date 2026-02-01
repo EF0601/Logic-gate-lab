@@ -13,8 +13,11 @@ fetch('./blocks.json')
     .then(response => response.json())
     .then(data => {
         blocklist = data;
+        loadingComplete();
     })
-    .catch(error => console.error('Failed to fetch data:', error));
+    .catch(error => {
+        console.error('Failed to fetch data:', error)
+    });
 
 let simrate = 250;
 
@@ -38,8 +41,31 @@ onmousemove = function (e) {
     }
 };
 
-//default welcome box
-displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
+function loadingComplete() {
+    populateMenu();
+    displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
+}
+
+//create buttons for each block in the blocklist in menu
+const createBlockBtnTemplate = document.getElementById('createBlockBtnTemplate');
+function populateMenu() {
+    const gridContainer = document.getElementById('gridContainer');
+
+    for (const key in blocklist) {
+        const newBlockBtn = createBlockBtnTemplate.cloneNode(true);
+        newBlockBtn.style.display = 'flex';
+        newBlockBtn.id = "";
+        newBlockBtn.querySelector('.gridItemButton').textContent = blocklist[key].title;
+        newBlockBtn.querySelector('.gridItemButton').title = `Represents a ${blocklist[key].title}`;
+        newBlockBtn.querySelector('.gridItemButton').onclick = () => {
+            createNewElement(key);
+        }
+        newBlockBtn.querySelector('.iconButton').onclick = (e) => {
+            addShortcut(key, e.target);
+        };
+        gridContainer.appendChild(newBlockBtn);
+    }
+}
 
 //sandbox saver and loader
 function saveSandbox() {
@@ -367,11 +393,6 @@ function updateToolbar() {
 //create blocks
 
 function createNewElement(key) {
-
-    // const newElement = document.createElement('div');
-    // newElement.innerHTML = blocklist[key].structure;
-    // document.getElementById('screen').appendChild(newElement);
-
     if (blocklist[key] === undefined) { return; }
 
     let newElement = document.createElement('div');
