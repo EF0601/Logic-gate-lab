@@ -24,9 +24,34 @@ let simrate = 250;
 //display alert box
 const alertBox = document.getElementById('alertBox');
 const alertText = document.getElementById('alertText');
-function displayAlert(text) {
+const alertBoxInput = document.getElementById('alertBoxInput');
+const alertBoxSubmit = document.getElementById('alertSubmitBtn');
+function displayAlert(text, input) {
+    listenInput = false;
     alertBox.style.display = 'block';
     alertText.textContent = text;
+    if (input) {
+        alertBoxInput.style.display = 'block';
+        alertBoxSubmit.style.display = 'block';
+        alertBoxInput.value = "";
+    } else {
+        alertBoxInput.style.display = 'none';
+        alertBoxSubmit.style.display = 'none';
+        listenInput = true;
+    }
+
+    return new Promise((resolve) => {
+        const submitAlert = () => {
+            alertBox.style.display = 'none';
+            alertBoxSubmit.removeEventListener('click', submitAlert);
+            console.log(alertBoxInput.value);
+            resolve(alertBoxInput.value);
+            listenInput = true;
+        };
+        alertBoxSubmit.addEventListener('click', submitAlert);
+    });
+
+
 }
 
 // sidebar
@@ -113,8 +138,8 @@ function loadTextSandbox() {
 }
 
 // New sandbox saver and loader using JSON and local storage
-function saveToLocalStorage() {
-    const fileName = prompt('Enter a name for your sandbox state:');
+async function saveToLocalStorage() {
+    const fileName = await displayAlert('Enter a name for your save', true);
     if (!fileName) {
         displayAlert('Save cancelled. No name provided.');
         return;
@@ -128,43 +153,97 @@ function saveToLocalStorage() {
         if (!draggable.classList.contains("trash")) {
             const blockId = draggable.classList[draggable.classList.length - 1]; // Assuming the last class is the block type
             const blockNumber = draggable.id.replace('draggable-', '');
-            sandboxState.blocks.push([blockId, blockNumber]);
+            if (blockId === "j") {
+                //This block is a comment, so push the text content as well
+                sandboxState.blocks.push([blockId, blockNumber, draggable.querySelector('textarea').value]);
+            }
+            else{
+                sandboxState.blocks.push([blockId, blockNumber]);
+            }
         }
     });
     console.log(JSON.stringify(sandboxState));
     localStorage.setItem(fileName, JSON.stringify(sandboxState));
     displayAlert(`Sandbox state saved to local storage as "${fileName}".`);
 }
-//TODO: Add a modal that shows available saves, each with a button to load.
-function loadFromLocalStorage() {
-    const fileName = prompt('Enter the name of the sandbox state to load:'); //TODO: Implement the above so there is no need to type
-    if (!fileName) {
-        displayAlert('Load cancelled. No name provided.');
-        return;
+
+async function loadFromLocalStorage(filename) {
+    if (await displayAlert('Loading a sandbox will overwrite your current sandbox. Do you want to continue? Type YES to continue.', true) == "YES") {
+        const sandboxState = JSON.parse(localStorage.getItem(filename));
+        console.log(sandboxState);
+
+        clearAllDraggables();
+        clearAllConnections();
+
+        sandboxState.blocks.forEach(block => {
+            createNewElement(block[0], block[1]);
+            if (block[0] === "j") {
+                //this is a comment. The contents must be applied as well.
+                document.getElementById(`draggable-${block[1]}`).querySelector('textarea').value = block[2];
+            }
+        });
+        for (let i = 0; i < sandboxState.connections.length; i++) {
+            const connection = sandboxState.connections[i];
+            document.getElementById(connection[0]).classList.add('connecting');
+            document.getElementById(connection[1]).classList.add('connecting');
+
+            connectorTool();
+        }
+
+        loadSpecialListeners();
     }
-    const savedState = localStorage.getItem(fileName);
-    if (!savedState) {
-        displayAlert(`No sandbox state found with the name "${fileName}".`);
-        return;
-    }
-    const sandboxState = JSON.parse(savedState);
-
-    clearAllDraggables();
-    clearAllConnections();
-
-    sandboxState.blocks.forEach(block => {
-        createNewElement(block[0], block[1]);
-    });
-    for (let i = 0; i < sandboxState.connections.length; i++) {
-        const connection = sandboxState.connections[i];
-        document.getElementById(connection[0]).classList.add('connecting');
-        document.getElementById(connection[1]).classList.add('connecting');
-
-        connectorTool();
-    }
-
-    loadSpecialListeners();
 }
+
+const localsaveDisplayTemplate = document.getElementById('localsaveDisplayTemplate');
+const localsaveTableHeader = document.getElementById('header');
+function openLocalStorage(){
+    document.getElementById('localstorageSavesContainer').innerHTML = '';
+    if (localStorage.length === 0) {
+        const noSavesMessage = document.createElement('p');
+        noSavesMessage.textContent = 'No saves found in local storage.';
+        document.getElementById('localstorageSavesContainer').appendChild(noSavesMessage);
+    }
+    else{
+        document.getElementById('localstorageSavesContainer').appendChild(localsaveTableHeader.cloneNode(true));
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const newSaveDisplay = localsaveDisplayTemplate.cloneNode(true);
+            newSaveDisplay.style.display = 'table-row';
+            newSaveDisplay.querySelector('#localStorageSaveName').textContent = key;
+            newSaveDisplay.querySelector('#localStorageLoad').onclick = () => {
+                loadFromLocalStorage(key);
+            };
+            newSaveDisplay.querySelector('#localStorageDelete').onclick = async () => {
+                if (await displayAlert(`Are you sure you want to delete the save "${key}"? This action cannot be undone. Type YES to continue.`, true) == "YES") {
+                    localStorage.removeItem(key);
+                    showLocalSaves();
+                }
+            };
+            if (Math.round((localStorage.getItem(key).length * 2)) >= 1028) {
+                newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round(((localStorage.getItem(key).length * 2) / 1028)*100) / 100} KB`;
+            }
+            else {
+                newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round((localStorage.getItem(key).length * 2))} Bytes`;
+            }
+            document.getElementById('localstorageSavesContainer').appendChild(newSaveDisplay);
+        }
+    }
+    const total = localsaveDisplayTemplate.cloneNode(true)
+    total.querySelector('#localStorageSaveName').textContent = `Total: ${localStorage.length} saves`;
+    if (Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0) >= 1028) {
+        //store as kilobytes if over 1028 bytes
+        total.querySelector('#localStorageSaveSize').textContent = `Total size: ${Math.round((Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0) / 1028) * 100) / 100} KB`;
+    }
+    else {
+        total.querySelector('#localStorageSaveSize').textContent = `Total size: ${Math.round((Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0)))} Bytes`;
+    }
+    total.querySelectorAll("button").forEach(button => button.remove());
+    document.getElementById('localstorageSavesContainer').appendChild(total);
+    total.style.display = 'table-row';
+
+    document.getElementById('localstorageSavesDialog').style.display = 'block';
+}
+
 
 function loadSpecialListeners() {
     draggables = document.querySelectorAll('.draggable');
@@ -278,18 +357,13 @@ document.addEventListener('mousemove', (e) => {
     activeDraggable.style.left = `${Math.round((e.clientX - offsetX) / 10) * 10}px`;
     activeDraggable.style.top = `${Math.round((e.clientY - offsetY) / 10) * 10}px`;
 
-    // Check collisions with all other draggables
+    // Check collisions with the trash can
     draggables.forEach(draggable => {
         if (draggable !== activeDraggable) {
-            if (isColliding(activeDraggable, draggable)) {
-                draggable.classList.add('collided');
-                activeDraggable.classList.add('collided');
+            if (isColliding(activeDraggable, draggable)) { //Feb 15th 2026: Removed "collided" mechanic as it was a legacy feature
                 if (draggable.classList.contains('trash')) {
                     activeDraggable.remove();
                 }
-            } else {
-                draggable.classList.remove('collided');
-                activeDraggable.classList.remove('collided');
             }
         }
     });
@@ -594,7 +668,7 @@ function connectorTool() {
             } else if (inout1.classList.contains('any') || inout2.classList.contains('any')) {
                 // One is any, so they are compatible
             }
-            else{
+            else {
                 displayAlert("Incompatible connection types.");
                 connections.pop(); // Remove the invalid connection
                 return;

@@ -48,7 +48,10 @@
   <a href="https://github.com/EF0601/Logic-gate-lab/releases">View all updates and better update logs.</a>
   <h3>Version 0.6.0-beta</h3>
   <p>
-    <i>1/29/2026</i> Almost a year after the last update, this version brings two more blocks: the pulser and the counter. There were several UI improvements and various bug fixes. The top bar should now be easier to access. The toolbar was also added, allowing quick access to up to 10 tools for convenience. Finally, users can now find the app as an executable. Check this out in the releases section.
+    <i>1/29/2026</i> Almost a year after the last update, this version brings two more blocks: the pulser and the
+    counter. There were several UI improvements and various bug fixes. The top bar should now be easier to access. The
+    toolbar was also added, allowing quick access to up to 10 tools for convenience. Finally, users can now find the app
+    as an executable. Check this out in the releases section.
   </p>
   <div class="container" style="display: flex; justify-content: center; margin-top: 10px">
     <button style="width: 90vh" onclick="document.getElementById('menu').style.display='none'">
@@ -61,9 +64,34 @@
   <p id="alertText">
     This is an alert box. It is used to alert the user of something.
   </p>
-  <button onclick="document.getElementById('alertBox').style.display='none'">
-    Close
-  </button>
+  <input type="text" id="alertBoxInput" style="display: none;">
+  <div class="container" style="display: flex; justify-content: center;">
+    <button id="alertCloseBtn" onclick="document.getElementById('alertBox').style.display='none'">Close</button>
+    <button id="alertSubmitBtn" style="display: none;">Submit</button> <!--Forms only-->
+  </div>
+</dialog>
+<dialog id="localstorageSavesDialog" style="display: none; z-index: 1;">
+  <h1>Local Storage Saves</h1>
+  <table id="localstorageSavesContainer">
+    <tr id="header">
+      <th>Name</th>
+      <th>Size</th>
+      <th>Actions</th>
+    </tr>
+    <tr class="localStorageSave" id="localsaveDisplayTemplate">
+
+      <td id="localStorageSaveName">Save 1</td>
+      <td id="localStorageSaveSize">Size: 0 bytes</td>
+      <td><button id="localStorageLoad">Load</button><button id="localStorageDelete">Delete</button></td>
+
+    </tr>
+    <!-- Dynamically filled with local storage saves -->
+  </table>
+  <div class="container" style="display: flex; justify-content: center; margin-top: 10px">
+    <button style="width: 90vh" onclick="document.getElementById('localstorageSavesDialog').style.display='none'">
+      Close
+    </button>
+  </div>
 </dialog>
 
 <div id="topBar">
@@ -77,7 +105,7 @@
           onfocus="listenInput = false" onblur="listenInput = true" id="loadSandboxInput"
           placeholder="Type file data here to load..."></textarea></button>
       <button onclick="saveToLocalStorage()">Save to localstorage...</button>
-      <button onclick="loadFromLocalStorage()">Load from localstorage...</button>
+      <button onclick="openLocalStorage()">Open localstorage...</button>
     </div>
   </div>
   <div class="dropdown">
