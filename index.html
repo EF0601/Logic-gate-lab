@@ -71,11 +71,13 @@
     <button class="dropbtn">File</button>
     <div class="dropdown-content">
       <button onclick="clearAllDraggables()">Clear</button>
-      <button onclick="saveSandbox()">Save</button>
-      <button onclick="loadSandbox()">Load</button>
+      <button onclick="saveTextSandbox()">Save to text</button>
+      <button onclick="loadTextSandbox()">Load from text</button>
       <button><textarea name="loader-input" rows="10" style="resize: none; overflow:scroll;"
           onfocus="listenInput = false" onblur="listenInput = true" id="loadSandboxInput"
           placeholder="Type file data here to load..."></textarea></button>
+      <button onclick="saveToLocalStorage()">Save to localstorage...</button>
+      <button onclick="loadFromLocalStorage()">Load from localstorage...</button>
     </div>
   </div>
   <div class="dropdown">

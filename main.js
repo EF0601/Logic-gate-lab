@@ -67,8 +67,8 @@ function populateMenu() {
     }
 }
 
-//sandbox saver and loader
-function saveSandbox() {
+//LEGACY sandbox saver and loader
+function saveTextSandbox() {
     const information = document.createElement('div');
     information.setAttribute('id', 'information');
     information.textContent = `${connections.join('||')}`;
@@ -80,7 +80,7 @@ function saveSandbox() {
     document.getElementById('screen').removeChild(information);
 }
 
-function loadSandbox() {
+function loadTextSandbox() {
     clearAllDraggables();
     clearAllConnections();
 
@@ -105,6 +105,68 @@ function loadSandbox() {
         connectorTool();
     }
 
+    loadSpecialListeners();
+
+    document.querySelector('#information').remove();
+
+    counter++;
+}
+
+// New sandbox saver and loader using JSON and local storage
+function saveToLocalStorage() {
+    const fileName = prompt('Enter a name for your sandbox state:');
+    if (!fileName) {
+        displayAlert('Save cancelled. No name provided.');
+        return;
+    }
+    const sandboxState = {
+        blocks: [],
+        connections: connections
+    };
+    console.log(draggables);
+    draggables.forEach(draggable => {
+        if (!draggable.classList.contains("trash")) {
+            const blockId = draggable.classList[draggable.classList.length - 1]; // Assuming the last class is the block type
+            const blockNumber = draggable.id.replace('draggable-', '');
+            sandboxState.blocks.push([blockId, blockNumber]);
+        }
+    });
+    console.log(JSON.stringify(sandboxState));
+    localStorage.setItem(fileName, JSON.stringify(sandboxState));
+    displayAlert(`Sandbox state saved to local storage as "${fileName}".`);
+}
+//TODO: Add a modal that shows available saves, each with a button to load.
+function loadFromLocalStorage() {
+    const fileName = prompt('Enter the name of the sandbox state to load:'); //TODO: Implement the above so there is no need to type
+    if (!fileName) {
+        displayAlert('Load cancelled. No name provided.');
+        return;
+    }
+    const savedState = localStorage.getItem(fileName);
+    if (!savedState) {
+        displayAlert(`No sandbox state found with the name "${fileName}".`);
+        return;
+    }
+    const sandboxState = JSON.parse(savedState);
+
+    clearAllDraggables();
+    clearAllConnections();
+
+    sandboxState.blocks.forEach(block => {
+        createNewElement(block[0], block[1]);
+    });
+    for (let i = 0; i < sandboxState.connections.length; i++) {
+        const connection = sandboxState.connections[i];
+        document.getElementById(connection[0]).classList.add('connecting');
+        document.getElementById(connection[1]).classList.add('connecting');
+
+        connectorTool();
+    }
+
+    loadSpecialListeners();
+}
+
+function loadSpecialListeners() {
     draggables = document.querySelectorAll('.draggable');
     inout = document.querySelectorAll('.inout');
 
@@ -155,11 +217,8 @@ function loadSandbox() {
             });
         }
     }
+};
 
-    document.querySelector('#information').remove();
-
-    counter++;
-}
 // current element hovered
 let currentHoveredElement = "";
 
@@ -392,12 +451,12 @@ function updateToolbar() {
 
 //create blocks
 
-function createNewElement(key) {
+function createNewElement(key, number) { //number is for loading blocks with specific numbers to preserve connections. OPTIONAL
     if (blocklist[key] === undefined) { return; }
 
     let newElement = document.createElement('div');
 
-    newElement.insertAdjacentHTML('beforeend', blocklist[key].structure.replace(/draggable-default/g, `draggable-${counter}`));
+    newElement.insertAdjacentHTML('beforeend', blocklist[key].structure.replace(/draggable-default/g, `draggable-${number !== undefined ? number : counter}`));
     newElement = newElement.children[0];
 
     const parent = newElement;
