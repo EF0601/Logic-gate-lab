@@ -139,11 +139,27 @@ function loadTextSandbox() {
 
 // New sandbox saver and loader using JSON and local storage
 async function saveToLocalStorage() {
-    const fileName = await displayAlert('Enter a name for your save', true);
-    if (!fileName) {
-        displayAlert('Save cancelled. No name provided.');
+    if (!localStorage) {
+        displayAlert('Local storage is not available in your browser.');
         return;
     }
+    if (Math.round((Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0) / 1028) >= 4.5 * 1000)) {
+        displayAlert('Local storage is full. Please delete some saves. You may only have up to 5MB worth of saves. Your current total is approximately ' + Math.round((Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0) / 1028) * 100) / 100 + ' KB.');
+        return;
+    }
+    //test file name
+    const fileName = await displayAlert('Enter a name for your save', true);
+    const fileNameRegexFilter = /^[a-z]+\w+$/;
+    if (!fileNameRegexFilter.test(fileName)|| fileName.length > 50) {
+        displayAlert('Invalid file name. File names must start with a letter and can only contain letters, numbers, and underscores.');
+        return;
+    }
+    if(localStorage.getItem(fileName) !== null){
+        if (await displayAlert('A save with this name already exists. Do you want to overwrite it? Type YES to overwrite.', true) != "YES") {
+            return;
+        }
+    }
+
     const sandboxState = {
         blocks: [],
         connections: connections
@@ -165,6 +181,7 @@ async function saveToLocalStorage() {
     console.log(JSON.stringify(sandboxState));
     localStorage.setItem(fileName, JSON.stringify(sandboxState));
     displayAlert(`Sandbox state saved to local storage as "${fileName}".`);
+    openLocalStorage();
 }
 
 async function loadFromLocalStorage(filename) {
@@ -216,7 +233,7 @@ function openLocalStorage(){
             newSaveDisplay.querySelector('#localStorageDelete').onclick = async () => {
                 if (await displayAlert(`Are you sure you want to delete the save "${key}"? This action cannot be undone. Type YES to continue.`, true) == "YES") {
                     localStorage.removeItem(key);
-                    showLocalSaves();
+                    openLocalStorage();
                 }
             };
             if (Math.round((localStorage.getItem(key).length * 2)) >= 1028) {
@@ -412,8 +429,8 @@ document.addEventListener('touchend', () => {
     }
 });
 
-const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-if (regex.test(navigator.userAgent)) {
+const mobileRegex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+if (mobileRegex.test(navigator.userAgent)) {
     document.getElementById('mobileConnectorBtn').style.display = 'block';
 } else {
     document.getElementById('mobileConnectorBtn').style.display = 'none';
