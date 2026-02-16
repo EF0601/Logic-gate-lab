@@ -782,6 +782,32 @@ function updateBlocks() {
                 output1.textContent = input1.textContent !== input2.textContent ? '1' : '0';
                 output2.textContent = input1.textContent !== input2.textContent ? '1' : '0';
                 break;
+            case "adder":
+                const sum = parseInt(input1.textContent) + parseInt(input2.textContent);
+                output1.textContent = sum;
+                output2.textContent = sum;
+                break;
+            case "subtractor":
+                const difference = parseInt(input1.textContent) - parseInt(input2.textContent);
+                output1.textContent = difference;
+                output2.textContent = difference;
+                break;
+            case "multiplier":
+                const product = parseInt(input1.textContent) * parseInt(input2.textContent);
+                output1.textContent = product;
+                output2.textContent = product;
+                break;
+            case "divider":
+                if (parseInt(input2.textContent) === 0) {
+                    output1.textContent = 'Error';
+                    output2.textContent = 'Error';
+                }
+                else {
+                    const quotient = parseInt(input1.textContent) / parseInt(input2.textContent);
+                    output1.textContent = quotient;
+                    output2.textContent = quotient;
+                }
+                break;
 
             default:
                 break;
