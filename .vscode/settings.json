@@ -7,6 +7,8 @@
     "localsave",
     "Mobi",
     "nondraggable",
+    "onblur",
+    "onfocus",
     "simrate",
     "Softlocked",
     "spacebar",
