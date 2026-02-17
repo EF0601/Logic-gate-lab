@@ -317,6 +317,7 @@ function loadSpecialListeners() {
 
 // current element hovered
 let currentHoveredElement = "";
+let dragOk = true;
 
 function addListeners() {
     draggables.forEach(draggable => {
@@ -370,7 +371,7 @@ function addListeners() {
 
 //moving blocks
 document.addEventListener('mousemove', (e) => {
-    if (!activeDraggable) return;
+    if (!activeDraggable || !dragOk) return;
     activeDraggable.style.left = `${Math.round((e.clientX - offsetX) / 10) * 10}px`;
     activeDraggable.style.top = `${Math.round((e.clientY - offsetY) / 10) * 10}px`;
 
@@ -387,7 +388,7 @@ document.addEventListener('mousemove', (e) => {
 });
 // mobile support
 document.addEventListener('touchmove', (e) => {
-    if (!activeDraggable) return;
+    if (!activeDraggable || !dragOk) return;
     const touch = e.touches[0];
     activeDraggable.style.left = `${Math.round((touch.clientX - offsetX) / 10) * 10}px`;
     activeDraggable.style.top = `${Math.round((touch.clientY - offsetY) / 10) * 10}px`;
@@ -604,6 +605,45 @@ function createNewElement(key, number) { //number is for loading blocks with spe
         syncConnections();
     }
 
+    //comment resizing
+    if (newElement.querySelector(".commentResizeHandle")) {
+        const dragHandle = newElement.querySelector(".commentResizeHandle");
+        console.log(dragHandle);
+        let isResizing = false;
+        dragHandle.addEventListener('mousedown', (e) => {
+            dragOk = false;
+            isResizing = true;
+            e.preventDefault();
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (isResizing) {
+                console.log("resizing");
+                const rect = newElement.getBoundingClientRect();
+                if (e.clientX - rect.left >= 100) {
+                    newElement.style.width = `${e.clientX - rect.left}px`;
+                }
+                if (e.clientY - rect.top >= 200) {
+                    newElement.style.height = `${e.clientY - rect.top}px`;
+                }
+                newElement.childNodes.forEach(child => {
+                    if (child.classList && child.classList.contains("commentResizeHandle")) {
+                        return;
+                    }
+                    else if (child.classList && child.classList.contains("commentTextarea")) {
+                        child.style.height = `${parseInt(newElement.style.height) - 40}px`;
+                    }
+                    child.style.width = `100%`;
+                });
+            }
+        });
+        document.addEventListener('mouseup', (e) => {
+            if (isResizing) {
+                dragOk = true;
+                isResizing = false;
+            }
+        });
+    }
+
     document.getElementById('screen').appendChild(newElement);
 
     draggables = document.querySelectorAll('.draggable');
@@ -782,6 +822,32 @@ function updateBlocks() {
                 output1.textContent = input1.textContent !== input2.textContent ? '1' : '0';
                 output2.textContent = input1.textContent !== input2.textContent ? '1' : '0';
                 break;
+            case "adder":
+                const sum = parseInt(input1.textContent) + parseInt(input2.textContent);
+                output1.textContent = sum;
+                output2.textContent = sum;
+                break;
+            case "subtractor":
+                const difference = parseInt(input1.textContent) - parseInt(input2.textContent);
+                output1.textContent = difference;
+                output2.textContent = difference;
+                break;
+            case "multiplier":
+                const product = parseInt(input1.textContent) * parseInt(input2.textContent);
+                output1.textContent = product;
+                output2.textContent = product;
+                break;
+            case "divider":
+                if (parseInt(input2.textContent) === 0) {
+                    output1.textContent = 'Error';
+                    output2.textContent = 'Error';
+                }
+                else {
+                    const quotient = parseInt(input1.textContent) / parseInt(input2.textContent);
+                    output1.textContent = quotient;
+                    output2.textContent = quotient;
+                }
+                break;
 
             default:
                 break;
@@ -874,6 +940,19 @@ function updateBlocks() {
             input2.textContent = 0;
         }
     });
+
+    //extenders
+    let extenders = document.querySelectorAll('.extender');
+    extenders.forEach(extender => {
+        const extenderInouts = extender.querySelectorAll(".inout").forEach(extenderInout => {
+            if (extenderInout.classList.contains("input") || extenderInout.classList.contains("title")) {
+                return;
+            }
+            else {
+                extenderInout.textContent = extender.querySelector(".input").textContent;
+            }
+        })
+    })
 }
 
 //time loop

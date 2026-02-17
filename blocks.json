@@ -47,7 +47,7 @@
   "j": {
     "title": "Comment",
     "type": "Special",
-    "structure": "<div class=\"draggable special comment j\" style=\"top: 200px; left: 200px; height: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout title\">comment block</div><textarea style=\"width: 100px; height: 80%; resize: none; overflow: scroll;\" onfocus=\"listenInput = false\" onblur=\"listenInput = true\"></textarea></div>"
+    "structure": "<div class=\"draggable special comment j\" style=\"top: 200px; left: 200px; height: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout title\" style=\"height: 40px\">comment block</div><textarea class=\"commentTextarea\" style=\"width: 100px; height: 160px; resize: none; overflow: scroll;\" onfocus=\"listenInput = false\" onblur=\"listenInput = true\"></textarea><div class=\"commentResizeHandle\"></div></div>"
   },
   "k": {
     "title": "Relay",
@@ -83,5 +83,30 @@
     "title": "Counter",
     "type": "Decimal",
     "structure": "<div class=\"draggable decimal counter r\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout any\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">counter</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+  },
+  "+": {
+    "title": "Adder",
+    "type": "Gate",
+    "structure": "<div class=\"draggable gate adder +\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">adder</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+  },
+  "-": {
+    "title": "Subtractor",
+    "type": "Gate",
+    "structure": "<div class=\"draggable gate subtractor -\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">subtractor</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+  },
+  "*": {
+    "title": "Multiplier",
+    "type": "Gate",
+    "structure": "<div class=\"draggable gate multiplier *\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">multiplier</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+  },
+  "/": {
+    "title": "Divider",
+    "type": "Gate",
+    "structure": "<div class=\"draggable gate divider /\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">divider</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+  },
+  "~": {
+    "title": "Extender",
+    "type": "Special",
+    "structure": "<div class=\"draggable special extender ~\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout input any\" id=\"draggable-default-input-1\">0</div><div class=\"inout title\">extender</div><div class=\"inout any\" id=\"draggable-default-output-1\">0</div><div class=\"inout any\" id=\"draggable-default-output-2\">0</div><div class=\"inout any\" id=\"draggable-default-output-3\">0</div><div class=\"inout any\" id=\"draggable-default-output-4\">0</div><div class=\"inout any\" id=\"draggable-default-output-5\" style=\"border: medium;\">0</div></div>"
   }
 }

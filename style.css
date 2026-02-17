@@ -364,3 +364,11 @@ table#localstorageSavesContainer{
   border-collapse: collapse;
   width: 100%;
 }
+.commentResizeHandle{
+  cursor: nwse-resize;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
