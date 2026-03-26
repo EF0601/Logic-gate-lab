@@ -499,6 +499,10 @@ document.addEventListener('keyup', (e) => {
 
 // shortcuts
 function addShortcut(block, caller) {
+    if (caller.classList.contains("iconImage")){
+        caller = caller.parentElement
+    }
+
     if (caller.style.backgroundColor != "green") {
         caller.style.backgroundColor = "green";
         favoriteBlocks.push(block);
@@ -510,7 +514,7 @@ function addShortcut(block, caller) {
         }
     }
     else {
-        caller.style.backgroundColor = "white";
+        caller.style.backgroundColor = "rgb(248, 242, 242)";
         favoriteBlocks.splice(favoriteBlocks.indexOf(block), 1);
     }
     setTimeout(updateToolbar, 10);
