@@ -58,11 +58,11 @@ function displayAlert(text, input) {
 /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
 
 onmousemove = function (e) {
-    if (e.clientX < 70) {
-        document.getElementById("sidebar").style.width = "250px";
+    if (e.clientX < 300) {
+        document.getElementById("sidebar").style.opacity = 1;
     }
     else if (e.clientX > 300) {
-        document.getElementById("sidebar").style.width = "0";
+        document.getElementById("sidebar").style.opacity = 0;
     }
 };
 

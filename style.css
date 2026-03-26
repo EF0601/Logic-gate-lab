@@ -3,19 +3,32 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+* {
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
 body {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
   padding: 0;
   height: 100vh;
   font-family: 'Courier New', Courier, monospace;
-  background-color: black;
+  background-color: #f0f0f0;
+  padding: 10px;
 }
 #screen {
   margin: 0;
+  flex: 1;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 90vh;
   background: #f0f0f0;
   font-family: 'Courier New', Courier, monospace;
 
@@ -29,7 +42,9 @@ body {
   justify-content: space-between;
   color: white;
   background-color: rgb(84, 56, 56);
-  padding: 5px;
+  padding: 5px 10px 5px 10px;
+  border-radius: 5vh;
+  align-items: center;
 }
 
 .draggable {
@@ -61,13 +76,15 @@ body {
 
 dialog {
   z-index: 100;
-  height: 50vh;
-  width: 50%;
-  overflow: scroll;
+  height: 75vh;
+  width: 95%;
+  overflow-y: scroll;
+  overflow-x: hidden;
   margin: auto;
-  margin-top: 20vh;
+  margin-top: 10vh;
   padding: 20px;
   display: none;
+  border-radius: 20px;
 }
 
 .touchSensor,
@@ -85,10 +102,12 @@ dialog button {
   margin-left: 5px;
   font-family: 'Courier New', Courier, monospace;
   padding: 5px;
+  border-radius: 10px;
+  line-break: anywhere;
 }
 
 dialog button:hover {
-  background-color: yellow;
+  text-decoration: underline;
 }
 
 #alertBox {
@@ -110,8 +129,10 @@ dialog button:hover {
 }
 
 .gridItem {
+  background-color: rgb(248, 242, 242);
   text-align: center;
-  padding: 1px;
+  padding: 10px;
+  border-radius: 10px;
   width: 100%;
   height: 100%;
   display: flex;
@@ -177,6 +198,8 @@ textarea {
   background-color: rgb(84, 56, 56);
   font-family: 'Courier new';
   height: 5vh;
+  border-radius: 5vh;;
+  align-items: center;
 }
 .topBar button {
   float: left;
@@ -218,6 +241,7 @@ textarea {
   min-width: 160px;
   z-index: 1;
   top: 5vh;
+  border-radius: 10px;
 }
 
 .dropdown-content button {
@@ -229,7 +253,6 @@ textarea {
   display: block;
   text-align: left;
   width: 100%;
-  border-radius: 0;
   font-family: 'Courier New', Courier, monospace;
   background-color: rgb(109, 76, 76);
   color: white;
@@ -262,6 +285,12 @@ textarea {
   .dropdown-content {
     top: 10vh;
   }
+  *{
+    scrollbar-width: auto;
+  }
+  ::-webkit-scrollbar {
+    display: block;
+  }
 }
 
 .binaryInputContainer > div,
@@ -285,26 +314,28 @@ textarea {
 
 #sidebar{
   height: 80%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
+  width: 250px; 
   position: fixed; /* Stay in place */
   z-index: 1; /* Stay on top */
   top: 10%;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.8); /* Black*/
+  left: 10px;
+  background-color: rgb(109, 76, 76); /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
-  overflow-y: scroll;
   padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-  border-radius: 0 5px 5px 0;
+
+  border-radius: 20px;
   padding: 10px;
   color: white;
   font-family: 'Courier New', Courier, monospace;
+
+  transition: opacity 0.5s;
 }
 
 #toolbar > .tool{
   margin: 5px;
   background-color: rgb(84, 56, 56);
   padding: 5px;
+  border-radius: 10px;
 }
 
 .toolActionsContainer{
@@ -316,7 +347,7 @@ textarea {
   margin: 2px;
   width: 50%;
   background-color: rgb(109, 76, 76);
-  border-radius: 0;
+  border-radius: 10px;
   color: white;
   font-family: 'Courier New', Courier, monospace;
   border: none;
@@ -329,16 +360,17 @@ textarea {
 #sidebarMenuBtn{
   width: 100%;
   margin-bottom: 10px;
-  background-color: rgb(109, 76, 76);
+  background-color: rgb(84, 56, 56);
   border: none;
   color: white;
   padding: 10px;
   font-family: 'Courier New', Courier, monospace;
   cursor: pointer;
+  border-radius: 10px;
 }
 
 #sidebarMenuBtn:hover{
-  background-color: rgb(84, 56, 56);
+  text-decoration: underline;
 }
 
 #alertBoxInput{
