@@ -35,7 +35,7 @@
 		<h3>Connect tool</h3>
 		Press the spacebar to enable connect tool. Then, select two objects to connect. You can also delete an existing connection by doing the same thing, holding spacebar and selecting two objects that are already connected.
 		<h2>Credits</h2>
-		<p>Created by <a href="">EF0601</a>. On December 31st, 2024</p>
+		<p>Created by <a href="https://github.com/EF0601">EF0601</a>. On December 31st, 2024</p>
 		<h2>Wiki</h2>
 		<p>Work in progress...</p>
 		<h2>Updates</h2>
@@ -43,7 +43,7 @@
 		<h3>Version 0.6.0-beta</h3>
 		<p><i>1/29/2026</i> Almost a year after the last update, this version brings two more blocks: the pulser and the counter. There were several UI improvements and various bug fixes. The top bar should now be easier to access. The toolbar was also added, allowing quick access to up to 10 tools for convenience. Finally, users can now find the app as an executable. Check this out in the releases section.</p>
 		<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
-			<button style="width: 90vh" onclick="document.getElementById('menu').style.display = 'none'">Close</button>
+			<button style="width: 100%" onclick="document.getElementById('menu').style.display = 'none'">Close</button>
 		</div>
 	</dialog>
 	<dialog id="alertBox">
@@ -63,16 +63,18 @@
 				<th>Name</th>
 				<th>Size</th>
 				<th>Actions</th>
+				<th>Notes</th>
 			</tr>
 			<tr class="localStorageSave" id="localsaveDisplayTemplate">
 				<td id="localStorageSaveName">Save 1</td>
 				<td id="localStorageSaveSize">Size: 0 bytes</td>
 				<td><button id="localStorageLoad">Load</button><button id="localStorageDelete">Delete</button></td>
+				<td id="localStorageSpecialData"></td>
 			</tr>
 			<!-- Dynamically filled with local storage saves -->
 		</table>
 		<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
-			<button style="width: 90vh" onclick="document.getElementById('localstorageSavesDialog').style.display = 'none'">Close</button>
+			<button style="width: 100%" onclick="document.getElementById('localstorageSavesDialog').style.display = 'none'">Close</button>
 		</div>
 	</dialog>
 
@@ -86,7 +88,7 @@
 				<button>
 					<textarea name="loader-input" rows="10" style="resize: none; overflow: scroll" onfocus="listenInput = false" onblur="listenInput = true" id="loadSandboxInput" placeholder="Type file data here to load..."></textarea>
 				</button>
-				<button onclick="saveToLocalStorage()">Save to localstorage...</button>
+				<button onclick="saveToLocalStorage('User')">Save to localstorage...</button>
 				<button onclick="openLocalStorage()">Open localstorage...</button>
 			</div>
 		</div>

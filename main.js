@@ -44,7 +44,6 @@ function displayAlert(text, input) {
         const submitAlert = () => {
             alertBox.style.display = 'none';
             alertBoxSubmit.removeEventListener('click', submitAlert);
-            console.log(alertBoxInput.value);
             resolve(alertBoxInput.value);
             listenInput = true;
         };
@@ -68,7 +67,7 @@ onmousemove = function (e) {
 
 function loadingComplete() {
     populateMenu();
-    displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
+    loadFromLocalStorage("autosave");
 }
 
 //create buttons for each block in the blocklist in menu
@@ -138,7 +137,7 @@ function loadTextSandbox() {
 }
 
 // New sandbox saver and loader using JSON and local storage
-async function saveToLocalStorage() {
+async function saveToLocalStorage(additionalNotes, force, setName) { //additional notes provides additional data for the save file. If param "force" is true, the file will be made regardless of any format or duplication error. If a name has been predetermined, setName should represent that name 
     if (!localStorage) {
         displayAlert('Local storage is not available in your browser.');
         return;
@@ -148,13 +147,13 @@ async function saveToLocalStorage() {
         return;
     }
     //test file name
-    const fileName = await displayAlert('Enter a name for your save', true);
+    const fileName = setName ?? await displayAlert('Enter a name for your save', true);
     const fileNameRegexFilter = /^[a-z]+\w+$/;
-    if (!fileNameRegexFilter.test(fileName)|| fileName.length > 50) {
-        displayAlert('Invalid file name. File names must start with a letter and can only contain letters, numbers, and underscores.');
+    if ((!fileNameRegexFilter.test(fileName)|| fileName.length > 50 || fileName === "autosave") && !force) {
+        displayAlert('Invalid file name. File names must start with a letter and can only contain letters, numbers, and underscores. Some names are reserved for system files.');
         return;
     }
-    if(localStorage.getItem(fileName) !== null){
+    if(localStorage.getItem(fileName) !== null && !force){
         if (await displayAlert('A save with this name already exists. Do you want to overwrite it? Type YES to overwrite.', true) != "YES") {
             return;
         }
@@ -162,9 +161,9 @@ async function saveToLocalStorage() {
 
     const sandboxState = {
         blocks: [],
-        connections: connections
+        connections: connections,
+        specialData: additionalNotes,
     };
-    console.log(draggables);
     draggables.forEach(draggable => {
         if (!draggable.classList.contains("trash")) {
             const blockId = draggable.classList[draggable.classList.length - 1]; // Assuming the last class is the block type
@@ -178,16 +177,28 @@ async function saveToLocalStorage() {
             }
         }
     });
-    console.log(JSON.stringify(sandboxState));
     localStorage.setItem(fileName, JSON.stringify(sandboxState));
+    
+    if(force){return}
+
     displayAlert(`Sandbox state saved to local storage as "${fileName}".`);
     openLocalStorage();
 }
 
 async function loadFromLocalStorage(filename) {
-    if (await displayAlert('Loading a sandbox will overwrite your current sandbox. Do you want to continue? Type YES to continue.', true) == "YES") {
+    if (!JSON.parse(localStorage.getItem(filename))){return}
+
+    let confirmLoad;
+
+    if(filename === "autosave"){
+        confirmLoad = await displayAlert('LGL has detected a past autosave file, allowing you to begin from where you left off. Do you want to continue? Type YES to continue.', true) == "YES"
+    }
+    else{
+        confirmLoad = await displayAlert('Loading a sandbox will overwrite your current sandbox. Do you want to continue? Type YES to continue.', true) == "YES"
+    }
+
+    if (confirmLoad) {
         const sandboxState = JSON.parse(localStorage.getItem(filename));
-        console.log(sandboxState);
 
         clearAllDraggables();
         clearAllConnections();
@@ -243,6 +254,8 @@ function openLocalStorage(){
                 newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round((localStorage.getItem(key).length * 2))} Bytes`;
             }
             document.getElementById('localstorageSavesContainer').appendChild(newSaveDisplay);
+
+            newSaveDisplay.querySelector('#localStorageSpecialData').textContent = JSON.parse(localStorage.getItem(key))?.specialData;
         }
     }
     const total = localsaveDisplayTemplate.cloneNode(true)
@@ -261,6 +274,10 @@ function openLocalStorage(){
     document.getElementById('localstorageSavesDialog').style.display = 'block';
 }
 
+//autosave mechanism
+document.addEventListener("visibilitychange", () => {
+  saveToLocalStorage("System made", true, "autosave");
+});
 
 function loadSpecialListeners() {
     draggables = document.querySelectorAll('.draggable');
@@ -500,7 +517,7 @@ document.addEventListener('keyup', (e) => {
 // shortcuts
 function addShortcut(block, caller) {
     if (caller.classList.contains("iconImage")){
-        caller = caller.parentElement
+        caller = caller.parentElement //band-aid solution for #6
     }
 
     if (caller.style.backgroundColor != "green") {
@@ -583,7 +600,6 @@ function createNewElement(key, number) { //number is for loading blocks with spe
 
     //decimal value
     if (newElement.classList.contains('decimalValue')) {
-        console.log(newElement);
         newElement.querySelector('input').addEventListener('input', (e) => {
             parent.querySelector(`#${parent.id}-output-1`).textContent = e.target.value;
             parent.querySelector(`#${parent.id}-output-2`).textContent = e.target.value;
@@ -612,7 +628,6 @@ function createNewElement(key, number) { //number is for loading blocks with spe
     //comment resizing
     if (newElement.querySelector(".commentResizeHandle")) {
         const dragHandle = newElement.querySelector(".commentResizeHandle");
-        console.log(dragHandle);
         let isResizing = false;
         dragHandle.addEventListener('mousedown', (e) => {
             dragOk = false;
@@ -621,7 +636,6 @@ function createNewElement(key, number) { //number is for loading blocks with spe
         });
         document.addEventListener('mousemove', (e) => {
             if (isResizing) {
-                console.log("resizing");
                 const rect = newElement.getBoundingClientRect();
                 if (e.clientX - rect.left >= 100) {
                     newElement.style.width = `${e.clientX - rect.left}px`;
