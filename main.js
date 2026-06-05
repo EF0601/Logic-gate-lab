@@ -20,12 +20,14 @@ fetch('./blocks.json')
     });
 
 let simrate = 250;
+let paused = false;
 
 //display alert box
 const alertBox = document.getElementById('alertBox');
 const alertText = document.getElementById('alertText');
 const alertBoxInput = document.getElementById('alertBoxInput');
 const alertBoxSubmit = document.getElementById('alertSubmitBtn');
+const alertBoxCancel = document.getElementById('alertCloseBtn');
 function displayAlert(text, input) {
     listenInput = false;
     alertBox.style.display = 'block';
@@ -44,10 +46,20 @@ function displayAlert(text, input) {
         const submitAlert = () => {
             alertBox.style.display = 'none';
             alertBoxSubmit.removeEventListener('click', submitAlert);
+            alertBoxCancel.removeEventListener('click', cancelAlert);
             resolve(alertBoxInput.value);
             listenInput = true;
         };
+
+        const cancelAlert = () => {
+            alertBox.style.display = 'none';
+            alertBoxSubmit.removeEventListener('click', submitAlert);
+            alertBoxCancel.removeEventListener('click', cancelAlert);
+            resolve(null);
+            listenInput = true;
+        };
         alertBoxSubmit.addEventListener('click', submitAlert);
+        alertBoxCancel.addEventListener('click', cancelAlert);
     });
 
 
@@ -936,7 +948,7 @@ function updateBlocks() {
             output1.textContent = output1.textContent === '1' ? '0' : '1';
             output2.textContent = output2.textContent === '1' ? '0' : '1';
 
-            document.getElementById(`${pulser.id}-input-1`).textContent = '0';
+            //document.getElementById(`${pulser.id}-input-1`).textContent = '0';
         }
     });
 
@@ -976,17 +988,18 @@ function updateBlocks() {
 }
 
 //time loop
-
 function runSimulation() {
-    syncConnections();
-    addListeners();
-    updateBlocks();
+    if(!paused){
+        syncConnections();
+        addListeners();
+        updateBlocks();
 
-    let lights = document.querySelectorAll('.lightPart');
-    lights.forEach(light => {
-        const input = document.getElementById(`${light.parentElement.id}-input-1`);
-        light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
-    });
+        let lights = document.querySelectorAll('.lightPart');
+        lights.forEach(light => {
+            const input = document.getElementById(`${light.parentElement.id}-input-1`);
+            light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
+        });
+    }
     setTimeout(clock, simrate);
 }
 

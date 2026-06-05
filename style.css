@@ -240,7 +240,7 @@ textarea {
   background-color: rgb(109, 76, 76);
   min-width: 160px;
   z-index: 1;
-  top: 5vh;
+  top: add(5vh, 10px);
   border-radius: 10px;
 }
 
