@@ -84,6 +84,7 @@ function populateMenu() {
         newBlockBtn.querySelector('.gridItemButton').onclick = () => {
             createNewElement(key);
         }
+        newBlockBtn.querySelector('.iconButton').id = "favoriteBtn-" + key;
         newBlockBtn.querySelector('.iconButton').onclick = (e) => {
             addShortcut(key, e.target);
         };
@@ -552,6 +553,7 @@ function updateToolbar() {
         newTool.querySelector('#toolDisplayTemplateTrash').onclick = (e) => {
             favoriteBlocks.splice(favoriteBlocks.indexOf(favBlock), 1);
             e.target.parentElement.parentElement.remove();
+            document.querySelector(`#favoriteBtn-${favBlock}`).style.backgroundColor = "rgb(248, 242, 242)";
         };
         newTool.style.display = 'block';
         newTool.id = `toolDisplay-${favBlock}`;
