@@ -19,8 +19,15 @@ fetch('./blocks.json')
         console.error('Failed to fetch data:', error)
     });
 
-let simrate = 250;
 let paused = false;
+let settings = {
+    simrate: 250,
+    autosave: true,
+    saveFrames: true,
+    autoToolbar: false,
+    showFrameCount: false,
+}
+let frame = 0;
 
 //display alert box
 const alertBox = document.getElementById('alertBox');
@@ -79,6 +86,7 @@ onmousemove = function (e) {
 
 function loadingComplete() {
     populateMenu();
+    clearFrameSaves();
     loadFromLocalStorage("autosave");
 }
 
@@ -183,10 +191,10 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
             const blockNumber = draggable.id.replace('draggable-', '');
             if (blockId === "j") {
                 //This block is a comment, so push the text content as well
-                sandboxState.blocks.push([blockId, blockNumber, draggable.querySelector('textarea').value]);
+                sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top, draggable.querySelector('textarea').value]);
             }
             else{
-                sandboxState.blocks.push([blockId, blockNumber]);
+                sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top]);
             }
         }
     });
@@ -198,19 +206,20 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
     openLocalStorage();
 }
 
-async function loadFromLocalStorage(filename) {
+async function loadFromLocalStorage(filename, force) { //if force is TRUE, the file will be loaded without user confirmation
     if (!JSON.parse(localStorage.getItem(filename))){return}
-
+    
     let confirmLoad;
-
-    if(filename === "autosave"){
-        confirmLoad = await displayAlert('LGL has detected a past autosave file, allowing you to begin from where you left off. Do you want to continue? Type YES to continue.', true) == "YES"
+    if (!force){
+        if(filename === "autosave"){
+            confirmLoad = await displayAlert('LGL has detected a past autosave file, allowing you to begin from where you left off. Do you want to continue? Type YES to continue.', true) == "YES"
+        }
+        else{
+            confirmLoad = await displayAlert('Loading a sandbox will overwrite your current sandbox. Do you want to continue? Type YES to continue.', true) == "YES"
+        }
     }
-    else{
-        confirmLoad = await displayAlert('Loading a sandbox will overwrite your current sandbox. Do you want to continue? Type YES to continue.', true) == "YES"
-    }
 
-    if (confirmLoad) {
+    if (confirmLoad || force) {
         const sandboxState = JSON.parse(localStorage.getItem(filename));
 
         clearAllDraggables();
@@ -220,7 +229,13 @@ async function loadFromLocalStorage(filename) {
             createNewElement(block[0], block[1]);
             if (block[0] === "j") {
                 //this is a comment. The contents must be applied as well.
-                document.getElementById(`draggable-${block[1]}`).querySelector('textarea').value = block[2];
+                const commentText = block.length > 4 ? block[4] : block[2];
+                document.getElementById(`draggable-${block[1]}`).querySelector('textarea').value = commentText;
+            }
+            // Set the position of the block
+            if (block.length > 3) {
+                document.getElementById(`draggable-${block[1]}`).style.left = block[2];
+                document.getElementById(`draggable-${block[1]}`).style.top = block[3];
             }
         });
         for (let i = 0; i < sandboxState.connections.length; i++) {
@@ -289,8 +304,20 @@ function openLocalStorage(){
 
 //autosave mechanism
 document.addEventListener("visibilitychange", () => {
-  saveToLocalStorage("System made", true, "autosave");
+    if (document.visibilityState === 'hidden' && settings.autosave) {
+        saveToLocalStorage("autosave", true, "autosave");
+    }
 });
+
+//settings
+function updateSettings(){
+    if(settings.showFrameCount){
+        document.getElementById("frameCountDisplay").style.display = "block";
+    }
+    else{
+        document.getElementById("frameCountDisplay").style.display = "none";
+    }
+}
 
 function loadSpecialListeners() {
     draggables = document.querySelectorAll('.draggable');
@@ -985,25 +1012,91 @@ function updateBlocks() {
             }
         })
     })
+
+    //lights
+    let lights = document.querySelectorAll('.lightPart');
+    lights.forEach(light => {
+        const input = document.getElementById(`${light.parentElement.id}-input-1`);
+        light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
+    });
 }
 
 //time loop
 function runSimulation() {
     if(!paused){
+        updateBlocks();
         syncConnections();
         addListeners();
-        updateBlocks();
+        frame++;
 
-        let lights = document.querySelectorAll('.lightPart');
-        lights.forEach(light => {
-            const input = document.getElementById(`${light.parentElement.id}-input-1`);
-            light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
-        });
+        saveFrames();
+        if(settings.showFrameCount){
+            document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
+        }
     }
-    setTimeout(clock, simrate);
+    setTimeout(clock, settings.simrate);
 }
 
 function clock() {
-    setTimeout(runSimulation, simrate);
+    setTimeout(runSimulation, settings.simrate);
 }
 clock();
+
+function saveFrames(){
+    if(settings.saveFrames){
+        if(localStorage.getItem(`frame-${frame-10}`) != undefined){
+            localStorage.removeItem(`frame-${frame-10}`);
+        }
+        saveToLocalStorage("frame", true, `frame-${frame}`);
+    }
+}
+
+function forwardFrame(){
+    if(!paused){
+        displayAlert("You can only step frames while paused. Go to debug -> pause.");
+    }
+    else {
+        frame++;
+        loadFromLocalStorage(`frame-${frame}`, true);
+        syncConnections();
+        addListeners();
+        updateBlocks();
+        saveFrames();
+        if(settings.showFrameCount){
+            document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
+        }
+    }
+}
+function backwardFrame(){
+    if(!paused){
+        displayAlert("You can only step frames while paused. Go to debug -> pause.");
+    }
+    else {
+        if(frame-1 <= 0){
+            displayAlert("No more frames to load!");
+        }
+        else {
+            frame--;
+            loadFromLocalStorage(`frame-${frame}`, true);
+            syncConnections();
+            addListeners();
+            updateBlocks();
+            saveFrames();
+            if(settings.showFrameCount){
+                document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
+            }
+        }   
+    }
+}
+function clearFrameSaves(){
+    const previousSaveFrameSetting = settings.saveFrames;
+    settings.saveFrames = false;
+    for(let k = 0; k < 5; k++){
+        for(let i = 0; i < localStorage.length; i++){
+            if(localStorage.key(i).startsWith("frame-")){
+                localStorage.removeItem(localStorage.key(i));
+            }
+        }
+    }
+    settings.saveFrames = previousSaveFrameSetting;
+}

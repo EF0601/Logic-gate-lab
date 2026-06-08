@@ -4,6 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="style.css" />
+		<link rel="icon" href="data:,">
 		<title>LGL: Logic Gate Lab</title>
 	</head>
 
@@ -44,6 +45,40 @@
 		<p><i>1/29/2026</i> Almost a year after the last update, this version brings two more blocks: the pulser and the counter. There were several UI improvements and various bug fixes. The top bar should now be easier to access. The toolbar was also added, allowing quick access to up to 10 tools for convenience. Finally, users can now find the app as an executable. Check this out in the releases section.</p>
 		<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
 			<button style="width: 100%" onclick="document.getElementById('menu').style.display = 'none'">Close</button>
+		</div>
+	</dialog>
+	<dialog id="settings">
+		<h1>Settings</h1>
+		<h2>Simrate</h2>
+		<p>Set the simulation rate, measured in milliseconds. This is the amount of time between the updating of connections and block logics. Lower values may require more processing resources.<i>Default: 500ms</i> </p>
+		<input type="number" value="500">ms
+		<h2>Autosave</h2>
+		<p>Choose whether the program should automatically locally save the sandbox upon tab focus loss. <i>Default: true</i></p>
+		<select name="" id="autosaveSettingChoice">
+			<option value="true">true</option>
+			<option value="false">false</option>
+		</select>
+		<h2>Save frames</h2>
+		<p>Choose whether the program should locally save the 10 most recent frames for debug. <i>Default: true</i></p>
+		<select name="" id="saveFramesSettingChoice">
+			<option value="true">true</option>
+			<option value="false">false</option>
+		</select>
+		<h2>Automatically open side toolbar</h2>
+		<p>Choose whether hovering near the left of the screen should open the side toolbar. If this settings is disabled, the side toolbar can be opened with the LShift key. <i>Default: false</i></p>
+		<select name="" id="saveFramesSettingChoice">
+			<option value="true">true</option>
+			<option value="false" selected>false</option>
+		</select>
+		<h2>Show frame count</h2>
+		<p>Choose whether you'd like to have the frame count shown in the debug tab. <i>Default: false</i></p>
+		<select name="" id="saveFramesSettingChoice">
+			<option value="true">true</option>
+			<option value="false" selected>false</option>
+		</select>
+		<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
+			<button style="width: 100%" onclick="">Update</button>
+			<button style="width: 100%" onclick="document.getElementById('settings').style.display = 'none'">Close</button>
 		</div>
 	</dialog>
 	<dialog id="alertBox">
@@ -96,7 +131,7 @@
 			<button class="dropbtn">Edit</button>
 			<div class="dropdown-content">
 				<button onclick="clearAllConnections()">Remove all connections</button>
-				<button onclick="simrate = document.getElementById('simrateChanger').value / 2">Set <input type="number" id="simrateChanger" value="500" /> ms as sim rate</button>
+				<button onclick="settings.simrate = document.getElementById('simrateChanger').value / 2">Set <input type="number" id="simrateChanger" value="500" /> ms as sim rate</button>
 			</div>
 		</div>
 		<div class="dropdown">
@@ -104,16 +139,17 @@
 			<div class="dropdown-content">
 				<button onclick="document.getElementById('menu').style.display = 'block'">Menu</button>
 				<button onclick="window.open('https://github.com/EF0601/Logic-gate-lab/wiki', '_blank')">Wiki</button>
-				<button>Settings</button>
+				<button onclick="document.getElementById('settings').style.display = 'block'">Settings</button>
 			</div>
 		</div>
 		<div class="dropdown">
 			<button class="dropbtn">Debug</button>
 			<div class="dropdown-content">
-				<button onclick="">Move forward 1 frame</button>
-				<button onclick="">Move backward 1 frame</button>
+				<button onclick="forwardFrame()">Move forward 1 frame</button>
+				<button onclick="backwardFrame()">Move backward 1 frame</button>
 				<button onclick="paused = true">Pause</button>
 				<button onclick="paused = false">Go</button>
+				<button id="frameCountDisplay">Frame: 0</button>
 			</div>
 		</div>
 		<!-- <div class="dropdown">

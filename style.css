@@ -68,6 +68,9 @@ body {
   height: 20%;
   border-bottom: 1px solid black;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .inout:hover {
@@ -174,8 +177,8 @@ dialog button:hover {
   width: 100px;
   height: 100px;
   position: absolute;
-  bottom: 7vh;
-  left: 10px;
+  top: 7vh;
+  right: 10px;
   display: flex;
   align-items: center;
   text-align: center;
@@ -194,6 +197,7 @@ textarea {
 
 /* the menu bar */
 #topBar {
+  display: flex;
   overflow: hidden;
   background-color: rgb(84, 56, 56);
   font-family: 'Courier new';
