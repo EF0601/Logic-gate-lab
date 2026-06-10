@@ -51,7 +51,7 @@
 		<h1>Settings</h1>
 		<h2>Simrate</h2>
 		<p>Set the simulation rate, measured in milliseconds. This is the amount of time between the updating of connections and block logics. Lower values may require more processing resources.<i>Default: 500ms</i> </p>
-		<input type="number" value="500">ms
+		<input type="number" value="500" id="simrateSettingInput">ms
 		<h2>Autosave</h2>
 		<p>Choose whether the program should automatically locally save the sandbox upon tab focus loss. <i>Default: true</i></p>
 		<select name="" id="autosaveSettingChoice">
@@ -66,18 +66,18 @@
 		</select>
 		<h2>Automatically open side toolbar</h2>
 		<p>Choose whether hovering near the left of the screen should open the side toolbar. If this settings is disabled, the side toolbar can be opened with the LShift key. <i>Default: false</i></p>
-		<select name="" id="saveFramesSettingChoice">
+		<select name="" id="autoOpenToolbarSettingChoice">
 			<option value="true">true</option>
 			<option value="false" selected>false</option>
 		</select>
 		<h2>Show frame count</h2>
 		<p>Choose whether you'd like to have the frame count shown in the debug tab. <i>Default: false</i></p>
-		<select name="" id="saveFramesSettingChoice">
+		<select name="" id="showFramesSettingChoice">
 			<option value="true">true</option>
 			<option value="false" selected>false</option>
 		</select>
 		<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
-			<button style="width: 100%" onclick="">Update</button>
+			<button style="width: 100%" onclick="updateSettings()">Update</button>
 			<button style="width: 100%" onclick="document.getElementById('settings').style.display = 'none'">Close</button>
 		</div>
 	</dialog>
@@ -88,7 +88,6 @@
 		<div class="container" style="display: flex; justify-content: center">
 			<button id="alertCloseBtn" onclick="document.getElementById('alertBox').style.display = 'none'">Close</button>
 			<button id="alertSubmitBtn" style="display: none">Submit</button>
-			<!--Forms only-->
 		</div>
 	</dialog>
 	<dialog id="localstorageSavesDialog" style="display: none; z-index: 1">

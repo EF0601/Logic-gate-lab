@@ -72,11 +72,26 @@ function displayAlert(text, input) {
 
 }
 
+function updateSettings(){
+    settings.simrate = document.getElementById("simrateSettingInput").value;
+    settings.autosave = document.getElementById("autosaveSettingChoice").value === "true";
+    settings.saveFrames = document.getElementById("saveFramesSettingChoice").value === "true";
+    settings.autoToolbar = document.getElementById("autoOpenToolbarSettingChoice").value === "true";
+    settings.showFrameCount = document.getElementById("showFramesSettingChoice").value === "true";
+
+    if(settings.showFrameCount){
+        document.getElementById("frameCountDisplay").style.display = "block";
+    }
+    else{
+        document.getElementById("frameCountDisplay").style.display = "none";
+    }
+}
+
 // sidebar
 /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
 
 onmousemove = function (e) {
-    if (e.clientX < 300) {
+    if (e.clientX < 300 && settings.autoToolbar) {
         document.getElementById("sidebar").style.opacity = 1;
     }
     else if (e.clientX > 300) {
@@ -87,6 +102,7 @@ onmousemove = function (e) {
 function loadingComplete() {
     populateMenu();
     clearFrameSaves();
+    updateSettings();
     loadFromLocalStorage("autosave");
 }
 
@@ -309,16 +325,6 @@ document.addEventListener("visibilitychange", () => {
     }
 });
 
-//settings
-function updateSettings(){
-    if(settings.showFrameCount){
-        document.getElementById("frameCountDisplay").style.display = "block";
-    }
-    else{
-        document.getElementById("frameCountDisplay").style.display = "none";
-    }
-}
-
 function loadSpecialListeners() {
     draggables = document.querySelectorAll('.draggable');
     inout = document.querySelectorAll('.inout');
@@ -537,6 +543,16 @@ document.addEventListener('keydown', (e) => {
             }
             else {
                 document.getElementById('menu').style.display = 'block';
+            }
+        }
+        
+        //open toolbar
+        if (e.key === "Shift"){
+            if(document.getElementById("sidebar").style.opacity === 1){
+                document.getElementById("sidebar").style.opacity = 0;
+            }
+            else{
+                document.getElementById("sidebar").style.opacity = 1;
             }
         }
 
