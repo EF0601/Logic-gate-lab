@@ -1035,6 +1035,61 @@ function updateBlocks() {
         const input = document.getElementById(`${light.parentElement.id}-input-1`);
         light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
     });
+
+    //equalities
+    const equalGates = document.querySelectorAll('equal-operator');
+    equalGates.forEach(gate => {
+        const input1 = String(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = String(document.getElementById(`${gate.id}-input-2`).textContent);
+        const output1 = document.getElementById(`${gate.id}-output-1`);
+        const output2 = document.getElementById(`${gate.id}-output-2`);
+
+        if(input1 === input2){
+            output1.textContent = "1";
+            output2.textContent = "1";
+        }
+    
+        else if(input1 !== input2){
+            output1.textContent = "0";
+            output2.textContent = "0";
+        }
+    })
+
+    const greaterGates = document.querySelectorAll('greater-operator');
+    greaterGates.forEach(gate => {
+        const input1 = String(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = String(document.getElementById(`${gate.id}-input-2`).textContent);
+        const output1 = document.getElementById(`${gate.id}-output-1`);
+        const output2 = document.getElementById(`${gate.id}-output-2`);
+
+        if(input1 === input2){
+            output1.textContent = "1";
+            output2.textContent = "1";
+        }
+    
+        else if(input1 !== input2){
+            output1.textContent = "0";
+            output2.textContent = "0";
+        }
+    })
+
+    const lesserGates = document.querySelectorAll('lesser-operator');
+    lesserGates.forEach(gate => {
+        const input1 = String(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = String(document.getElementById(`${gate.id}-input-2`).textContent);
+        const output1 = document.getElementById(`${gate.id}-output-1`);
+        const output2 = document.getElementById(`${gate.id}-output-2`);
+
+        if(input1 === input2){
+            output1.textContent = "1";
+            output2.textContent = "1";
+        }
+    
+        else if(input1 !== input2){
+            output1.textContent = "0";
+            output2.textContent = "0";
+        }
+    })
 }
 
 //time loop
