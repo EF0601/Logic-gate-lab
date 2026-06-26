@@ -174,7 +174,7 @@ function loadTextSandbox() {
 }
 
 // New sandbox saver and loader using JSON and local storage
-async function saveToLocalStorage(additionalNotes, force, setName) { //additional notes provides additional data for the save file. If param "force" is true, the file will be made regardless of any format or duplication error. If a name has been predetermined, setName should represent that name 
+async function saveToLocalStorage(additionalNotes, force, setName) { //additional notes provides additional data for the save file. If param "force" is true, the file will be made regardless of any format or duplication error. If a name has been predetermined, setName should represent that name
     if (!localStorage) {
         displayAlert('Local storage is not available in your browser.');
         return;
@@ -215,7 +215,7 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
         }
     });
     localStorage.setItem(fileName, JSON.stringify(sandboxState));
-    
+
     if(force){return}
 
     displayAlert(`Sandbox state saved to local storage as "${fileName}".`);
@@ -224,7 +224,7 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
 
 async function loadFromLocalStorage(filename, force) { //if force is TRUE, the file will be loaded without user confirmation
     if (!JSON.parse(localStorage.getItem(filename))){return}
-    
+
     let confirmLoad;
     if (!force){
         if(filename === "autosave"){
@@ -545,7 +545,7 @@ document.addEventListener('keydown', (e) => {
                 document.getElementById('menu').style.display = 'block';
             }
         }
-        
+
         //open toolbar
         if (e.key === "Shift"){
             if(document.getElementById("sidebar").style.opacity === 1){
@@ -1037,10 +1037,10 @@ function updateBlocks() {
     });
 
     //equalities
-    const equalGates = document.querySelectorAll('equal-operator');
+    const equalGates = document.querySelectorAll('.equal-operator');
     equalGates.forEach(gate => {
-        const input1 = String(document.getElementById(`${gate.id}-input-1`).textContent);
-        const input2 = String(document.getElementById(`${gate.id}-input-2`).textContent);
+        const input1 = Number(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = Number(document.getElementById(`${gate.id}-input-2`).textContent);
         const output1 = document.getElementById(`${gate.id}-output-1`);
         const output2 = document.getElementById(`${gate.id}-output-2`);
 
@@ -1048,44 +1048,44 @@ function updateBlocks() {
             output1.textContent = "1";
             output2.textContent = "1";
         }
-    
+
         else if(input1 !== input2){
             output1.textContent = "0";
             output2.textContent = "0";
         }
     })
 
-    const greaterGates = document.querySelectorAll('greater-operator');
+    const greaterGates = document.querySelectorAll('.greater-operator');
     greaterGates.forEach(gate => {
-        const input1 = String(document.getElementById(`${gate.id}-input-1`).textContent);
-        const input2 = String(document.getElementById(`${gate.id}-input-2`).textContent);
+        const input1 = Number(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = Number(document.getElementById(`${gate.id}-input-2`).textContent);
         const output1 = document.getElementById(`${gate.id}-output-1`);
         const output2 = document.getElementById(`${gate.id}-output-2`);
 
-        if(input1 === input2){
+        if(input1 > input2){
             output1.textContent = "1";
             output2.textContent = "1";
         }
-    
-        else if(input1 !== input2){
+
+        else if(input1 <= input2){
             output1.textContent = "0";
             output2.textContent = "0";
         }
     })
 
-    const lesserGates = document.querySelectorAll('lesser-operator');
+    const lesserGates = document.querySelectorAll('.lesser-operator');
     lesserGates.forEach(gate => {
-        const input1 = String(document.getElementById(`${gate.id}-input-1`).textContent);
-        const input2 = String(document.getElementById(`${gate.id}-input-2`).textContent);
+        const input1 = Number(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = Number(document.getElementById(`${gate.id}-input-2`).textContent);
         const output1 = document.getElementById(`${gate.id}-output-1`);
         const output2 = document.getElementById(`${gate.id}-output-2`);
 
-        if(input1 === input2){
+        if(input1 < input2){
             output1.textContent = "1";
             output2.textContent = "1";
         }
-    
-        else if(input1 !== input2){
+
+        else if(input1 >= input2){
             output1.textContent = "0";
             output2.textContent = "0";
         }
@@ -1156,7 +1156,7 @@ function backwardFrame(){
             if(settings.showFrameCount){
                 document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
             }
-        }   
+        }
     }
 }
 function clearFrameSaves(){

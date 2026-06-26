@@ -2,37 +2,37 @@
   "a": {
     "title": "Binary Value 0",
     "type": "Binary",
-    "structure": "<div class=\"draggable binary a\" style=\"top: 200px; left: 200px;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">value</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable binary a\" style=\"top: 200px; left: 200px;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">value</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "b": {
     "title": "Binary Value 1",
     "type": "Binary",
-    "structure": "<div class=\"draggable binary b\" style=\"top: 200px; left: 200px;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">value</div><div class=\"inout binary\" id=\"draggable-default-output-1\">1</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+    "structure": "<div class=\"draggable binary b\" style=\"top: 200px; left: 200px;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">value</div><div class=\"inout binary\" id=\"draggable-default-output-1\">1</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div></div>"
   },
   "c": {
     "title": "Gate: Not",
     "type": "Gate",
-    "structure": "<div class=\"draggable binary not gate c\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">NOT gate</div><div class=\"inout binary\" id=\"draggable-default-output-1\">1</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+    "structure": "<div class=\"draggable binary not gate c\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">NOT gate</div><div class=\"inout binary\" id=\"draggable-default-output-1\">1</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div></div>"
   },
   "d": {
     "title": "Gate: AND",
     "type": "Gate",
-    "structure": "<div class=\"draggable binary and gate d\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">AND gate</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable binary and gate d\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">AND gate</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "e": {
     "title": "Gate: OR",
     "type": "Gate",
-    "structure": "<div class=\"draggable binary or gate e\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">OR gate</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable binary or gate e\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">OR gate</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "f": {
     "title": "Gate: XOR",
     "type": "Gate",
-    "structure": "<div class=\"draggable binary xor gate f\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">XOR gate</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable binary xor gate f\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">XOR gate</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "g": {
     "title": "Switch",
     "type": "Special",
-    "structure": "<div class=\"draggable special switch g\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout title\">switch</div><div class=\"inout binary\" id=\"draggable-default-output-1\">1</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div><div class=\"touchSensor\" id=\"draggable-default-touchSensor\"></div></div>"
+    "structure": "<div class=\"draggable special switch g\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout title\">switch</div><div class=\"inout binary\" id=\"draggable-default-output-1\">1</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div><div class=\"touchSensor\" id=\"draggable-default-touchSensor\"></div></div>"
   },
   "h": {
     "title": "Lamp",
@@ -42,7 +42,7 @@
   "i": {
     "title": "Push Button",
     "type": "Special",
-    "structure": "<div class=\"draggable binary button i\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout title\">button</div><div class=\"inout binary\" id=\"draggable-default-output-1\">1</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div><div class=\"pushSensor\" id=\"draggable-default-pushSensor\"></div></div>"
+    "structure": "<div class=\"draggable binary button i\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout title\">button</div><div class=\"inout binary\" id=\"draggable-default-output-1\">1</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div><div class=\"pushSensor\" id=\"draggable-default-pushSensor\"></div></div>"
   },
   "j": {
     "title": "Comment",
@@ -52,12 +52,12 @@
   "k": {
     "title": "Relay",
     "type": "Gate",
-    "structure": "<div class=\"draggable gate relay k\" style=\"top: 200px; left: 200px;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">relay</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable gate relay k\" style=\"top: 200px; left: 200px;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">relay</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "l": {
     "title": "Memory Relay",
     "type": "Gate",
-    "structure": "<div class=\"draggable gate relay memoryRelay l\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">memory relay</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable gate relay memoryRelay l\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">memory relay</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "n": {
     "title": "Binary to Decimal",
@@ -72,42 +72,42 @@
   "p": {
     "title": "Decimal Value",
     "type": "Decimal",
-    "structure": "<div class=\"draggable decimal decimalValue p\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout\" id=\"draggable-default-input-1\"><input type=\"number\" style=\"width: 100%;\"></div><div class=\"inout title\">Decimal value</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable decimal decimalValue p\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout\" id=\"draggable-default-input-1\"><input type=\"number\" style=\"width: 100%;\"></div><div class=\"inout title\">Decimal value</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "q": {
     "title": "Pulser",
     "type": "Special",
-    "structure": "<div class=\"draggable special pulser q\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">pulser</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable special pulser q\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout binary\" id=\"draggable-default-input-1\">0</div><div class=\"inout\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">pulser</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "r": {
     "title": "Counter",
     "type": "Decimal",
-    "structure": "<div class=\"draggable decimal counter r\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout any\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">counter</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+    "structure": "<div class=\"draggable decimal counter r\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout any\" id=\"draggable-default-input-1\">0</div><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">counter</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div></div>"
   },
   "sa": {
     "title": "Adder",
     "type": "Gate",
-    "structure": "<div class=\"draggable gate adder sa\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">adder</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+    "structure": "<div class=\"draggable gate adder sa\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">adder</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div></div>"
   },
   "sb": {
     "title": "Subtractor",
     "type": "Gate",
-    "structure": "<div class=\"draggable gate subtractor sb\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">subtractor</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+    "structure": "<div class=\"draggable gate subtractor sb\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">subtractor</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div></div>"
   },
   "sc": {
     "title": "Multiplier",
     "type": "Gate",
-    "structure": "<div class=\"draggable gate multiplier sc\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">multiplier</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+    "structure": "<div class=\"draggable gate multiplier sc\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">multiplier</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div></div>"
   },
   "sd": {
     "title": "Divider",
     "type": "Gate",
-    "structure": "<div class=\"draggable gate divider sd\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">divider</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border: medium;\">1</div></div>"
+    "structure": "<div class=\"draggable gate divider sd\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\" data-last-input=\"0\"><div class=\"inout decimal\" id=\"draggable-default-input-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">divider</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">1</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">1</div></div>"
   },
   "t": {
     "title": "Extender",
     "type": "Special",
-    "structure": "<div class=\"draggable special extender t\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout input any\" id=\"draggable-default-input-1\">0</div><div class=\"inout title\">extender</div><div class=\"inout any\" id=\"draggable-default-output-1\">0</div><div class=\"inout any\" id=\"draggable-default-output-2\">0</div><div class=\"inout any\" id=\"draggable-default-output-3\">0</div><div class=\"inout any\" id=\"draggable-default-output-4\">0</div><div class=\"inout any\" id=\"draggable-default-output-5\" style=\"border: medium;\">0</div></div>"
+    "structure": "<div class=\"draggable special extender t\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout input any\" id=\"draggable-default-input-1\">0</div><div class=\"inout title\">extender</div><div class=\"inout any\" id=\"draggable-default-output-1\">0</div><div class=\"inout any\" id=\"draggable-default-output-2\">0</div><div class=\"inout any\" id=\"draggable-default-output-3\">0</div><div class=\"inout any\" id=\"draggable-default-output-4\">0</div><div class=\"inout any\" id=\"draggable-default-output-5\" style=\"border-bottom: none;\">0</div></div>"
   },
   "ua": {
     "title": "Equality operator",
