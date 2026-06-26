@@ -72,7 +72,7 @@
   "p": {
     "title": "Decimal Value",
     "type": "Decimal",
-    "structure": "<div class=\"draggable decimal decimalValue p\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout\" id=\"draggable-default-input-1\"><input type=\"number\" style=\"width: 100%;\"></div><div class=\"inout title\">Decimal value</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
+    "structure": "<div class=\"draggable decimal decimalValue p\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout\" id=\"draggable-default-input-1\"><input type=\"number\" style=\"width: 100%;\" value=\"0\"></div><div class=\"inout title\">Decimal value</div><div class=\"inout decimal\" id=\"draggable-default-output-1\">0</div><div class=\"inout decimal\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div>"
   },
   "q": {
     "title": "Pulser",

@@ -13,5 +13,8 @@
     "Softlocked",
     "spacebar",
     "subtractor"
+  ],
+  "liveServer.settings.ignoreFiles": [
+    "**"
   ]
 }

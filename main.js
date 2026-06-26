@@ -209,6 +209,10 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
                 //This block is a comment, so push the text content as well
                 sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top, draggable.querySelector('textarea').value]);
             }
+            else if (blockId === "p"){
+                //This block is a decimal value, so push the value as well
+                sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top, draggable.querySelector('input').value]);
+            }
             else{
                 sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top]);
             }
@@ -247,6 +251,10 @@ async function loadFromLocalStorage(filename, force) { //if force is TRUE, the f
                 //this is a comment. The contents must be applied as well.
                 const commentText = block.length > 4 ? block[4] : block[2];
                 document.getElementById(`draggable-${block[1]}`).querySelector('textarea').value = commentText;
+            }
+            if (block[0] === "p"){
+                const decimalValue = block.length > 4 ? block[4] : block [2];
+                document.getElementById(`draggable-${block[1]}`).querySelector('input').value = decimalValue;
             }
             // Set the position of the block
             if (block.length > 3) {
@@ -291,6 +299,12 @@ function openLocalStorage(){
                     openLocalStorage();
                 }
             };
+            newSaveDisplay.querySelector('#localStorageRepair').onclick = async () => {
+                if (await displayAlert(`Repairing a file utilizes a script to check for outdated, malformed, or deprecated parts in a file. This action will override the current file and can remove some parts, but can ensure the file can be loaded. Type YES to continue.`, true) == "YES") {
+                    repairFile(key)
+                    openLocalStorage();
+                }
+            }
             if (Math.round((localStorage.getItem(key).length * 2)) >= 1028) {
                 newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round(((localStorage.getItem(key).length * 2) / 1028)*100) / 100} KB`;
             }
