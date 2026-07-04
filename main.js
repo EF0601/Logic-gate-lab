@@ -305,6 +305,15 @@ function openLocalStorage() {
                     openLocalStorage();
                 }
             }
+            newSaveDisplay.querySelector('#localStorageDownload').onclick = () => {
+                const blob = new Blob([localStorage.getItem(key)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${key}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
             if (Math.round((localStorage.getItem(key).length * 2)) >= 1028) {
                 newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round(((localStorage.getItem(key).length * 2) / 1028) * 100) / 100} KB`;
             }
@@ -331,6 +340,22 @@ function openLocalStorage() {
 
     document.getElementById('localstorageSavesDialog').style.display = 'block';
 }
+//import to localstorage
+document.getElementById('saveFileInput').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                localStorage.setItem(await displayAlert("Select a name for the file", true), JSON.stringify(data));
+            } catch (error) {
+                console.error('Error importing file:', error);
+            }
+        };
+        reader.readAsText(file);
+    }
+});
 
 //autosave mechanism
 document.addEventListener("visibilitychange", () => {
@@ -884,7 +909,7 @@ function clearAllConnections() {
 
 //Gate logic
 function updateBlocks() {
-    let gates = document.querySelectorAll('.gate');
+    let gates = document.querySelectorAll('.draggable');
     gates.forEach(gate => {
         const input1 = document.getElementById(`${gate.id}-input-1`);
         const input2 = document.getElementById(`${gate.id}-input-2`);
@@ -937,7 +962,25 @@ function updateBlocks() {
                     output2.textContent = quotient;
                 }
                 break;
-
+            case "multiplexer":
+                const inputValues = gate.querySelector(".mux-inputs").children;
+                const muxValues = parseInt(String(gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-input-5`).textContent) + String(gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-input-6`).textContent), 2)
+                console.log(muxValues)
+                gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-output-1`).textContent = inputValues[muxValues].textContent;
+                gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-output-2`).textContent = inputValues[muxValues].textContent;
+                break;
+            case "demultiplexer":
+                const outputValues = Array.from(gate.querySelector(".demux-outputs").children);
+                const demuxValues = parseInt(String(gate.querySelector('.demux-inputs').querySelector(`#${gate.id}-input-2`).textContent) + String(gate.querySelector('.demux-inputs').querySelector(`#${gate.id}-input-3`).textContent), 2)
+                outputValues.forEach((output, index) => {
+                    if (index === demuxValues) {
+                        output.textContent = gate.querySelector('.demux-inputs').querySelector(`#${gate.id}-input-1`).textContent;
+                    }
+                    else {
+                        output.textContent = '0';
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -1233,33 +1276,11 @@ let customFunctions = function () {
 
 // update function script
 function extendFunction(originalFunc, newCode, id) { //id = gate to look for to attach function to
-    // const funcString = originalFunc.toString();
-    // const originalBody = funcString.slice(0, funcString.indexOf('{') + 1);
-
-    // let getGatesOfType = function (){
-    //     document.getElementById('#screen').querySelectorAll(`.${id}`).forEach(gate => {
-
-    //     });
-    // }
-
-    // const wrapStart = getGatesOfType.toString().slice(0, getGatesOfType.toString().indexOf('=>') + 4);
-    // const wrapEnd = getGatesOfType.toString().slice(getGatesOfType.toString().indexOf('});'));
-
-    // const updatedBody = `
-    // ${originalBody}
-    // ${wrapStart}
-    // ${newCode}
-    // ${wrapEnd}
-    // }
-    // `;
-    // console.log(updatedBody);
-    // return new Function(updatedBody);
     const funcString = originalFunc.toString();
     const bodyStartIndex = funcString.indexOf('{') + 1;
     const bodyEndIndex = funcString.lastIndexOf('}');
     const originalBody = funcString.slice(bodyStartIndex, bodyEndIndex);
 
-    // We wrap everything in a named function wrapper and return it immediately
     const updatedBody = `
     return function customFunctions() {
       ${originalBody}
@@ -1269,7 +1290,6 @@ function extendFunction(originalFunc, newCode, id) { //id = gate to look for to 
     };
   `;
 
-    // new Function() runs the outer block, which returns our named inner function
     const factory = new Function(updatedBody);
-    return factory(); // Executes the factory to return the actual 'gameLoop' function
+    return factory();
 }

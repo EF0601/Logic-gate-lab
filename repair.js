@@ -1,8 +1,10 @@
 //includes scripts to repair old save files by removing incompatible parts
+let validBlocks;
+
 fetch('./blocks.json')
     .then(response => response.json())
     .then(data => {
-        const validBlocks = data;
+        validBlocks = data;
     })
     .catch(error => {
         console.error('Failed to fetch data:', error)

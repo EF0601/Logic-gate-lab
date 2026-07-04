@@ -1,5 +1,7 @@
 {
   "cSpell.words": [
+    "Demultiplexer",
+    "demux",
     "draggables",
     "dropbtn",
     "inout",
@@ -14,7 +16,5 @@
     "spacebar",
     "subtractor"
   ],
-  "liveServer.settings.ignoreFiles": [
-    "**"
-  ]
+  "liveServer.settings.ignoreFiles": ["**"]
 }

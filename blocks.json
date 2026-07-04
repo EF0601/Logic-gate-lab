@@ -123,5 +123,15 @@
     "title": "Less than operator",
     "type": "Gate",
     "structure": "<div class=\"draggable gate lesser-operator uc\" style=\"top: 200px; left: 200px; cursor: grab;\" id=\"draggable-default\"><div class=\"inout input any\" id=\"draggable-default-input-1\">0</div><div class=\"inout input any\" id=\"draggable-default-input-2\">0</div><div class=\"inout title\">Less than operator</div><div class=\"inout binary\" id=\"draggable-default-output-1\">0</div><div class=\"inout binary\" id=\"draggable-default-output-2\">0</div></div>"
+  },
+  "mux": {
+    "title": "Multiplexer",
+    "type": "Gate",
+    "structure": "<div class=\"draggable special multiplexer mux\" id=\"draggable-default\" style=\"display:grid;grid-template-columns:repeat(2,50%);\"><div class=\"mux-inputs\"><div class=\"inout any\" id=\"draggable-default-input-1\">0</div><div class=\"inout any\" id=\"draggable-default-input-2\">0</div><div class=\"inout any\" id=\"draggable-default-input-3\">0</div><div class=\"inout any\" id=\"draggable-default-input-4\">0</div></div><div class=\"mux-outputs\"><div class=\"inout binary\" id=\"draggable-default-input-5\">0</div><div class=\"inout binary\" id=\"draggable-default-input-6\">0</div><div class=\"inout title\">Multiplexer</div><div class=\"inout any\" id=\"draggable-default-output-1\">0</div><div class=\"inout any\" id=\"draggable-default-output-2\" style=\"border-bottom: none;\">0</div></div></div>"
+  },
+  "demux": {
+    "title": "Demultiplexer",
+    "type": "Gate",
+    "structure": "<div class=\"draggable special demultiplexer demux\" id=\"draggable-default\" style=\"display:grid;grid-template-columns:repeat(2,50%);\"><div class=\"demux-inputs\"><div class=\"inout binary\" id=\"draggable-default-input-2\">0</div><div class=\"inout binary\" id=\"draggable-default-input-3\">0</div><div class=\"inout title\">Demux</div><div class=\"inout any\" id=\"draggable-default-input-1\">0</div></div><div class=\"demux-outputs\"><div class=\"inout any\" id=\"draggable-default-output-1\">0</div><div class=\"inout any\" id=\"draggable-default-output-2\">0</div><div class=\"inout any\" id=\"draggable-default-output-3\">0</div><div class=\"inout any\" id=\"draggable-default-output-4\">0</div></div></div>"
   }
 }

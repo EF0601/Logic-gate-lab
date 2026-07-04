@@ -133,7 +133,7 @@
 			<td id="localStorageSaveName">Save 1</td>
 			<td id="localStorageSaveSize">Size: 0 bytes</td>
 			<td><button id="localStorageLoad">Load</button><button id="localStorageDelete">Delete</button><button
-					id="localStorageRepair">Repair</button></td>
+					id="localStorageRepair">Repair</button><button id="localStorageDownload">Download</button></td>
 			<td id="localStorageSpecialData"></td>
 		</tr>
 		<!-- Dynamically filled with local storage saves -->
@@ -158,6 +158,7 @@
 			</button>
 			<button onclick="saveToLocalStorage('User')">Save to localstorage...</button>
 			<button onclick="openLocalStorage()">Open localstorage...</button>
+			<button><input type="file" id="saveFileInput" accept=".json" /> <br>Import save file</button>
 			<button><input type="file" id="jsonFileInput" accept=".json" /> <br>Import modification</button>
 		</div>
 	</div>

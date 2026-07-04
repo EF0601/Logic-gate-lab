@@ -456,3 +456,8 @@ table#localstorageSavesContainer {
   height: 30vh;
 }
 /* END CREATOR ONLY */
+
+/* Demultiplexer only: it has 4 inouts instead of 5 */
+.demultiplexer .inout{
+  height: 25%;
+}
