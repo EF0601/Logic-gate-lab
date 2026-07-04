@@ -1,236 +1,198 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <title>LGL: Logic Gate Lab</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="style.css" />
+	<link rel="icon" href="data:,">
+	<title>LGL: Logic Gate Lab</title>
 </head>
 
 <div id="sidebar">
-  <button onclick="document.getElementById('menu').style.display = 'block'" id="sidebarMenuBtn">Menu</button>
-  <h2>Toolbar</h2>
-  <div id="toolbar">
-    <div class="tool" id="toolDisplayTemplate" style="display: none;">
-      <p id="toolDisplayTemplateName">Name</p>
-      <div class="toolActionsContainer">
-        <button id="toolDisplayTemplateButton">Use</button>
-        <button id="toolDisplayTemplateTrash">Remove</button>
-      </div>
-    </div>
-  </div>
+	<button onclick="document.getElementById('menu').style.display = 'block'" id="sidebarMenuBtn">Menu</button>
+	<h2>Toolbar</h2>
+	<div id="toolbar">
+		<div class="tool" id="toolDisplayTemplate" style="display: none">
+			<p id="toolDisplayTemplateName">Name</p>
+			<div class="toolActionsContainer">
+				<button id="toolDisplayTemplateButton">Use</button>
+				<button id="toolDisplayTemplateTrash">Remove</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <dialog id="menu">
-  <h1>Menu</h1>
-  <h2>Add new</h2>
-  <div id="gridContainer">
-    <div class="gridItem">
-      <button onclick="createNewElement('a')" title="Represents a binary 0" class="gridItemButton">
-        Value: 0
-      </button>
-      <button class="iconButton" onclick="addShortcut('a', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('b')" title="Represents a binary 1" class="gridItemButton">
-        Value: 1
-      </button>
-      <button class="iconButton" onclick="addShortcut('b', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('c')" title="Inverts the input value" class="gridItemButton">
-        Gate: NOT
-      </button>
-      <button class="iconButton" onclick="addShortcut('c', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('d')" title="Outputs true if both inputs are true" class="gridItemButton">
-        Gate: AND
-      </button>
-      <button class="iconButton" onclick="addShortcut('d', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('e')" title="Outputs true if at least one input is true" class="gridItemButton">
-        Gate: OR
-      </button>
-      <button class="iconButton" onclick="addShortcut('e', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('f')" title="Outputs true if one input is true and the other is false"
-        class="gridItemButton">
-        Gate: XOR
-      </button>
-      <button class="iconButton" onclick="addShortcut('f', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('g')" title="Can toggle between 0 and 1" class="gridItemButton">
-        Special: Switch
-      </button>
-      <button class="iconButton" onclick="addShortcut('g', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('h')" title="Lights up if the input is 1" class="gridItemButton">
-        Special: Lamp
-      </button>
-      <button class="iconButton" onclick="addShortcut('h', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('i')" title="Needs to be continuously pushed to be activated"
-        class="gridItemButton">
-        Special: Push button
-      </button>
-      <button class="iconButton" onclick="addShortcut('i', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('j')" title="A comment block for anything you need to comment"
-        class="gridItemButton">
-        Special: Comment
-      </button>
-      <button class="iconButton" onclick="addShortcut('j', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('k')" title="A relay switch that can be controlled by another circuit"
-        class="gridItemButton">
-        Gate: Relay
-      </button>
-      <button class="iconButton" onclick="addShortcut('k', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('l')" title="A memory relay that retains its state" class="gridItemButton">
-        Gate: Memory Relay
-      </button>
-      <button class="iconButton" onclick="addShortcut('l', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('n')" title="Converts binary input to decimal output" class="gridItemButton">
-        Special: Binary to Decimal
-      </button>
-      <button class="iconButton" onclick="addShortcut('n', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('o')" title="Converts decimal input to binary output" class="gridItemButton">
-        Special: Decimal to binary
-      </button>
-      <button class="iconButton" onclick="addShortcut('o', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('p')"
-        title="Similar to the value block, it represents an adjustable decimal value" class="gridItemButton">
-        Decimal: Decimal Value
-      </button>
-      <button class="iconButton" onclick="addShortcut('p', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('q')" title="Alternates between 0 and 1 every tick." class="gridItemButton">
-        Special: Pulser
-      </button>
-      <button class="iconButton" onclick="addShortcut('q', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-    <div class="gridItem">
-      <button onclick="createNewElement('r')"
-        title="Counts the number of input pulses and outputs the count as a decimal value." class="gridItemButton">
-        Special: Counter
-      </button>
-      <button class="iconButton" onclick="addShortcut('r', this)">
-        <img src="./star.svg" alt="star image" class="iconImage">
-      </button>
-    </div>
-  </div>
-  <h3>Connect tool</h3>
-  Press the spacebar to enable connect tool. Then, select two objects to
-  connect. You can also delete an existing connection by doing the same thing,
-  holding spacebar and selecting two objects that are already connected.
-  <h2>Credits</h2>
-  <p>Created by <a href="">EF0601</a>. On December 31st, 2024</p>
-  <h2>Wiki</h2>
-  <p>Work in progress...</p>
-  <h2>Updates</h2>
-  <a href="https://github.com/EF0601/Logic-gate-lab/releases">View all updates and better update logs.</a>
-  <h3>Version 0.6.0-beta</h3>
-  <p>
-    <i>1/29/2026</i> Almost a year after the last update, this version brings two more blocks: the pulser and the counter. There were several UI improvements and various bug fixes. The top bar should now be easier to access. The toolbar was also added, allowing quick access to up to 10 tools for convenience. Finally, users can now find the app as an executable. Check this out in the releases section.
-  </p>
-  <div class="container" style="display: flex; justify-content: center; margin-top: 10px">
-    <button style="width: 90vh" onclick="document.getElementById('menu').style.display='none'">
-      Close
-    </button>
-  </div>
+	<h1>Menu</h1>
+	<h2>Add new</h2>
+	<div id="gridContainer">
+		<div class="gridItem" id="createBlockBtnTemplate" style="display: none">
+			<button title="Represents template" class="gridItemButton">template</button>
+			<button class="iconButton">
+				<img src="./star.svg" alt="star image" class="iconImage" />
+			</button>
+		</div>
+	</div>
+	<h3>Connect tool</h3>
+	Press the spacebar to enable connect tool. Then, select two objects to connect. You can also delete an existing
+	connection by doing the same thing, holding spacebar and selecting two objects that are already connected.
+	<h2>Credits</h2>
+	<p>Created by <a href="https://github.com/EF0601">EF0601</a>. On December 31st, 2024</p>
+	<h2>Wiki</h2>
+	<p>Work in progress...</p>
+	<h2>Updates</h2>
+	<a href="https://github.com/EF0601/Logic-gate-lab/releases">View all updates and better update logs.</a>
+	<h3>Version 1.0.0</h3>
+	<p><i>7/4/2026</i> This update is the largest by far, with numerous new features and improvements. The new Gate Creator
+		allows users to customize their sandbox with new blocks. Program them with HTML and Javascript in the Creator
+		(Window > Creator). Export a .json file to import into the main sandbox. <br><br>New multiplexer and demultiplexer
+		blocks. New math (basic operations) and equality operator blocks. New debug system to view the sandbox frame by
+		frame. UI overhaul to give the app a refreshed look. New repair tool to fix outdated save files. Import and export
+		save files in .json format. New settings menu to allow for some customization. Comment resize handle and extender
+		block. New autosave feature. New localstorage save feature to save files locally. Plus, various bug fixes.</p>
+	<h2>License</h2>
+	<p>
+		Copyright © 2026 EF0601 <br><br>
+
+		Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+		documentation files (the “Software”), to deal in the Software without restriction, including without limitation
+		the
+		rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+		permit persons to whom the Software is furnished to do so, subject to the following conditions: <br><br>
+
+		The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+		the
+		Software.<br><br>
+
+		THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+		THE
+		WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+		AUTHORS
+		OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
+		OR
+		OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+	</p>
+	<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
+		<button style="width: 100%" onclick="document.getElementById('menu').style.display = 'none'">Close</button>
+	</div>
+</dialog>
+<dialog id="settings">
+	<h1>Settings</h1>
+	<h2>Simrate</h2>
+	<p>Set the simulation rate, measured in milliseconds. This is the amount of time between the updating of connections
+		and block logics. Lower values may require more processing resources.<i>Default: 500ms</i> </p>
+	<input type="number" value="500" id="simrateSettingInput">ms
+	<h2>Autosave</h2>
+	<p>Choose whether the program should automatically locally save the sandbox upon tab focus loss. <i>Default:
+			true</i></p>
+	<select name="" id="autosaveSettingChoice">
+		<option value="true">true</option>
+		<option value="false">false</option>
+	</select>
+	<h2>Save frames</h2>
+	<p>Choose whether the program should locally save the 10 most recent frames for debug. <i>Default: true</i></p>
+	<select name="" id="saveFramesSettingChoice">
+		<option value="true">true</option>
+		<option value="false">false</option>
+	</select>
+	<h2>Automatically open side toolbar</h2>
+	<p>Choose whether hovering near the left of the screen should open the side toolbar. If this settings is disabled,
+		the side toolbar can be opened with the LShift key. <i>Default: false</i></p>
+	<select name="" id="autoOpenToolbarSettingChoice">
+		<option value="true">true</option>
+		<option value="false" selected>false</option>
+	</select>
+	<h2>Show frame count</h2>
+	<p>Choose whether you'd like to have the frame count shown in the debug tab. <i>Default: false</i></p>
+	<select name="" id="showFramesSettingChoice">
+		<option value="true">true</option>
+		<option value="false" selected>false</option>
+	</select>
+	<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
+		<button style="width: 100%" onclick="updateSettings()">Update</button>
+		<button style="width: 100%" onclick="document.getElementById('settings').style.display = 'none'">Close</button>
+	</div>
 </dialog>
 <dialog id="alertBox">
-  <h1>Alert!</h1>
-  <p id="alertText">
-    This is an alert box. It is used to alert the user of something.
-  </p>
-  <button onclick="document.getElementById('alertBox').style.display='none'">
-    Close
-  </button>
+	<h1>Alert!</h1>
+	<p id="alertText">This is an alert box. It is used to alert the user of something.</p>
+	<input type="text" id="alertBoxInput" style="display: none" />
+	<div class="container" style="display: flex; justify-content: center">
+		<button id="alertCloseBtn" onclick="document.getElementById('alertBox').style.display = 'none'">Close</button>
+		<button id="alertSubmitBtn" style="display: none">Submit</button>
+	</div>
+</dialog>
+<dialog id="localstorageSavesDialog" style="display: none; z-index: 1">
+	<h1>Local Storage Saves</h1>
+	<table id="localstorageSavesContainer">
+		<tr id="header">
+			<th>Name</th>
+			<th>Size</th>
+			<th>Actions</th>
+			<th>Notes</th>
+		</tr>
+		<tr class="localStorageSave" id="localsaveDisplayTemplate">
+			<td id="localStorageSaveName">Save 1</td>
+			<td id="localStorageSaveSize">Size: 0 bytes</td>
+			<td><button id="localStorageLoad">Load</button><button id="localStorageDelete">Delete</button><button
+					id="localStorageRepair">Repair</button><button id="localStorageDownload">Download</button></td>
+			<td id="localStorageSpecialData"></td>
+		</tr>
+		<!-- Dynamically filled with local storage saves -->
+	</table>
+	<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
+		<button style="width: 100%"
+			onclick="document.getElementById('localstorageSavesDialog').style.display = 'none'">Close</button>
+	</div>
 </dialog>
 
 <div id="topBar">
-  <div class="dropdown">
-    <button class="dropbtn">File</button>
-    <div class="dropdown-content">
-      <button onclick="clearAllDraggables()">Clear</button>
-      <button onclick="saveSandbox()">Save</button>
-      <button onclick="loadSandbox()">Load</button>
-      <button><textarea name="loader-input" rows="10" style="resize: none; overflow:scroll;"
-          onfocus="listenInput = false" onblur="listenInput = true" id="loadSandboxInput"
-          placeholder="Type file data here to load..."></textarea></button>
-    </div>
-  </div>
-  <div class="dropdown">
-    <button class="dropbtn">Edit</button>
-    <div class="dropdown-content">
-      <button onclick="clearAllConnections()">Remove all connections</button>
-      <button onclick="simrate = document.getElementById('simrateChanger').value /2">Set <input type="number"
-          id="simrateChanger" value="500"> ms as sim rate</button>
-    </div>
-  </div>
-  <div class="dropdown">
-    <button class="dropbtn">Help</button>
-    <div class="dropdown-content">
-      <button onclick="document.getElementById('menu').style.display='block'">
-        Menu
-      </button>
-      <button onclick="window.open('https://github.com/EF0601/Logic-gate-lab/wiki', '_blank')">
-        Wiki
-      </button>
-    </div>
-  </div>
-  <!-- <div class="dropdown">
+	<div class="dropdown">
+		<button class="dropbtn">File</button>
+		<div class="dropdown-content">
+			<button onclick="clearAllDraggables()">Clear</button>
+			<button onclick="saveTextSandbox()">Save to text</button>
+			<button onclick="loadTextSandbox()">Load from text</button>
+			<button>
+				<textarea name="loader-input" rows="10" style="resize: none; overflow: scroll"
+					onfocus="listenInput = false" onblur="listenInput = true" id="loadSandboxInput"
+					placeholder="Type file data here to load..."></textarea>
+			</button>
+			<button onclick="saveToLocalStorage('User')">Save to localstorage...</button>
+			<button onclick="openLocalStorage()">Open localstorage...</button>
+			<button><input type="file" id="saveFileInput" accept=".json" /> <br>Import save file</button>
+			<button><input type="file" id="jsonFileInput" accept=".json" /> <br>Import modification</button>
+		</div>
+	</div>
+	<div class="dropdown">
+		<button class="dropbtn">Edit</button>
+		<div class="dropdown-content">
+			<button onclick="clearAllConnections()">Remove all connections</button>
+			<button onclick="settings.simrate = document.getElementById('simrateChanger').value / 2">Set <input
+					type="number" id="simrateChanger" value="500" /> ms as sim rate</button>
+		</div>
+	</div>
+	<div class="dropdown">
+		<button class="dropbtn">Window</button>
+		<div class="dropdown-content">
+			<button onclick="document.getElementById('menu').style.display = 'block'">Menu</button>
+			<button onclick="window.open('https://github.com/EF0601/Logic-gate-lab/wiki', '_blank')">Wiki</button>
+			<button onclick="document.getElementById('settings').style.display = 'block'">Settings</button>
+			<button onclick="window.open('./creator.html', '_blank')">Gate Creator</button>
+		</div>
+	</div>
+	<div class="dropdown">
+		<button class="dropbtn">Debug</button>
+		<div class="dropdown-content">
+			<button onclick="forwardFrame()">Move forward 1 frame</button>
+			<button onclick="backwardFrame()">Move backward 1 frame</button>
+			<button onclick="paused = true">Pause</button>
+			<button onclick="paused = false">Go</button>
+			<button id="frameCountDisplay">Frame: 0</button>
+		</div>
+	</div>
+	<!-- <div class="dropdown">
             <button class="dropbtn">
                 Simulation
             </button>
@@ -246,15 +208,11 @@
         </div> -->
 </div>
 <div id="trash" class="draggable nondraggable trash">Trash</div>
-<button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">
-  Connector Tool
-</button>
-<div id="screen">
-
-</div>
-<div id="bottomBar">
-  <span id="inputDisplay">Awaiting input...</span><span id="currentElementDisplay">No element.</span>
+<button id="mobileConnectorBtn" onclick="toggleMobileConnectorBtn()">Connector Tool</button>
+<div id="screen"></div>
+<div id="bottomBar"><span id="inputDisplay">Awaiting input...</span><span id="currentElementDisplay">No element.</span>
 </div>
 <script src="main.js"></script>
+<script src="repair.js"></script>
 
 </html>

@@ -1,6 +1,6 @@
 {
   "name": "logic-gate-lab",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "An app to create series of logic gates and various components",
   "main": "builder.js",
   "scripts": {

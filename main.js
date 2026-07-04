@@ -13,36 +13,123 @@ fetch('./blocks.json')
     .then(response => response.json())
     .then(data => {
         blocklist = data;
+        loadingComplete();
     })
-    .catch(error => console.error('Failed to fetch data:', error));
+    .catch(error => {
+        console.error('Failed to fetch data:', error)
+    });
 
-let simrate = 250;
+let paused = false;
+let settings = {
+    simrate: 250,
+    autosave: true,
+    saveFrames: true,
+    autoToolbar: false,
+    showFrameCount: false,
+}
+let frame = 0;
 
 //display alert box
 const alertBox = document.getElementById('alertBox');
 const alertText = document.getElementById('alertText');
-function displayAlert(text) {
+const alertBoxInput = document.getElementById('alertBoxInput');
+const alertBoxSubmit = document.getElementById('alertSubmitBtn');
+const alertBoxCancel = document.getElementById('alertCloseBtn');
+function displayAlert(text, input) {
+    listenInput = false;
     alertBox.style.display = 'block';
     alertText.textContent = text;
+    if (input) {
+        alertBoxInput.style.display = 'block';
+        alertBoxSubmit.style.display = 'block';
+        alertBoxInput.value = "";
+    } else {
+        alertBoxInput.style.display = 'none';
+        alertBoxSubmit.style.display = 'none';
+        listenInput = true;
+    }
+
+    return new Promise((resolve) => {
+        const submitAlert = () => {
+            alertBox.style.display = 'none';
+            alertBoxSubmit.removeEventListener('click', submitAlert);
+            alertBoxCancel.removeEventListener('click', cancelAlert);
+            resolve(alertBoxInput.value);
+            listenInput = true;
+        };
+
+        const cancelAlert = () => {
+            alertBox.style.display = 'none';
+            alertBoxSubmit.removeEventListener('click', submitAlert);
+            alertBoxCancel.removeEventListener('click', cancelAlert);
+            resolve(null);
+            listenInput = true;
+        };
+        alertBoxSubmit.addEventListener('click', submitAlert);
+        alertBoxCancel.addEventListener('click', cancelAlert);
+    });
+
+
+}
+
+function updateSettings() {
+    settings.simrate = document.getElementById("simrateSettingInput").value;
+    settings.autosave = document.getElementById("autosaveSettingChoice").value === "true";
+    settings.saveFrames = document.getElementById("saveFramesSettingChoice").value === "true";
+    settings.autoToolbar = document.getElementById("autoOpenToolbarSettingChoice").value === "true";
+    settings.showFrameCount = document.getElementById("showFramesSettingChoice").value === "true";
+
+    if (settings.showFrameCount) {
+        document.getElementById("frameCountDisplay").style.display = "block";
+    }
+    else {
+        document.getElementById("frameCountDisplay").style.display = "none";
+    }
 }
 
 // sidebar
 /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
 
 onmousemove = function (e) {
-    if (e.clientX < 250) {
-        document.getElementById("sidebar").style.width = "250px";
+    if (e.clientX < 300 && settings.autoToolbar) {
+        document.getElementById("sidebar").style.opacity = 1;
     }
     else if (e.clientX > 300) {
-        document.getElementById("sidebar").style.width = "0";
+        document.getElementById("sidebar").style.opacity = 0;
     }
 };
 
-//default welcome box
-displayAlert('Welcome to this little sandbox! A reminder that this is still in Alpha testing. If you find an issue, please report it on the GitHub page. Enjoy!');
+function loadingComplete() {
+    populateMenu();
+    clearFrameSaves();
+    updateSettings();
+    loadFromLocalStorage("autosave");
+}
 
-//sandbox saver and loader
-function saveSandbox() {
+//create buttons for each block in the blocklist in menu
+const createBlockBtnTemplate = document.getElementById('createBlockBtnTemplate');
+function populateMenu() {
+    const gridContainer = document.getElementById('gridContainer');
+
+    for (const key in blocklist) {
+        const newBlockBtn = createBlockBtnTemplate.cloneNode(true);
+        newBlockBtn.style.display = 'flex';
+        newBlockBtn.id = "";
+        newBlockBtn.querySelector('.gridItemButton').textContent = blocklist[key].title;
+        newBlockBtn.querySelector('.gridItemButton').title = `Represents a ${blocklist[key].title}`;
+        newBlockBtn.querySelector('.gridItemButton').onclick = () => {
+            createNewElement(key);
+        }
+        newBlockBtn.querySelector('.iconButton').id = "favoriteBtn-" + key;
+        newBlockBtn.querySelector('.iconButton').onclick = (e) => {
+            addShortcut(key, e.target);
+        };
+        gridContainer.appendChild(newBlockBtn);
+    }
+}
+
+//LEGACY sandbox saver and loader
+function saveTextSandbox() {
     const information = document.createElement('div');
     information.setAttribute('id', 'information');
     information.textContent = `${connections.join('||')}`;
@@ -54,7 +141,7 @@ function saveSandbox() {
     document.getElementById('screen').removeChild(information);
 }
 
-function loadSandbox() {
+function loadTextSandbox() {
     clearAllDraggables();
     clearAllConnections();
 
@@ -79,6 +166,205 @@ function loadSandbox() {
         connectorTool();
     }
 
+    loadSpecialListeners();
+
+    document.querySelector('#information').remove();
+
+    counter++;
+}
+
+// New sandbox saver and loader using JSON and local storage
+async function saveToLocalStorage(additionalNotes, force, setName) { //additional notes provides additional data for the save file. If param "force" is true, the file will be made regardless of any format or duplication error. If a name has been predetermined, setName should represent that name
+    if (!localStorage) {
+        displayAlert('Local storage is not available in your browser.');
+        return;
+    }
+    if (Math.round((Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0) / 1028) >= 4.5 * 1000)) {
+        displayAlert('Local storage is full. Please delete some saves. You may only have up to 5MB worth of saves. Your current total is approximately ' + Math.round((Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0) / 1028) * 100) / 100 + ' KB.');
+        return;
+    }
+    //test file name
+    const fileName = setName ?? await displayAlert('Enter a name for your save', true);
+    const fileNameRegexFilter = /^[a-z]+\w+$/;
+    if ((!fileNameRegexFilter.test(fileName) || fileName.length > 50 || fileName === "autosave") && !force) {
+        displayAlert('Invalid file name. File names must start with a letter and can only contain letters, numbers, and underscores. Some names are reserved for system files.');
+        return;
+    }
+    if (localStorage.getItem(fileName) !== null && !force) {
+        if (await displayAlert('A save with this name already exists. Do you want to overwrite it? Type YES to overwrite.', true) != "YES") {
+            return;
+        }
+    }
+
+    const sandboxState = {
+        blocks: [],
+        connections: connections,
+        specialData: additionalNotes,
+    };
+    draggables.forEach(draggable => {
+        if (!draggable.classList.contains("trash")) {
+            const blockId = draggable.classList[draggable.classList.length - 1]; // Assuming the last class is the block type
+            const blockNumber = draggable.id.replace('draggable-', '');
+            if (blockId === "j") {
+                //This block is a comment, so push the text content as well
+                sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top, draggable.querySelector('textarea').value]);
+            }
+            else if (blockId === "p") {
+                //This block is a decimal value, so push the value as well
+                sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top, draggable.querySelector('input').value]);
+            }
+            else {
+                sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top]);
+            }
+        }
+    });
+    localStorage.setItem(fileName, JSON.stringify(sandboxState));
+
+    if (force) { return }
+
+    displayAlert(`Sandbox state saved to local storage as "${fileName}".`);
+    openLocalStorage();
+}
+
+async function loadFromLocalStorage(filename, force) { //if force is TRUE, the file will be loaded without user confirmation
+    if (!JSON.parse(localStorage.getItem(filename))) { return }
+
+    let confirmLoad;
+    if (!force) {
+        if (filename === "autosave") {
+            confirmLoad = await displayAlert('LGL has detected a past autosave file, allowing you to begin from where you left off. Do you want to continue? Type YES to continue.', true) == "YES"
+        }
+        else {
+            confirmLoad = await displayAlert('Loading a sandbox will overwrite your current sandbox. Do you want to continue? Type YES to continue.', true) == "YES"
+        }
+    }
+
+    if (confirmLoad || force) {
+        const sandboxState = JSON.parse(localStorage.getItem(filename));
+
+        clearAllDraggables();
+        clearAllConnections();
+
+        sandboxState.blocks.forEach(block => {
+            createNewElement(block[0], block[1]);
+            if (block[0] === "j") {
+                //this is a comment. The contents must be applied as well.
+                const commentText = block.length > 4 ? block[4] : block[2];
+                document.getElementById(`draggable-${block[1]}`).querySelector('textarea').value = commentText;
+            }
+            if (block[0] === "p") {
+                const decimalValue = block.length > 4 ? block[4] : block[2];
+                document.getElementById(`draggable-${block[1]}`).querySelector('input').value = decimalValue;
+            }
+            // Set the position of the block
+            if (block.length > 3) {
+                document.getElementById(`draggable-${block[1]}`).style.left = block[2];
+                document.getElementById(`draggable-${block[1]}`).style.top = block[3];
+            }
+        });
+        for (let i = 0; i < sandboxState.connections.length; i++) {
+            const connection = sandboxState.connections[i];
+            document.getElementById(connection[0]).classList.add('connecting');
+            document.getElementById(connection[1]).classList.add('connecting');
+
+            connectorTool();
+        }
+
+        loadSpecialListeners();
+    }
+}
+
+const localsaveDisplayTemplate = document.getElementById('localsaveDisplayTemplate');
+const localsaveTableHeader = document.getElementById('header');
+function openLocalStorage() {
+    document.getElementById('localstorageSavesContainer').innerHTML = '';
+    if (localStorage.length === 0) {
+        const noSavesMessage = document.createElement('p');
+        noSavesMessage.textContent = 'No saves found in local storage.';
+        document.getElementById('localstorageSavesContainer').appendChild(noSavesMessage);
+    }
+    else {
+        document.getElementById('localstorageSavesContainer').appendChild(localsaveTableHeader.cloneNode(true));
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const newSaveDisplay = localsaveDisplayTemplate.cloneNode(true);
+            newSaveDisplay.style.display = 'table-row';
+            newSaveDisplay.querySelector('#localStorageSaveName').textContent = key;
+            newSaveDisplay.querySelector('#localStorageLoad').onclick = () => {
+                loadFromLocalStorage(key);
+            };
+            newSaveDisplay.querySelector('#localStorageDelete').onclick = async () => {
+                if (await displayAlert(`Are you sure you want to delete the save "${key}"? This action cannot be undone. Type YES to continue.`, true) == "YES") {
+                    localStorage.removeItem(key);
+                    openLocalStorage();
+                }
+            };
+            newSaveDisplay.querySelector('#localStorageRepair').onclick = async () => {
+                if (await displayAlert(`Repairing a file utilizes a script to check for outdated, malformed, or deprecated parts in a file. This action will override the current file and can remove some parts, but can ensure the file can be loaded. Type YES to continue.`, true) == "YES") {
+                    repairFile(key)
+                    openLocalStorage();
+                }
+            }
+            newSaveDisplay.querySelector('#localStorageDownload').onclick = () => {
+                const blob = new Blob([localStorage.getItem(key)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${key}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+            if (Math.round((localStorage.getItem(key).length * 2)) >= 1028) {
+                newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round(((localStorage.getItem(key).length * 2) / 1028) * 100) / 100} KB`;
+            }
+            else {
+                newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round((localStorage.getItem(key).length * 2))} Bytes`;
+            }
+            document.getElementById('localstorageSavesContainer').appendChild(newSaveDisplay);
+
+            newSaveDisplay.querySelector('#localStorageSpecialData').textContent = JSON.parse(localStorage.getItem(key))?.specialData;
+        }
+    }
+    const total = localsaveDisplayTemplate.cloneNode(true)
+    total.querySelector('#localStorageSaveName').textContent = `Total: ${localStorage.length} saves`;
+    if (Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0) >= 1028) {
+        //store as kilobytes if over 1028 bytes
+        total.querySelector('#localStorageSaveSize').textContent = `Total size: ${Math.round((Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0) / 1028) * 100) / 100} KB`;
+    }
+    else {
+        total.querySelector('#localStorageSaveSize').textContent = `Total size: ${Math.round((Array.from({ length: localStorage.length }, (_, i) => localStorage.getItem(localStorage.key(i))).reduce((acc, val) => acc + val.length * 2, 0)))} Bytes`;
+    }
+    total.querySelectorAll("button").forEach(button => button.remove());
+    document.getElementById('localstorageSavesContainer').appendChild(total);
+    total.style.display = 'table-row';
+
+    document.getElementById('localstorageSavesDialog').style.display = 'block';
+}
+//import to localstorage
+document.getElementById('saveFileInput').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                localStorage.setItem(await displayAlert("Select a name for the file", true), JSON.stringify(data));
+            } catch (error) {
+                console.error('Error importing file:', error);
+            }
+        };
+        reader.readAsText(file);
+    }
+});
+
+//autosave mechanism
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === 'hidden' && settings.autosave) {
+        saveToLocalStorage("autosave", true, "autosave");
+    }
+});
+
+function loadSpecialListeners() {
     draggables = document.querySelectorAll('.draggable');
     inout = document.querySelectorAll('.inout');
 
@@ -129,13 +415,11 @@ function loadSandbox() {
             });
         }
     }
+};
 
-    document.querySelector('#information').remove();
-
-    counter++;
-}
 // current element hovered
 let currentHoveredElement = "";
+let dragOk = true;
 
 function addListeners() {
     draggables.forEach(draggable => {
@@ -189,29 +473,24 @@ function addListeners() {
 
 //moving blocks
 document.addEventListener('mousemove', (e) => {
-    if (!activeDraggable) return;
+    if (!activeDraggable || !dragOk) return;
     activeDraggable.style.left = `${Math.round((e.clientX - offsetX) / 10) * 10}px`;
     activeDraggable.style.top = `${Math.round((e.clientY - offsetY) / 10) * 10}px`;
 
-    // Check collisions with all other draggables
+    // Check collisions with the trash can
     draggables.forEach(draggable => {
         if (draggable !== activeDraggable) {
-            if (isColliding(activeDraggable, draggable)) {
-                draggable.classList.add('collided');
-                activeDraggable.classList.add('collided');
+            if (isColliding(activeDraggable, draggable)) { //Feb 15th 2026: Removed "collided" mechanic as it was a legacy feature
                 if (draggable.classList.contains('trash')) {
                     activeDraggable.remove();
                 }
-            } else {
-                draggable.classList.remove('collided');
-                activeDraggable.classList.remove('collided');
             }
         }
     });
 });
 // mobile support
 document.addEventListener('touchmove', (e) => {
-    if (!activeDraggable) return;
+    if (!activeDraggable || !dragOk) return;
     const touch = e.touches[0];
     activeDraggable.style.left = `${Math.round((touch.clientX - offsetX) / 10) * 10}px`;
     activeDraggable.style.top = `${Math.round((touch.clientY - offsetY) / 10) * 10}px`;
@@ -253,8 +532,8 @@ document.addEventListener('touchend', () => {
     }
 });
 
-const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-if (regex.test(navigator.userAgent)) {
+const mobileRegex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+if (mobileRegex.test(navigator.userAgent)) {
     document.getElementById('mobileConnectorBtn').style.display = 'block';
 } else {
     document.getElementById('mobileConnectorBtn').style.display = 'none';
@@ -290,7 +569,7 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('inputDisplay').textContent = `Input: ${e.key}`;
 
         // shortcut tool
-        createNewElement(favoriteBlocks[e.key]);
+        createNewElement(e.key);
 
         //connector tool
         if (e.key === ' ') {
@@ -303,6 +582,16 @@ document.addEventListener('keydown', (e) => {
             }
             else {
                 document.getElementById('menu').style.display = 'block';
+            }
+        }
+
+        //open toolbar
+        if (e.key === "Shift") {
+            if (document.getElementById("sidebar").style.opacity === 1) {
+                document.getElementById("sidebar").style.opacity = 0;
+            }
+            else {
+                document.getElementById("sidebar").style.opacity = 1;
             }
         }
 
@@ -322,6 +611,10 @@ document.addEventListener('keyup', (e) => {
 
 // shortcuts
 function addShortcut(block, caller) {
+    if (caller.classList.contains("iconImage")) {
+        caller = caller.parentElement //band-aid solution for #6
+    }
+
     if (caller.style.backgroundColor != "green") {
         caller.style.backgroundColor = "green";
         favoriteBlocks.push(block);
@@ -333,7 +626,7 @@ function addShortcut(block, caller) {
         }
     }
     else {
-        caller.style.backgroundColor = "white";
+        caller.style.backgroundColor = "rgb(248, 242, 242)";
         favoriteBlocks.splice(favoriteBlocks.indexOf(block), 1);
     }
     setTimeout(updateToolbar, 10);
@@ -354,6 +647,7 @@ function updateToolbar() {
         newTool.querySelector('#toolDisplayTemplateTrash').onclick = (e) => {
             favoriteBlocks.splice(favoriteBlocks.indexOf(favBlock), 1);
             e.target.parentElement.parentElement.remove();
+            document.querySelector(`#favoriteBtn-${favBlock}`).style.backgroundColor = "rgb(248, 242, 242)";
         };
         newTool.style.display = 'block';
         newTool.id = `toolDisplay-${favBlock}`;
@@ -366,326 +660,106 @@ function updateToolbar() {
 
 //create blocks
 
-function createNewElement(key) {
-    const fragment = document.createDocumentFragment();
+function createNewElement(key, number) { //number is for loading blocks with specific numbers to preserve connections. OPTIONAL
+    if (blocklist[key] === undefined) { return; }
 
-    const newDraggable = document.createElement('div');
-    newDraggable.classList.add('draggable');
-    newDraggable.style.top = '200px';
-    newDraggable.style.left = '200px';
-    newDraggable.id = `draggable-${counter}`;
+    let newElement = document.createElement('div');
 
-    const inout1 = document.createElement('div');
-    inout1.classList.add('inout');
-    inout1.id = (`draggable-${counter}-input-1`);
-    inout1.textContent = '0';
-    newDraggable.appendChild(inout1);
+    newElement.insertAdjacentHTML('beforeend', blocklist[key].structure.replace(/draggable-default/g, `draggable-${number !== undefined ? number : counter}`));
+    newElement = newElement.children[0];
 
+    const parent = newElement;
 
-    const inout2 = document.createElement('div');
-    inout2.classList.add('inout');
-    inout2.id = (`draggable-${counter}-input-2`);
-    inout2.textContent = '0';
-    newDraggable.appendChild(inout2);
+    //final processing
 
-    const title = document.createElement('div');
-    title.classList.add('inout');
-    title.classList.add('title');
-    title.textContent = 'title';
-    newDraggable.appendChild(title);
+    //touch sensors
+    if (newElement.querySelector('.touchSensor')) {
+        const touchSensor = newElement.querySelector('.touchSensor');
+        newElement.querySelector('.touchSensor').addEventListener('click', (e) => {
+            const parent = touchSensor.parentElement;
+            const output1 = document.getElementById(`${parent.id}-output-1`);
+            const output2 = document.getElementById(`${parent.id}-output-2`);
 
-    const inout3 = document.createElement('div');
-    inout3.classList.add('inout');
-    inout3.id = (`draggable-${counter}-output-1`);
-    inout3.textContent = '0';
-    newDraggable.appendChild(inout3);
-
-    const inout4 = document.createElement('div');
-    inout4.classList.add('inout');
-    inout4.id = (`draggable-${counter}-output-2`);
-    inout4.textContent = '0';
-    inout4.style.border = "none";
-    newDraggable.appendChild(inout4);
-
-
-    switch (key) {
-        case "a":
-            newDraggable.classList.add('binary');
-            title.textContent = 'value';
-            inout3.textContent = '0';
-            inout4.textContent = '0';
-            break;
-        case "b":
-            newDraggable.classList.add('binary');
-            title.textContent = 'value';
-            inout3.textContent = '1';
-            inout4.textContent = '1';
-            break;
-        case "c":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('not');
-            newDraggable.classList.add('gate');
-            title.textContent = 'NOT gate';
-            break;
-        case "d":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('and');
-            newDraggable.classList.add('gate');
-            title.textContent = 'AND gate';
-            break;
-        case "e":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('or');
-            newDraggable.classList.add('gate');
-            title.textContent = 'OR gate';
-            break;
-        case "f":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('xor');
-            newDraggable.classList.add('gate');
-            title.textContent = 'XOR gate';
-            break;
-        case "g":
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('switch');
-            title.textContent = 'switch';
-            inout3.textContent = '1';
-            inout4.textContent = '1';
-            inout1.remove();
-            inout2.remove();
-
-            const touchSensor = document.createElement('div');
-            touchSensor.classList.add('touchSensor');
-            touchSensor.id = (`draggable-${counter}-touchSensor`);
-            newDraggable.appendChild(touchSensor);
-
-            touchSensor.addEventListener('click', (e) => {
-                const parent = touchSensor.parentElement;
-                const output1 = document.getElementById(`${parent.id}-output-1`);
-                const output2 = document.getElementById(`${parent.id}-output-2`);
-
-                if (output1.textContent == '1') {
-                    touchSensor.style.backgroundColor = "black";
-                    output1.textContent = '0';
-                    output2.textContent = '0';
-                }
-                else if (output1.textContent == '0') {
-                    touchSensor.style.backgroundColor = "yellow";
-                    output1.textContent = '1';
-                    output2.textContent = '1';
-                }
-                syncConnections();
-            });
-            break;
-        case 'h':
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('light');
-            title.textContent = 'lamp';
-            inout2.remove();
-            inout3.remove();
-            inout4.remove();
-
-            const light = document.createElement('div');
-            light.style.height = '60px';
-            light.style.backgroundColor = 'black';
-            light.classList.add('lightPart');
-            newDraggable.appendChild(light);
-
-            break;
-        case 'i':
-            newDraggable.classList.add('binary');
-            newDraggable.classList.add('button');
-            title.textContent = 'button';
-            inout1.remove();
-            inout2.remove();
-            inout3.textContent = '1';
-            inout4.textContent = '1';
-
-            const pushSensor = document.createElement('div');
-            pushSensor.classList.add('pushSensor');
-            pushSensor.id = (`draggable-${counter}-pushSensor`);
-            newDraggable.appendChild(pushSensor);
-
-            const parent = pushSensor.parentElement;
-            const output1 = parent.querySelector(`#${parent.id}-output-1`);
-            const output2 = parent.querySelector(`#${parent.id}-output-2`);
-            pushSensor.addEventListener('mousedown', (e) => {
-                pushSensor.style.backgroundColor = "yellow";
-                output1.textContent = '1';
-                output2.textContent = '1';
-            });
-            pushSensor.addEventListener('mouseup', (e) => {
-                pushSensor.style.backgroundColor = "black";
+            if (output1.textContent == '1') {
+                touchSensor.style.backgroundColor = "black";
                 output1.textContent = '0';
                 output2.textContent = '0';
-            });
+            }
+            else if (output1.textContent == '0') {
+                touchSensor.style.backgroundColor = "yellow";
+                output1.textContent = '1';
+                output2.textContent = '1';
+            }
             syncConnections();
-            break;
-        case 'k':
-            newDraggable.classList.add('gate');
-            newDraggable.classList.add('relay');
-            title.textContent = 'relay';
-
-            break;
-        case 'l':
-            newDraggable.classList.add('gate');
-            newDraggable.classList.add('relay');
-            newDraggable.classList.add('memoryRelay');
-            title.textContent = 'memory relay';
-
-            break;
-        case 'n':
-            newDraggable.classList.add('decimal');
-            newDraggable.classList.add('binaryToDecimal');
-
-            newDraggable.style.width = '200px';
-            newDraggable.height = '50px';
-
-            title.textContent = 'Binary to Decimal';
-            title.style.width = '200px';
-
-            inout1.remove();
-            inout2.remove();
-            inout3.remove();
-            inout4.remove();
-
-            const binaryInputContainer = document.createElement('div');
-            binaryInputContainer.classList.add('binaryInputContainer');
-            binaryInputContainer.style.display = 'flex';
-            binaryInputContainer.style.justifyContent = 'center';
-
-            for (let i = 0; i < 8; i++) {
-                const binaryInput = document.createElement('div');
-                binaryInput.classList.add('binaryInput');
-                binaryInput.classList.add('inout');
-                binaryInput.id = (`draggable-${counter}-input-${i}`);
-                binaryInput.textContent = '0';
-                binaryInputContainer.appendChild(binaryInput);
-            }
-
-            const equalsSign = document.createElement('div');
-            equalsSign.textContent = '=';
-            binaryInputContainer.appendChild(equalsSign);
-
-            const decimalOutput = document.createElement('div');
-            decimalOutput.textContent = '0';
-            decimalOutput.style.width = '50px';
-            decimalOutput.classList.add('decimalOutput');
-            decimalOutput.classList.add('inout');
-            decimalOutput.id = (`draggable-${counter}-output-1`);
-            binaryInputContainer.appendChild(decimalOutput);
-
-            newDraggable.appendChild(binaryInputContainer);
-
-            break;
-        case "o":
-            newDraggable.classList.add('decimal');
-            newDraggable.classList.add('decimalToBinary');
-
-            newDraggable.style.width = '200px';
-            newDraggable.height = '50px';
-
-            title.textContent = 'Decimal to Binary';
-            title.style.width = '200px';
-
-            inout1.remove();
-            inout2.remove();
-            inout3.remove();
-            inout4.remove();
-
-            const binaryOutputContainer = document.createElement('div');
-            binaryOutputContainer.classList.add('binaryOutputContainer');
-            binaryOutputContainer.style.display = 'flex';
-            binaryOutputContainer.style.justifyContent = 'center';
-
-            const decimalInput = document.createElement('div');
-            decimalInput.textContent = '0';
-            decimalInput.style.width = '50px';
-            decimalInput.classList.add('decimalInput');
-            decimalInput.classList.add('inout');
-            decimalInput.id = (`draggable-${counter}-input-1`);
-            binaryOutputContainer.appendChild(decimalInput);
-
-            const equalSign = document.createElement('div');
-            equalSign.textContent = '=';
-            binaryOutputContainer.appendChild(equalSign);
-
-            for (let i = 0; i < 8; i++) {
-                const binaryOutput = document.createElement('div');
-                binaryOutput.classList.add('inout');
-                binaryOutput.classList.add('binaryOutput');
-                binaryOutput.id = (`draggable-${counter}-output-${i}`);
-                binaryOutput.textContent = '0';
-                binaryOutputContainer.appendChild(binaryOutput);
-            }
-
-            newDraggable.appendChild(binaryOutputContainer);
-
-            break;
-        case "p":
-            newDraggable.classList.add('decimal');
-            newDraggable.classList.add('decimalValue');
-
-            inout2.remove();
-            inout1.textContent = null;
-            const inputBlock = document.createElement('input');
-            inputBlock.type = 'number';
-            inputBlock.value = '0';
-            inputBlock.style.width = '100%';
-            inputBlock.addEventListener('input', (e) => {
-                inout3.textContent = e.target.value;
-                inout4.textContent = e.target.value;
-                syncConnections();
-            });
-            inout1.appendChild(inputBlock);
-            title.textContent = "Decimal value";
-            break;
-        case "j":
-            newDraggable.classList.add('special');
-            newDraggable.classList.add('comment');
-            title.textContent = 'comment block';
-            inout1.remove();
-            inout2.remove();
-            inout3.remove();
-            inout4.remove();
-
-            newDraggable.style.height = '200px';
-
-            const textArea = document.createElement('textarea');
-            textArea.style.width = '100px';
-            textArea.style.height = '80%';
-            textArea.style.resize = 'none';
-            textArea.style.overflow = 'scroll';
-            newDraggable.appendChild(textArea);
-
-            textArea.addEventListener('focus', (e) => {
-                listenInput = false;
-            });
-            textArea.addEventListener('blur', (e) => {
-                listenInput = true;
-            });
-
-            break;
-        case "q":
-            newDraggable.classList.add('special');
-            newDraggable.classList.add('pulser');
-            title.textContent = 'pulser';
-            break;
-        case "r":
-            newDraggable.classList.add('decimal');
-            newDraggable.classList.add('counter');
-            title.textContent = 'counter';
-            break;
-
-        default:
-            newDraggable.remove();
-            return;
+        });
     }
 
-    // Append newDraggable to the fragment
-    fragment.appendChild(newDraggable);
+    //decimal value
+    if (newElement.classList.contains('decimalValue')) {
+        newElement.querySelector('input').addEventListener('input', (e) => {
+            parent.querySelector(`#${parent.id}-output-1`).textContent = e.target.value;
+            parent.querySelector(`#${parent.id}-output-2`).textContent = e.target.value;
+            syncConnections();
+        });
+    }
 
-    document.getElementById("screen").appendChild(fragment);
+    //push sensors
+    if (newElement.querySelector('.pushSensor')) {
+        const pushSensor = newElement.querySelector('.pushSensor');
+        const output1 = parent.querySelector(`#${parent.id}-output-1`);
+        const output2 = parent.querySelector(`#${parent.id}-output-2`);
+        pushSensor.addEventListener('mousedown', (e) => {
+            pushSensor.style.backgroundColor = "yellow";
+            output1.textContent = '1';
+            output2.textContent = '1';
+        });
+        pushSensor.addEventListener('mouseup', (e) => {
+            pushSensor.style.backgroundColor = "black";
+            output1.textContent = '0';
+            output2.textContent = '0';
+        });
+        syncConnections();
+    }
+
+    //comment resizing
+    if (newElement.querySelector(".commentResizeHandle")) {
+        const dragHandle = newElement.querySelector(".commentResizeHandle");
+        let isResizing = false;
+        dragHandle.addEventListener('mousedown', (e) => {
+            dragOk = false;
+            isResizing = true;
+            e.preventDefault();
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (isResizing) {
+                const rect = newElement.getBoundingClientRect();
+                if (e.clientX - rect.left >= 100) {
+                    newElement.style.width = `${e.clientX - rect.left}px`;
+                }
+                if (e.clientY - rect.top >= 200) {
+                    newElement.style.height = `${e.clientY - rect.top}px`;
+                }
+                newElement.childNodes.forEach(child => {
+                    if (child.classList && child.classList.contains("commentResizeHandle")) {
+                        return;
+                    }
+                    else if (child.classList && child.classList.contains("commentTextarea")) {
+                        child.style.height = `${parseInt(newElement.style.height) - 40}px`;
+                    }
+                    child.style.width = `100%`;
+                });
+            }
+        });
+        document.addEventListener('mouseup', (e) => {
+            if (isResizing) {
+                dragOk = true;
+                isResizing = false;
+            }
+        });
+    }
+
+    document.getElementById('screen').appendChild(newElement);
+
     draggables = document.querySelectorAll('.draggable');
     inout = document.querySelectorAll('.inout');
 
@@ -710,17 +784,6 @@ function clearAllDraggables() {
 //on start
 
 addListeners();
-
-// fetch('./blocks.json')
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! Status: ${response.status}`);
-//         }
-//         return response.json();
-//     })
-//     .then(data => console.log(data))
-//     .catch(error => console.error('Failed to fetch data:', error));
-
 
 let isConnecting = false;
 let startElement = null;
@@ -763,6 +826,25 @@ function connectorTool() {
     else {
         if (newConnections.length === 2) {
             connections.push(newConnections);
+
+            //validate connection compatibility
+            const [ele1, ele2] = newConnections;
+            const inout1 = document.getElementById(ele1);
+            const inout2 = document.getElementById(ele2);
+
+            if (inout1.classList.contains('binary') && inout2.classList.contains('binary')) {
+                // Both are binary, so they are compatible
+            } else if (inout1.classList.contains('decimal') && inout2.classList.contains('decimal')) {
+                // Both are decimal, so they are compatible
+            } else if (inout1.classList.contains('any') || inout2.classList.contains('any')) {
+                // One is any, so they are compatible
+            }
+            else {
+                displayAlert("Incompatible connection types.");
+                connections.pop(); // Remove the invalid connection
+                return;
+            }
+
             newConnections.forEach(connection => {
                 document.getElementById(connection).style.backgroundColor = color;
             });
@@ -827,7 +909,7 @@ function clearAllConnections() {
 
 //Gate logic
 function updateBlocks() {
-    let gates = document.querySelectorAll('.gate');
+    let gates = document.querySelectorAll('.draggable');
     gates.forEach(gate => {
         const input1 = document.getElementById(`${gate.id}-input-1`);
         const input2 = document.getElementById(`${gate.id}-input-2`);
@@ -854,7 +936,51 @@ function updateBlocks() {
                 output1.textContent = input1.textContent !== input2.textContent ? '1' : '0';
                 output2.textContent = input1.textContent !== input2.textContent ? '1' : '0';
                 break;
-
+            case "adder":
+                const sum = parseInt(input1.textContent) + parseInt(input2.textContent);
+                output1.textContent = sum;
+                output2.textContent = sum;
+                break;
+            case "subtractor":
+                const difference = parseInt(input1.textContent) - parseInt(input2.textContent);
+                output1.textContent = difference;
+                output2.textContent = difference;
+                break;
+            case "multiplier":
+                const product = parseInt(input1.textContent) * parseInt(input2.textContent);
+                output1.textContent = product;
+                output2.textContent = product;
+                break;
+            case "divider":
+                if (parseInt(input2.textContent) === 0) {
+                    output1.textContent = 'Error';
+                    output2.textContent = 'Error';
+                }
+                else {
+                    const quotient = parseInt(input1.textContent) / parseInt(input2.textContent);
+                    output1.textContent = quotient;
+                    output2.textContent = quotient;
+                }
+                break;
+            case "multiplexer":
+                const inputValues = gate.querySelector(".mux-inputs").children;
+                const muxValues = parseInt(String(gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-input-5`).textContent) + String(gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-input-6`).textContent), 2)
+                console.log(muxValues)
+                gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-output-1`).textContent = inputValues[muxValues].textContent;
+                gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-output-2`).textContent = inputValues[muxValues].textContent;
+                break;
+            case "demultiplexer":
+                const outputValues = Array.from(gate.querySelector(".demux-outputs").children);
+                const demuxValues = parseInt(String(gate.querySelector('.demux-inputs').querySelector(`#${gate.id}-input-2`).textContent) + String(gate.querySelector('.demux-inputs').querySelector(`#${gate.id}-input-3`).textContent), 2)
+                outputValues.forEach((output, index) => {
+                    if (index === demuxValues) {
+                        output.textContent = gate.querySelector('.demux-inputs').querySelector(`#${gate.id}-input-1`).textContent;
+                    }
+                    else {
+                        output.textContent = '0';
+                    }
+                });
+                break;
             default:
                 break;
         }
@@ -922,7 +1048,7 @@ function updateBlocks() {
             output1.textContent = output1.textContent === '1' ? '0' : '1';
             output2.textContent = output2.textContent === '1' ? '0' : '1';
 
-            document.getElementById(`${pulser.id}-input-1`).textContent = '0';
+            //document.getElementById(`${pulser.id}-input-1`).textContent = '0';
         }
     });
 
@@ -946,24 +1072,224 @@ function updateBlocks() {
             input2.textContent = 0;
         }
     });
-}
 
-//time loop
+    //extenders
+    let extenders = document.querySelectorAll('.extender');
+    extenders.forEach(extender => {
+        const extenderInouts = extender.querySelectorAll(".inout").forEach(extenderInout => {
+            if (extenderInout.classList.contains("input") || extenderInout.classList.contains("title")) {
+                return;
+            }
+            else {
+                extenderInout.textContent = extender.querySelector(".input").textContent;
+            }
+        })
+    })
 
-function runSimulation() {
-    syncConnections();
-    addListeners();
-    updateBlocks();
-
+    //lights
     let lights = document.querySelectorAll('.lightPart');
     lights.forEach(light => {
         const input = document.getElementById(`${light.parentElement.id}-input-1`);
         light.style.backgroundColor = input.textContent === '1' ? 'yellow' : 'black';
     });
-    setTimeout(clock, simrate);
+
+    //equalities
+    const equalGates = document.querySelectorAll('.equal-operator');
+    equalGates.forEach(gate => {
+        const input1 = Number(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = Number(document.getElementById(`${gate.id}-input-2`).textContent);
+        const output1 = document.getElementById(`${gate.id}-output-1`);
+        const output2 = document.getElementById(`${gate.id}-output-2`);
+
+        if (input1 === input2) {
+            output1.textContent = "1";
+            output2.textContent = "1";
+        }
+
+        else if (input1 !== input2) {
+            output1.textContent = "0";
+            output2.textContent = "0";
+        }
+    })
+
+    const greaterGates = document.querySelectorAll('.greater-operator');
+    greaterGates.forEach(gate => {
+        const input1 = Number(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = Number(document.getElementById(`${gate.id}-input-2`).textContent);
+        const output1 = document.getElementById(`${gate.id}-output-1`);
+        const output2 = document.getElementById(`${gate.id}-output-2`);
+
+        if (input1 > input2) {
+            output1.textContent = "1";
+            output2.textContent = "1";
+        }
+
+        else if (input1 <= input2) {
+            output1.textContent = "0";
+            output2.textContent = "0";
+        }
+    })
+
+    const lesserGates = document.querySelectorAll('.lesser-operator');
+    lesserGates.forEach(gate => {
+        const input1 = Number(document.getElementById(`${gate.id}-input-1`).textContent);
+        const input2 = Number(document.getElementById(`${gate.id}-input-2`).textContent);
+        const output1 = document.getElementById(`${gate.id}-output-1`);
+        const output2 = document.getElementById(`${gate.id}-output-2`);
+
+        if (input1 < input2) {
+            output1.textContent = "1";
+            output2.textContent = "1";
+        }
+
+        else if (input1 >= input2) {
+            output1.textContent = "0";
+            output2.textContent = "0";
+        }
+    })
+}
+
+//time loop
+function runSimulation() {
+    if (!paused) {
+        updateBlocks();
+        syncConnections();
+        addListeners();
+        customFunctions();
+        frame++;
+
+        saveFrames();
+        if (settings.showFrameCount) {
+            document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
+        }
+    }
+    setTimeout(clock, settings.simrate);
 }
 
 function clock() {
-    setTimeout(runSimulation, simrate);
+    setTimeout(runSimulation, settings.simrate);
 }
 clock();
+
+function saveFrames() {
+    if (settings.saveFrames) {
+        if (localStorage.getItem(`frame-${frame - 10}`) != undefined) {
+            localStorage.removeItem(`frame-${frame - 10}`);
+        }
+        saveToLocalStorage("frame", true, `frame-${frame}`);
+    }
+}
+
+function forwardFrame() {
+    if (!paused) {
+        displayAlert("You can only step frames while paused. Go to debug -> pause.");
+    }
+    else {
+        frame++;
+        loadFromLocalStorage(`frame-${frame}`, true);
+        syncConnections();
+        addListeners();
+        updateBlocks();
+        saveFrames();
+        if (settings.showFrameCount) {
+            document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
+        }
+    }
+}
+function backwardFrame() {
+    if (!paused) {
+        displayAlert("You can only step frames while paused. Go to debug -> pause.");
+    }
+    else {
+        if (frame - 1 <= 0) {
+            displayAlert("No more frames to load!");
+        }
+        else {
+            frame--;
+            loadFromLocalStorage(`frame-${frame}`, true);
+            syncConnections();
+            addListeners();
+            updateBlocks();
+            saveFrames();
+            if (settings.showFrameCount) {
+                document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
+            }
+        }
+    }
+}
+function clearFrameSaves() {
+    const previousSaveFrameSetting = settings.saveFrames;
+    settings.saveFrames = false;
+    for (let k = 0; k < 5; k++) {
+        for (let i = 0; i < localStorage.length; i++) {
+            if (localStorage.key(i).startsWith("frame-")) {
+                localStorage.removeItem(localStorage.key(i));
+            }
+        }
+    }
+    settings.saveFrames = previousSaveFrameSetting;
+}
+
+//import modification
+document.getElementById('jsonFileInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+
+    // when the file is successfully read
+    reader.onload = function (e) {
+        try {
+            const jsonText = e.target.result;
+            const newBlock = JSON.parse(jsonText);
+
+            blocklist[newBlock.id] = {
+                title: newBlock.title,
+                type: newBlock.type,
+                structure: newBlock.structure
+            }
+
+            populateMenu();
+
+            const logicCode = newBlock.logic
+            customFunctions = extendFunction(customFunctions, logicCode, newBlock.id);
+        } catch (error) {
+            console.error("Error parsing JSON:", error);
+            displayAlert("An error occurred when reading the file...")
+        }
+    };
+
+    reader.onerror = function () {
+        console.error("Error reading file");
+    };
+
+    reader.readAsText(file);
+});
+
+// handle Javascript
+let customFunctions = function () {
+
+}
+
+// update function script
+function extendFunction(originalFunc, newCode, id) { //id = gate to look for to attach function to
+    const funcString = originalFunc.toString();
+    const bodyStartIndex = funcString.indexOf('{') + 1;
+    const bodyEndIndex = funcString.lastIndexOf('}');
+    const originalBody = funcString.slice(bodyStartIndex, bodyEndIndex);
+
+    const updatedBody = `
+    return function customFunctions() {
+      ${originalBody}
+      document.getElementById('screen').querySelectorAll('.${id}').forEach(gate => {
+        ${newCode}
+      });
+    };
+  `;
+
+    const factory = new Function(updatedBody);
+    return factory();
+}
