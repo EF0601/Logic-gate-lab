@@ -142,7 +142,7 @@ dialog button:hover {
   justify-content: space-evenly;
 }
 
-.gridItemButton{
+.gridItemButton {
   width: 60%;
   height: 100%;
 }
@@ -202,7 +202,7 @@ textarea {
   background-color: rgb(84, 56, 56);
   font-family: 'Courier new';
   height: 5vh;
-  border-radius: 5vh;;
+  border-radius: 5vh;
   align-items: center;
 }
 .topBar button {
@@ -289,7 +289,7 @@ textarea {
   .dropdown-content {
     top: 10vh;
   }
-  *{
+  * {
     scrollbar-width: auto;
   }
   ::-webkit-scrollbar {
@@ -305,20 +305,20 @@ textarea {
   text-align: center;
 }
 
-.iconImage{
+.iconImage {
   width: 15px;
   height: 15px;
   margin: 0;
 }
 
-.iconButton{
+.iconButton {
   width: 20%;
   height: 100%;
 }
 
-#sidebar{
+#sidebar {
   height: 80%; /* 100% Full-height */
-  width: 250px; 
+  width: 250px;
   position: fixed; /* Stay in place */
   z-index: 1; /* Stay on top */
   top: 10%;
@@ -335,19 +335,19 @@ textarea {
   transition: opacity 0.5s;
 }
 
-#toolbar > .tool{
+#toolbar > .tool {
   margin: 5px;
   background-color: rgb(84, 56, 56);
   padding: 5px;
   border-radius: 10px;
 }
 
-.toolActionsContainer{
+.toolActionsContainer {
   display: flex;
   justify-content: left;
 }
 
-.toolActionsContainer button{
+.toolActionsContainer button {
   margin: 2px;
   width: 50%;
   background-color: rgb(109, 76, 76);
@@ -357,11 +357,11 @@ textarea {
   border: none;
 }
 
-.toolActionsContainer button:hover{
+.toolActionsContainer button:hover {
   background-color: rgb(84, 56, 56);
 }
 
-#sidebarMenuBtn{
+#sidebarMenuBtn {
   width: 100%;
   margin-bottom: 10px;
   background-color: rgb(84, 56, 56);
@@ -373,11 +373,11 @@ textarea {
   border-radius: 10px;
 }
 
-#sidebarMenuBtn:hover{
+#sidebarMenuBtn:hover {
   text-decoration: underline;
 }
 
-#alertBoxInput{
+#alertBoxInput {
   width: 80%;
   padding: 5px;
   font-size: small;
@@ -385,22 +385,21 @@ textarea {
   margin: auto;
 }
 
-
-.localStorageSave td{
+.localStorageSave td {
   padding: 5px;
   border: 1px solid black;
 }
 .localStorageSave tr:nth-of-type(odd) {
   background-color: rgb(115, 71, 71);
 }
-.localStorageSave button{
+.localStorageSave button {
   text-align: left;
 }
-table#localstorageSavesContainer{
+table#localstorageSavesContainer {
   border-collapse: collapse;
   width: 100%;
 }
-.commentResizeHandle{
+.commentResizeHandle {
   cursor: nwse-resize;
   width: 20px;
   height: 20px;
@@ -408,3 +407,52 @@ table#localstorageSavesContainer{
   bottom: 0;
   right: 0;
 }
+
+/* CREATOR ONLY */
+#main {
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  flex: 1;
+}
+.subpart {
+  margin: 20px;
+  border-radius: 20px;
+}
+#codespace{
+  resize: none;
+  width: 90%;
+  height: 80%;
+  margin: 10px;
+  background-color: rgb(32, 30, 30);
+  color: white;
+  font-size: larger;
+  border-radius: 20px;
+  border: none;
+  padding: 10px;
+}
+#codeBar{
+  display: grid;
+  grid-template-columns: repeat(3, 33.33%);
+  border-radius: 20px;
+  height: 40px;
+  width: 90%;
+  margin: auto;
+  overflow: hidden;
+}
+#codeBar button,
+#codeBar select{
+  background-color: rgb(32, 30, 30);
+  border: none;
+  color: white;
+  padding: 0 20px 0 20px;
+}
+#codeBar button:hover,
+#codeBar select:hover{
+  background-color: rgb(50, 46, 46);
+}
+#inputDialog,
+#alertBox{  /* #alertBox is from index.html, the main app, but I like the looks so I'm reusing it*/
+  width: 50vh;
+  height: 30vh;
+}
+/* END CREATOR ONLY */

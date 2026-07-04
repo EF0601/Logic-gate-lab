@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LGL: Gate Creator</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<dialog id="menu">
+    <h1>Menu</h1>
+    <h2>Credits</h2>
+    <p>Created by <a href="https://github.com/EF0601">EF0601</a>. On December 31st, 2024</p>
+    <h2>Updates</h2>
+    <a href="https://github.com/EF0601/Logic-gate-lab/releases">View all updates and better update logs.</a>
+    <h3>Version 0.6.0-beta</h3>
+    <p><i>1/29/2026</i> Almost a year after the last update, this version brings two more blocks: the pulser and the
+        counter. There were several UI improvements and various bug fixes. The top bar should now be easier to access.
+        The toolbar was also added, allowing quick access to up to 10 tools for convenience. Finally, users can now find
+        the app as an executable. Check this out in the releases section.</p>
+    <h2>License</h2>
+    <p>
+        Copyright © 2026 EF0601 <br><br>
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+        documentation files (the “Software”), to deal in the Software without restriction, including without limitation
+        the
+        rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+        permit persons to whom the Software is furnished to do so, subject to the following conditions: <br><br>
+
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+        the
+        Software.<br><br>
+
+        THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+        THE
+        WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS
+        OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
+        OR
+        OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    </p>
+    <div class="container" style="display: flex; justify-content: center; margin-top: 10px">
+        <button style="width: 100%" onclick="document.getElementById('menu').style.display = 'none'">Close</button>
+    </div>
+</dialog>
+<dialog id="inputDialog">
+    <h2 id="inputDialogHeader"></h2>
+    <p id="inputDialogBody"></p>
+    <input type="text" id="inputDialogInput" placeholder="Type...">
+    <button id="inputDialogCancel">Cancel</button>
+    <button id="inputDialogSubmit">Submit</button>
+</dialog>
+
+<body>
+    <div id="topBar" style="display: flex; justify-content: space-between;">
+        <div>
+            <div class="dropdown">
+                <button class="dropbtn">File</button>
+                <div class="dropdown-content">
+                    <button onclick="">Clear</button>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn">Edit</button>
+                <div class="dropdown-content">
+                    <button></button>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn">Window</button>
+                <div class="dropdown-content">
+                    <button onclick="document.getElementById('menu').style.display = 'block'">Menu</button>
+                    <button
+                        onclick="window.open('https://github.com/EF0601/Logic-gate-lab/wiki', '_blank')">Wiki</button>
+                    <button onclick="window.open('./index.html', '_blank')">Sandbox</button>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn">Debug</button>
+                <div class="dropdown-content">
+                    <button></button>
+                </div>
+            </div>
+        </div>
+        <h2 style="color: white; margin-right: 10px;">Gate Creator v0.1</h2>
+    </div>
+    <div id="main">
+        <div class="subpart" style="background-color: rgb(222, 213, 213); text-align: center;">
+            <textarea name="" id="codespace" placeholder="Start typing..."></textarea>
+            <div id="codeBar">
+                <select name="" id="codespaceSelect">
+                    <option value="Design" selected>Design</option>
+                    <option value="Program">Program</option>
+                </select>
+                <button onclick="updatePreview()">Refresh</button>
+                <button id="exportBtn">Export</button>
+            </div>
+        </div>
+        <div id="screen" class="subpart">
+
+        </div>
+    </div>
+    <div id="bottomBar"><span>Bottom bar is disabled in Gate Creator</span>
+    </div>
+</body>
+<script src="creator.js"></script>
+
+</html>

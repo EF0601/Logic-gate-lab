@@ -72,17 +72,17 @@ function displayAlert(text, input) {
 
 }
 
-function updateSettings(){
+function updateSettings() {
     settings.simrate = document.getElementById("simrateSettingInput").value;
     settings.autosave = document.getElementById("autosaveSettingChoice").value === "true";
     settings.saveFrames = document.getElementById("saveFramesSettingChoice").value === "true";
     settings.autoToolbar = document.getElementById("autoOpenToolbarSettingChoice").value === "true";
     settings.showFrameCount = document.getElementById("showFramesSettingChoice").value === "true";
 
-    if(settings.showFrameCount){
+    if (settings.showFrameCount) {
         document.getElementById("frameCountDisplay").style.display = "block";
     }
-    else{
+    else {
         document.getElementById("frameCountDisplay").style.display = "none";
     }
 }
@@ -186,11 +186,11 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
     //test file name
     const fileName = setName ?? await displayAlert('Enter a name for your save', true);
     const fileNameRegexFilter = /^[a-z]+\w+$/;
-    if ((!fileNameRegexFilter.test(fileName)|| fileName.length > 50 || fileName === "autosave") && !force) {
+    if ((!fileNameRegexFilter.test(fileName) || fileName.length > 50 || fileName === "autosave") && !force) {
         displayAlert('Invalid file name. File names must start with a letter and can only contain letters, numbers, and underscores. Some names are reserved for system files.');
         return;
     }
-    if(localStorage.getItem(fileName) !== null && !force){
+    if (localStorage.getItem(fileName) !== null && !force) {
         if (await displayAlert('A save with this name already exists. Do you want to overwrite it? Type YES to overwrite.', true) != "YES") {
             return;
         }
@@ -209,32 +209,32 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
                 //This block is a comment, so push the text content as well
                 sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top, draggable.querySelector('textarea').value]);
             }
-            else if (blockId === "p"){
+            else if (blockId === "p") {
                 //This block is a decimal value, so push the value as well
                 sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top, draggable.querySelector('input').value]);
             }
-            else{
+            else {
                 sandboxState.blocks.push([blockId, blockNumber, draggable.style.left, draggable.style.top]);
             }
         }
     });
     localStorage.setItem(fileName, JSON.stringify(sandboxState));
 
-    if(force){return}
+    if (force) { return }
 
     displayAlert(`Sandbox state saved to local storage as "${fileName}".`);
     openLocalStorage();
 }
 
 async function loadFromLocalStorage(filename, force) { //if force is TRUE, the file will be loaded without user confirmation
-    if (!JSON.parse(localStorage.getItem(filename))){return}
+    if (!JSON.parse(localStorage.getItem(filename))) { return }
 
     let confirmLoad;
-    if (!force){
-        if(filename === "autosave"){
+    if (!force) {
+        if (filename === "autosave") {
             confirmLoad = await displayAlert('LGL has detected a past autosave file, allowing you to begin from where you left off. Do you want to continue? Type YES to continue.', true) == "YES"
         }
-        else{
+        else {
             confirmLoad = await displayAlert('Loading a sandbox will overwrite your current sandbox. Do you want to continue? Type YES to continue.', true) == "YES"
         }
     }
@@ -252,8 +252,8 @@ async function loadFromLocalStorage(filename, force) { //if force is TRUE, the f
                 const commentText = block.length > 4 ? block[4] : block[2];
                 document.getElementById(`draggable-${block[1]}`).querySelector('textarea').value = commentText;
             }
-            if (block[0] === "p"){
-                const decimalValue = block.length > 4 ? block[4] : block [2];
+            if (block[0] === "p") {
+                const decimalValue = block.length > 4 ? block[4] : block[2];
                 document.getElementById(`draggable-${block[1]}`).querySelector('input').value = decimalValue;
             }
             // Set the position of the block
@@ -276,14 +276,14 @@ async function loadFromLocalStorage(filename, force) { //if force is TRUE, the f
 
 const localsaveDisplayTemplate = document.getElementById('localsaveDisplayTemplate');
 const localsaveTableHeader = document.getElementById('header');
-function openLocalStorage(){
+function openLocalStorage() {
     document.getElementById('localstorageSavesContainer').innerHTML = '';
     if (localStorage.length === 0) {
         const noSavesMessage = document.createElement('p');
         noSavesMessage.textContent = 'No saves found in local storage.';
         document.getElementById('localstorageSavesContainer').appendChild(noSavesMessage);
     }
-    else{
+    else {
         document.getElementById('localstorageSavesContainer').appendChild(localsaveTableHeader.cloneNode(true));
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -306,7 +306,7 @@ function openLocalStorage(){
                 }
             }
             if (Math.round((localStorage.getItem(key).length * 2)) >= 1028) {
-                newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round(((localStorage.getItem(key).length * 2) / 1028)*100) / 100} KB`;
+                newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round(((localStorage.getItem(key).length * 2) / 1028) * 100) / 100} KB`;
             }
             else {
                 newSaveDisplay.querySelector('#localStorageSaveSize').textContent = `Size: ${Math.round((localStorage.getItem(key).length * 2))} Bytes`;
@@ -561,11 +561,11 @@ document.addEventListener('keydown', (e) => {
         }
 
         //open toolbar
-        if (e.key === "Shift"){
-            if(document.getElementById("sidebar").style.opacity === 1){
+        if (e.key === "Shift") {
+            if (document.getElementById("sidebar").style.opacity === 1) {
                 document.getElementById("sidebar").style.opacity = 0;
             }
-            else{
+            else {
                 document.getElementById("sidebar").style.opacity = 1;
             }
         }
@@ -586,7 +586,7 @@ document.addEventListener('keyup', (e) => {
 
 // shortcuts
 function addShortcut(block, caller) {
-    if (caller.classList.contains("iconImage")){
+    if (caller.classList.contains("iconImage")) {
         caller = caller.parentElement //band-aid solution for #6
     }
 
@@ -1058,12 +1058,12 @@ function updateBlocks() {
         const output1 = document.getElementById(`${gate.id}-output-1`);
         const output2 = document.getElementById(`${gate.id}-output-2`);
 
-        if(input1 === input2){
+        if (input1 === input2) {
             output1.textContent = "1";
             output2.textContent = "1";
         }
 
-        else if(input1 !== input2){
+        else if (input1 !== input2) {
             output1.textContent = "0";
             output2.textContent = "0";
         }
@@ -1076,12 +1076,12 @@ function updateBlocks() {
         const output1 = document.getElementById(`${gate.id}-output-1`);
         const output2 = document.getElementById(`${gate.id}-output-2`);
 
-        if(input1 > input2){
+        if (input1 > input2) {
             output1.textContent = "1";
             output2.textContent = "1";
         }
 
-        else if(input1 <= input2){
+        else if (input1 <= input2) {
             output1.textContent = "0";
             output2.textContent = "0";
         }
@@ -1094,12 +1094,12 @@ function updateBlocks() {
         const output1 = document.getElementById(`${gate.id}-output-1`);
         const output2 = document.getElementById(`${gate.id}-output-2`);
 
-        if(input1 < input2){
+        if (input1 < input2) {
             output1.textContent = "1";
             output2.textContent = "1";
         }
 
-        else if(input1 >= input2){
+        else if (input1 >= input2) {
             output1.textContent = "0";
             output2.textContent = "0";
         }
@@ -1108,14 +1108,15 @@ function updateBlocks() {
 
 //time loop
 function runSimulation() {
-    if(!paused){
+    if (!paused) {
         updateBlocks();
         syncConnections();
         addListeners();
+        customFunctions();
         frame++;
 
         saveFrames();
-        if(settings.showFrameCount){
+        if (settings.showFrameCount) {
             document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
         }
     }
@@ -1127,17 +1128,17 @@ function clock() {
 }
 clock();
 
-function saveFrames(){
-    if(settings.saveFrames){
-        if(localStorage.getItem(`frame-${frame-10}`) != undefined){
-            localStorage.removeItem(`frame-${frame-10}`);
+function saveFrames() {
+    if (settings.saveFrames) {
+        if (localStorage.getItem(`frame-${frame - 10}`) != undefined) {
+            localStorage.removeItem(`frame-${frame - 10}`);
         }
         saveToLocalStorage("frame", true, `frame-${frame}`);
     }
 }
 
-function forwardFrame(){
-    if(!paused){
+function forwardFrame() {
+    if (!paused) {
         displayAlert("You can only step frames while paused. Go to debug -> pause.");
     }
     else {
@@ -1147,17 +1148,17 @@ function forwardFrame(){
         addListeners();
         updateBlocks();
         saveFrames();
-        if(settings.showFrameCount){
+        if (settings.showFrameCount) {
             document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
         }
     }
 }
-function backwardFrame(){
-    if(!paused){
+function backwardFrame() {
+    if (!paused) {
         displayAlert("You can only step frames while paused. Go to debug -> pause.");
     }
     else {
-        if(frame-1 <= 0){
+        if (frame - 1 <= 0) {
             displayAlert("No more frames to load!");
         }
         else {
@@ -1167,21 +1168,108 @@ function backwardFrame(){
             addListeners();
             updateBlocks();
             saveFrames();
-            if(settings.showFrameCount){
+            if (settings.showFrameCount) {
                 document.getElementById("frameCountDisplay").innerHTML = `Frame: ${frame}`;
             }
         }
     }
 }
-function clearFrameSaves(){
+function clearFrameSaves() {
     const previousSaveFrameSetting = settings.saveFrames;
     settings.saveFrames = false;
-    for(let k = 0; k < 5; k++){
-        for(let i = 0; i < localStorage.length; i++){
-            if(localStorage.key(i).startsWith("frame-")){
+    for (let k = 0; k < 5; k++) {
+        for (let i = 0; i < localStorage.length; i++) {
+            if (localStorage.key(i).startsWith("frame-")) {
                 localStorage.removeItem(localStorage.key(i));
             }
         }
     }
     settings.saveFrames = previousSaveFrameSetting;
+}
+
+//import modification
+document.getElementById('jsonFileInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+
+    // when the file is successfully read
+    reader.onload = function (e) {
+        try {
+            const jsonText = e.target.result;
+            const newBlock = JSON.parse(jsonText);
+
+            blocklist[newBlock.id] = {
+                title: newBlock.title,
+                type: newBlock.type,
+                structure: newBlock.structure
+            }
+
+            populateMenu();
+
+            const logicCode = newBlock.logic
+            customFunctions = extendFunction(customFunctions, logicCode, newBlock.id);
+        } catch (error) {
+            console.error("Error parsing JSON:", error);
+            displayAlert("An error occurred when reading the file...")
+        }
+    };
+
+    reader.onerror = function () {
+        console.error("Error reading file");
+    };
+
+    reader.readAsText(file);
+});
+
+// handle Javascript
+let customFunctions = function () {
+
+}
+
+// update function script
+function extendFunction(originalFunc, newCode, id) { //id = gate to look for to attach function to
+    // const funcString = originalFunc.toString();
+    // const originalBody = funcString.slice(0, funcString.indexOf('{') + 1);
+
+    // let getGatesOfType = function (){
+    //     document.getElementById('#screen').querySelectorAll(`.${id}`).forEach(gate => {
+
+    //     });
+    // }
+
+    // const wrapStart = getGatesOfType.toString().slice(0, getGatesOfType.toString().indexOf('=>') + 4);
+    // const wrapEnd = getGatesOfType.toString().slice(getGatesOfType.toString().indexOf('});'));
+
+    // const updatedBody = `
+    // ${originalBody}
+    // ${wrapStart}
+    // ${newCode}
+    // ${wrapEnd}
+    // }
+    // `;
+    // console.log(updatedBody);
+    // return new Function(updatedBody);
+    const funcString = originalFunc.toString();
+    const bodyStartIndex = funcString.indexOf('{') + 1;
+    const bodyEndIndex = funcString.lastIndexOf('}');
+    const originalBody = funcString.slice(bodyStartIndex, bodyEndIndex);
+
+    // We wrap everything in a named function wrapper and return it immediately
+    const updatedBody = `
+    return function customFunctions() {
+      ${originalBody}
+      document.getElementById('screen').querySelectorAll('.${id}').forEach(gate => {
+        ${newCode}
+      });
+    };
+  `;
+
+    // new Function() runs the outer block, which returns our named inner function
+    const factory = new Function(updatedBody);
+    return factory(); // Executes the factory to return the actual 'gameLoop' function
 }
