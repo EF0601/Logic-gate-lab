@@ -7,18 +7,29 @@
 	<link rel="stylesheet" href="style.css" />
 	<link rel="icon" href="data:,">
 	<title>LGL: Logic Gate Lab</title>
+	<style id="userSelectStyle">
+		* {
+			-webkit-user-select: text;
+			-ms-user-select: text;
+			user-select: text;
+		}
+	</style>
 </head>
 
 <div id="sidebar">
-	<button onclick="document.getElementById('menu').style.display = 'block'" id="sidebarMenuBtn">Menu</button>
-	<h2>Toolbar</h2>
-	<div id="toolbar">
-		<div class="tool" id="toolDisplayTemplate" style="display: none">
-			<p id="toolDisplayTemplateName">Name</p>
-			<div class="toolActionsContainer">
-				<button id="toolDisplayTemplateButton">Use</button>
-				<button id="toolDisplayTemplateTrash">Remove</button>
-			</div>
+	<button onclick="useTool('favorites')"><img src="./media/star-regular-full.svg" alt="" class="iconImage"></button>
+	<button onclick="useTool('select')"><img src="./media/arrow-pointer-solid-full.svg" alt=""
+			class="iconImage"></button>
+	<button><img src="./media/link-solid-full.svg" alt="" class="iconImage"></button>
+	<button onclick="useTool('drag')"><img src="./media/arrows-up-down-left-right-solid-full.svg" alt=""
+			class="iconImage"></button>
+</div>
+<div id="toolbar" style="display: none">
+	<div class="tool" id="toolDisplayTemplate" style="display: none">
+		<p id="toolDisplayTemplateName">Name</p>
+		<div class="toolActionsContainer">
+			<button id="toolDisplayTemplateButton">Use</button>
+			<button id="toolDisplayTemplateTrash">Remove</button>
 		</div>
 	</div>
 </div>
@@ -44,12 +55,16 @@
 	<h2>Updates</h2>
 	<a href="https://github.com/EF0601/Logic-gate-lab/releases">View all updates and better update logs.</a>
 	<h3>Version 1.0.0</h3>
-	<p><i>7/4/2026</i> This update is the largest by far, with numerous new features and improvements. The new Gate Creator
+	<p><i>7/4/2026</i> This update is the largest by far, with numerous new features and improvements. The new Gate
+		Creator
 		allows users to customize their sandbox with new blocks. Program them with HTML and Javascript in the Creator
-		(Window > Creator). Export a .json file to import into the main sandbox. <br><br>New multiplexer and demultiplexer
+		(Window > Creator). Export a .json file to import into the main sandbox. <br><br>New multiplexer and
+		demultiplexer
 		blocks. New math (basic operations) and equality operator blocks. New debug system to view the sandbox frame by
-		frame. UI overhaul to give the app a refreshed look. New repair tool to fix outdated save files. Import and export
-		save files in .json format. New settings menu to allow for some customization. Comment resize handle and extender
+		frame. UI overhaul to give the app a refreshed look. New repair tool to fix outdated save files. Import and
+		export
+		save files in .json format. New settings menu to allow for some customization. Comment resize handle and
+		extender
 		block. New autosave feature. New localstorage save feature to save files locally. Plus, various bug fixes.</p>
 	<h2>License</h2>
 	<p>
@@ -95,13 +110,6 @@
 	<select name="" id="saveFramesSettingChoice">
 		<option value="true">true</option>
 		<option value="false">false</option>
-	</select>
-	<h2>Automatically open side toolbar</h2>
-	<p>Choose whether hovering near the left of the screen should open the side toolbar. If this settings is disabled,
-		the side toolbar can be opened with the LShift key. <i>Default: false</i></p>
-	<select name="" id="autoOpenToolbarSettingChoice">
-		<option value="true">true</option>
-		<option value="false" selected>false</option>
 	</select>
 	<h2>Show frame count</h2>
 	<p>Choose whether you'd like to have the frame count shown in the debug tab. <i>Default: false</i></p>

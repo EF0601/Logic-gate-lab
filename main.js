@@ -3,6 +3,7 @@ let inout = document.querySelectorAll('.inout');
 let blocksObject;
 
 let listenInput = true;
+let allowDrag = false;
 
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
@@ -24,7 +25,6 @@ let settings = {
     simrate: 250,
     autosave: true,
     saveFrames: true,
-    autoToolbar: false,
     showFrameCount: false,
 }
 let frame = 0;
@@ -76,7 +76,6 @@ function updateSettings() {
     settings.simrate = document.getElementById("simrateSettingInput").value;
     settings.autosave = document.getElementById("autosaveSettingChoice").value === "true";
     settings.saveFrames = document.getElementById("saveFramesSettingChoice").value === "true";
-    settings.autoToolbar = document.getElementById("autoOpenToolbarSettingChoice").value === "true";
     settings.showFrameCount = document.getElementById("showFramesSettingChoice").value === "true";
 
     if (settings.showFrameCount) {
@@ -87,23 +86,13 @@ function updateSettings() {
     }
 }
 
-// sidebar
-/* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
-
-onmousemove = function (e) {
-    if (e.clientX < 300 && settings.autoToolbar) {
-        document.getElementById("sidebar").style.opacity = 1;
-    }
-    else if (e.clientX > 300) {
-        document.getElementById("sidebar").style.opacity = 0;
-    }
-};
-
 function loadingComplete() {
     populateMenu();
     clearFrameSaves();
     updateSettings();
+    updateToolbar();
     loadFromLocalStorage("autosave");
+    useTool('select');
 }
 
 //create buttons for each block in the blocklist in menu
@@ -417,6 +406,41 @@ function loadSpecialListeners() {
     }
 };
 
+function useTool(tool) {
+    const style = document.getElementById('userSelectStyle');
+    switch (tool) {
+        case 'favorites':
+            if (document.getElementById('toolbar').style.display === "none") {
+                document.getElementById('toolbar').style.display = "block";
+            }
+            else {
+                document.getElementById('toolbar').style.display = "none";
+            }
+            break;
+        case 'drag':
+            allowDrag = true;
+            style.innerHTML = `
+            * {
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }`;
+            break;
+        case 'select':
+            allowDrag = false;
+            // prevent text selection to fix issue #10
+            style.innerHTML = `
+                * {
+                    -webkit-user-select: text;
+                    -ms-user-select: text;
+                    user-select: text;
+                }`;
+            break;
+        default:
+            break;
+    }
+}
+
 // current element hovered
 let currentHoveredElement = "";
 let dragOk = true;
@@ -424,7 +448,7 @@ let dragOk = true;
 function addListeners() {
     draggables.forEach(draggable => {
         draggable.addEventListener('mousedown', (e) => {
-            if (draggable.classList.contains('nondraggable')) return;
+            if (draggable.classList.contains('nondraggable') || !allowDrag) return;
             else {
                 activeDraggable = draggable;
                 offsetX = Math.round((e.clientX - draggable.offsetLeft) / 10) * 10;
@@ -434,7 +458,7 @@ function addListeners() {
         });
 
         draggable.addEventListener('touchstart', (e) => {
-            if (draggable.classList.contains('nondraggable')) return;
+            if (draggable.classList.contains('nondraggable') || !allowDrag) return;
             else {
                 activeDraggable = draggable;
                 const touch = e.touches[0];
@@ -585,16 +609,6 @@ document.addEventListener('keydown', (e) => {
             }
         }
 
-        //open toolbar
-        if (e.key === "Shift") {
-            if (document.getElementById("sidebar").style.opacity === 1) {
-                document.getElementById("sidebar").style.opacity = 0;
-            }
-            else {
-                document.getElementById("sidebar").style.opacity = 1;
-            }
-        }
-
         setTimeout(() => {
             document.getElementById('inputDisplay').textContent = `Awaiting input...`;
         }, 500);
@@ -629,17 +643,17 @@ function addShortcut(block, caller) {
         caller.style.backgroundColor = "rgb(248, 242, 242)";
         favoriteBlocks.splice(favoriteBlocks.indexOf(block), 1);
     }
-    setTimeout(updateToolbar, 10);
+    updateToolbar();
 }
 //update toolbar
 
-const template = document.getElementById('toolDisplayTemplate');
+const toolBarTemplate = document.getElementById('toolDisplayTemplate');
 function updateToolbar() {
     const toolbar = document.getElementById('toolbar');
     toolbar.innerHTML = '';
 
     favoriteBlocks.forEach(favBlock => {
-        const newTool = template.cloneNode(true);
+        const newTool = toolBarTemplate.cloneNode(true);
         newTool.querySelector('#toolDisplayTemplateName').textContent = blocklist[favBlock].title;
         newTool.querySelector('#toolDisplayTemplateButton').onclick = () => {
             createNewElement(favBlock);
@@ -648,6 +662,7 @@ function updateToolbar() {
             favoriteBlocks.splice(favoriteBlocks.indexOf(favBlock), 1);
             e.target.parentElement.parentElement.remove();
             document.querySelector(`#favoriteBtn-${favBlock}`).style.backgroundColor = "rgb(248, 242, 242)";
+            updateToolbar();
         };
         newTool.style.display = 'block';
         newTool.id = `toolDisplay-${favBlock}`;
@@ -656,6 +671,9 @@ function updateToolbar() {
         newTool.querySelector('#toolDisplayTemplateTrash').id = `toolDisplayTrash-${favBlock}`;
         toolbar.appendChild(newTool);
     });
+    if (toolbar.innerHTML === '') {
+        toolbar.innerHTML = "No blocks in favorites list. Add some in the menu.";
+    }
 };
 
 //create blocks
