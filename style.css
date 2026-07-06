@@ -306,9 +306,10 @@ textarea {
 }
 
 .iconImage {
-  width: 15px;
-  height: 15px;
+  width: 1em;
+  height: 1em;
   margin: 0;
+  vertical-align: -0.125em;
 }
 
 .iconButton {
