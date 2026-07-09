@@ -565,18 +565,25 @@ let counter = 0;
 // all key listeners
 document.addEventListener('keydown', (e) => {
     if (listenInput) {
+        let input;
+        if(e.key === " "){
+            input = "Space";
+        }
+        else{
+            input = e.key;
+        }
         //input display
-        document.getElementById('inputDisplay').textContent = `Input: ${e.key}`;
+        document.getElementById('inputDisplay').textContent = `Input: ${input}`;
 
         // shortcut tool
-        createNewElement(e.key);
+        createNewElement(input);
 
         //connector tool
-        if (e.key === ' ') {
+        if (input === ' ') {
             isConnecting = true;
         }
         //menu
-        if (e.key === 'm') {
+        if (input === 'm') {
             if (document.getElementById('menu').style.display === 'block') {
                 document.getElementById('menu').style.display = 'none';
             }
@@ -586,7 +593,7 @@ document.addEventListener('keydown', (e) => {
         }
 
         //open toolbar
-        if (e.key === "Shift") {
+        if (input === "Shift") {
             if (document.getElementById("sidebar").style.opacity === 1) {
                 document.getElementById("sidebar").style.opacity = 0;
             }
