@@ -77,6 +77,10 @@ body {
   border: 1px solid yellow;
 }
 
+.lastInout {
+  border: none;
+}
+
 dialog {
   z-index: 100;
   height: 75vh;
@@ -322,7 +326,7 @@ textarea {
   z-index: 1; /* Stay on top */
   top: 40%;
   left: 10px;
-  background-color: rgb(238, 231, 231); /* Black*/
+  background-color: rgb(238, 231, 231);
   overflow: hidden;
   border-radius: 20px;
   color: black;
@@ -333,22 +337,22 @@ textarea {
   width: 30px;
 }
 
-#sidebar > button{
+#sidebar > button {
   background: none;
-  border-radius: none;
+  border-radius: 0;
   border: none;
 }
 
-#sidebar > button:hover{
+#sidebar > button:hover {
   background-color: #ddd2d2;
 }
 
-#sidebar > button > img{
+#sidebar > button > img {
   width: 80%;
   height: 80%;
 }
 
-#toolbar{
+#toolbar {
   background-color: rgb(109, 76, 76);
   position: fixed;
   left: 50px;
@@ -446,7 +450,7 @@ table#localstorageSavesContainer {
   margin: 20px;
   border-radius: 20px;
 }
-#codespace{
+#codespace {
   resize: none;
   width: 90%;
   height: 80%;
@@ -458,7 +462,7 @@ table#localstorageSavesContainer {
   border: none;
   padding: 10px;
 }
-#codeBar{
+#codeBar {
   display: grid;
   grid-template-columns: repeat(3, 33.33%);
   border-radius: 20px;
@@ -468,24 +472,25 @@ table#localstorageSavesContainer {
   overflow: hidden;
 }
 #codeBar button,
-#codeBar select{
+#codeBar select {
   background-color: rgb(32, 30, 30);
   border: none;
   color: white;
   padding: 0 20px 0 20px;
 }
 #codeBar button:hover,
-#codeBar select:hover{
+#codeBar select:hover {
   background-color: rgb(50, 46, 46);
 }
 #inputDialog,
-#alertBox{  /* #alertBox is from index.html, the main app, but I like the looks so I'm reusing it*/
+#alertBox {
+  /* #alertBox is from index.html, the main app, but I like the looks so I'm reusing it*/
   width: 50vh;
   height: 30vh;
 }
 /* END CREATOR ONLY */
 
 /* Demultiplexer only: it has 4 inouts instead of 5 */
-.demultiplexer .inout{
+.demultiplexer .inout {
   height: 25%;
 }

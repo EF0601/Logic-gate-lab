@@ -17,11 +17,11 @@
 </head>
 
 <div id="sidebar">
-	<button onclick="useTool('favorites')"><img src="./media/star-regular-full.svg" alt="" class="iconImage"></button>
-	<button onclick="useTool('select')"><img src="./media/arrow-pointer-solid-full.svg" alt=""
+	<button onclick="useTool('favorites')" id="sidebarFavBtn"><img src="./media/star-regular-full.svg" alt="" class="iconImage"></button>
+	<button onclick="useTool('select')" id="sidebarSelectBtn"><img src="./media/arrow-pointer-solid-full.svg" alt=""
 			class="iconImage"></button>
-	<button><img src="./media/link-solid-full.svg" alt="" class="iconImage"></button>
-	<button onclick="useTool('drag')"><img src="./media/arrows-up-down-left-right-solid-full.svg" alt=""
+	<button onclick="useTool('connect')" id="sidebarConnectBtn"><img src="./media/link-solid-full.svg" alt="" class="iconImage"></button>
+	<button onclick="useTool('drag')" id="sidebarDragBtn"><img src="./media/arrows-up-down-left-right-solid-full.svg" alt=""
 			class="iconImage"></button>
 </div>
 <div id="toolbar" style="display: none">
@@ -121,6 +121,12 @@
 		<button style="width: 100%" onclick="updateSettings()">Update</button>
 		<button style="width: 100%" onclick="document.getElementById('settings').style.display = 'none'">Close</button>
 	</div>
+	<h2>Auto connect</h2>
+	<p>Choose whether the connector tool should automatically create a connection if there are two selected elements that can be connected. This is helpful if you use the side toolbar rather than the keyboard shortcut. <i>Default: true</i></p>
+	<select name="" id="autoConnectSettingsChoice">
+		<option value="true" selected>true</option>
+		<option value="false">false</option>
+	</select>
 </dialog>
 <dialog id="alertBox">
 	<h1>Alert!</h1>
