@@ -39,7 +39,7 @@ const alertBoxCancel = document.getElementById('alertCloseBtn');
 function displayAlert(text, input) {
     listenInput = false;
     alertBox.style.display = 'block';
-    alertText.textContent = text;
+    alertText.innerHTML = text;
     if (input) {
         alertBoxInput.style.display = 'block';
         alertBoxSubmit.style.display = 'block';
@@ -93,7 +93,12 @@ function loadingComplete() {
     clearFrameSaves();
     updateSettings();
     updateToolbar();
-    loadFromLocalStorage("autosave");
+    (async () => {
+        const result = await loadFromLocalStorage("autosave"); //check for autosave file. If there is, it will be loaded.
+        if (result === undefined) { //if there is no autosave file, the user is probably new
+            displayAlert("Hello! Welcome to Logic Gate Lab. We detected that this is your first time using the application. If you wish to access the tutorial, click <a href='https://github.com/EF0601/Logic-gate-lab/wiki/Starting-off' target='_blank'>here.</a>");
+        }
+    })();
     useTool('select');
     addListeners();
 }
@@ -263,6 +268,8 @@ async function loadFromLocalStorage(filename, force) { //if force is TRUE, the f
         }
 
         loadSpecialListeners();
+
+        return true;
     }
 }
 
@@ -961,7 +968,6 @@ function syncConnections() {
                 }
             }
 
-            console.log(input, output);
             if (input === undefined || output === undefined) {
                 invalidConnection(connection[0], connection[1]); //make sure the inouts are not both inputs or outputs
                 return
@@ -1050,7 +1056,7 @@ function updateBlocks() {
             case "multiplexer":
                 const inputValues = gate.querySelector(".mux-inputs").children;
                 const muxValues = parseInt(String(gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-input-5`).textContent) + String(gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-input-6`).textContent), 2)
-                console.log(muxValues)
+
                 gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-output-1`).textContent = inputValues[muxValues].textContent;
                 gate.querySelector('.mux-outputs').querySelector(`#${gate.id}-output-2`).textContent = inputValues[muxValues].textContent;
                 break;
