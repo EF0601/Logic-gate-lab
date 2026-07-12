@@ -121,16 +121,16 @@
 		<option value="true">true</option>
 		<option value="false" selected>false</option>
 	</select>
-	<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
-		<button style="width: 100%" onclick="updateSettings()">Update</button>
-		<button style="width: 100%" onclick="document.getElementById('settings').style.display = 'none'">Close</button>
-	</div>
 	<h2>Auto connect</h2>
 	<p>Choose whether the connector tool should automatically create a connection if there are two selected elements that can be connected. This is helpful if you use the side toolbar rather than the keyboard shortcut. <i>Default: true</i></p>
 	<select name="" id="autoConnectSettingsChoice">
 		<option value="true" selected>true</option>
 		<option value="false">false</option>
 	</select>
+	<div class="container" style="display: flex; justify-content: center; margin-top: 10px">
+		<button style="width: 100%" onclick="updateSettings()">Update</button>
+		<button style="width: 100%" onclick="document.getElementById('settings').style.display = 'none'">Close</button>
+	</div>
 </dialog>
 <dialog id="alertBox">
 	<h1>Alert!</h1>
