@@ -932,44 +932,53 @@ function connectorTool() {
 //how to pass values between connected elements
 function syncConnections() {
     connections.forEach(connection => {
-        const [ele1, ele2] = connection;
-
-        if (document.getElementById(ele1) == undefined || document.getElementById(ele2) == undefined) {
-            if (document.getElementById(ele1) != undefined) {
-                document.getElementById(ele1).style.backgroundColor = 'lightblue';
+        if (document.getElementById(connection[0]) == undefined || document.getElementById(connection[1]) == undefined) {
+            if (document.getElementById(connection[0]) != undefined) {
+                document.getElementById(connection[0]).style.backgroundColor = 'lightblue';
             }
-            else if (document.getElementById(ele2) != undefined) {
-                document.getElementById(ele2).style.backgroundColor = 'lightblue';
+            else if (document.getElementById(connection[1]) != undefined) {
+                document.getElementById(connection[1]).style.backgroundColor = 'lightblue';
             }
             connections.splice(connections.indexOf(connection), 1);
         }
         else {
-
             let input;
             let output;
 
-            //which is input?
-            if (ele1.split("-")[2] === "input") {
-                output = document.getElementById(ele2);
-                input = document.getElementById(ele1);
-            }
-            else if (ele2.split("-")[2] === "input") {
-                output = document.getElementById(ele1);
-                input = document.getElementById(ele2);
-            }
-            else {
-                displayAlert('Invalid connection. Please check your connections. The first element must be an input, the second must be an output.');
-                document.getElementById(ele1).style.backgroundColor = 'lightblue';
-                document.getElementById(ele2).style.backgroundColor = 'lightblue';
-                document.getElementById(ele1).style.color = "black";
-                document.getElementById(ele2).style.color = "black";
+            for (let i = 0; i < connection.length; i++) {
+                const keyword = connection[i].split("-")[2];
+                switch (keyword) {
+                    case "input":
+                        input = document.getElementById(connection[i]);
+                        break;
+                    case "output":
+                        output = document.getElementById(connection[i]);
+                        break;
 
-                connections.splice(connections.indexOf(connection), 1);
-                return;
+                    default:
+                        console.error("An error occurred when attempting to classify inouts as inputs or outputs.");
+                        break;
+                }
+            }
+
+            console.log(input, output);
+            if (input === undefined || output === undefined) {
+                invalidConnection(connection[0], connection[1]); //make sure the inouts are not both inputs or outputs
+                return
             }
             input.textContent = output.textContent;
         }
     });
+}
+
+function invalidConnection(ele1, ele2){
+    displayAlert('Invalid connection. Please check your connections. The first element must be an output, the second must be an input. The elements cannot be both inputs or outputs.');
+    document.getElementById(ele1).style.backgroundColor = 'lightblue';
+    document.getElementById(ele2).style.backgroundColor = 'lightblue';
+    document.getElementById(ele1).style.color = "black";
+    document.getElementById(ele2).style.color = "black";
+
+    connections.splice(connections.indexOf([ele1, ele2]), 1);
 }
 
 function clearAllConnections() {
