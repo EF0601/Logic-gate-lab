@@ -3,6 +3,7 @@ let inout = document.querySelectorAll('.inout');
 let blocksObject;
 
 let listenInput = true;
+let allowDrag = false;
 
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
@@ -24,8 +25,8 @@ let settings = {
     simrate: 250,
     autosave: true,
     saveFrames: true,
-    autoToolbar: false,
     showFrameCount: false,
+    autoConnect: true,
 }
 let frame = 0;
 
@@ -76,8 +77,8 @@ function updateSettings() {
     settings.simrate = document.getElementById("simrateSettingInput").value;
     settings.autosave = document.getElementById("autosaveSettingChoice").value === "true";
     settings.saveFrames = document.getElementById("saveFramesSettingChoice").value === "true";
-    settings.autoToolbar = document.getElementById("autoOpenToolbarSettingChoice").value === "true";
     settings.showFrameCount = document.getElementById("showFramesSettingChoice").value === "true";
+    settings.autoConnect = document.getElementById("autoConnectSettingsChoice").value === "true";
 
     if (settings.showFrameCount) {
         document.getElementById("frameCountDisplay").style.display = "block";
@@ -87,23 +88,14 @@ function updateSettings() {
     }
 }
 
-// sidebar
-/* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
-
-onmousemove = function (e) {
-    if (e.clientX < 300 && settings.autoToolbar) {
-        document.getElementById("sidebar").style.opacity = 1;
-    }
-    else if (e.clientX > 300) {
-        document.getElementById("sidebar").style.opacity = 0;
-    }
-};
-
 function loadingComplete() {
     populateMenu();
     clearFrameSaves();
     updateSettings();
+    updateToolbar();
     loadFromLocalStorage("autosave");
+    useTool('select');
+    addListeners();
 }
 
 //create buttons for each block in the blocklist in menu
@@ -417,6 +409,64 @@ function loadSpecialListeners() {
     }
 };
 
+function useTool(tool) {
+    switch (tool) {
+        case 'favorites':
+            if (document.getElementById('toolbar').style.display === "none") {
+                document.getElementById('toolbar').style.display = "block";
+                document.getElementById('sidebarFavBtn').style.backgroundColor = "#ddd2d2";
+            }
+            else {
+                document.getElementById('toolbar').style.display = "none";
+                document.getElementById('sidebarFavBtn').style.backgroundColor = "rgb(238, 231, 231)";
+            }
+            break;
+        case 'drag':
+            clearUsedTool(true)
+            document.getElementById('sidebarDragBtn').style.backgroundColor = "#ddd2d2";
+            allowDrag = true;
+            document.getElementById('userSelectStyle').innerHTML = `
+            * {
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }`;
+            break;
+        case 'select':
+            clearUsedTool(true)
+            document.getElementById('sidebarSelectBtn').style.backgroundColor = "#ddd2d2";
+            break;
+        case 'connect':
+            clearUsedTool(false);
+            document.getElementById('sidebarConnectBtn').style.backgroundColor = "#ddd2d2";
+            isConnecting = !isConnecting;
+            if (!isConnecting) {
+                connectorTool();
+                useTool('select');
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+function clearUsedTool(resetConnect) {
+    document.getElementById('sidebarConnectBtn').style.backgroundColor = "rgb(238, 231, 231)";
+    document.getElementById('sidebarDragBtn').style.backgroundColor = "rgb(238, 231, 231)";
+    document.getElementById('sidebarSelectBtn').style.backgroundColor = "rgb(238, 231, 231)";
+
+    //change to select tool to reset tools
+    allowDrag = false;
+    if (resetConnect) { isConnecting = false; }
+
+    // prevent text selection to fix issue #10
+    document.getElementById('userSelectStyle').innerHTML = `* {
+        -webkit-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+    }`;
+}
+
 // current element hovered
 let currentHoveredElement = "";
 let dragOk = true;
@@ -424,7 +474,7 @@ let dragOk = true;
 function addListeners() {
     draggables.forEach(draggable => {
         draggable.addEventListener('mousedown', (e) => {
-            if (draggable.classList.contains('nondraggable')) return;
+            if (draggable.classList.contains('nondraggable') || !allowDrag) return;
             else {
                 activeDraggable = draggable;
                 offsetX = Math.round((e.clientX - draggable.offsetLeft) / 10) * 10;
@@ -434,7 +484,7 @@ function addListeners() {
         });
 
         draggable.addEventListener('touchstart', (e) => {
-            if (draggable.classList.contains('nondraggable')) return;
+            if (draggable.classList.contains('nondraggable') || !allowDrag) return;
             else {
                 activeDraggable = draggable;
                 const touch = e.touches[0];
@@ -460,12 +510,24 @@ function addListeners() {
         inout.addEventListener('mousedown', (e) => {
             if (isConnecting && !inout.classList.contains('connecting') && !inout.classList.contains('title')) {
                 inout.classList.add('connecting');
+                inout.style.border = "1px solid green";
+
+                //check if there are enough connections to create a connection (can be disabled)
+                if (document.querySelectorAll('.connecting').length >= 2 && settings.autoConnect) {
+                    useTool("connect");
+                }
             }
         });
 
         inout.addEventListener('touchstart', (e) => {
             if (isConnecting && !inout.classList.contains('connecting') && !inout.classList.contains('title')) {
                 inout.classList.add('connecting');
+                inout.style.border = "1px solid green";
+
+                //check if there are enough connections to create a connection (can be disabled)
+                if (document.querySelectorAll('.connecting').length >= 2 && settings.autoConnect) {
+                    useTool("connect");
+                }
             }
         });
     });
@@ -592,16 +654,6 @@ document.addEventListener('keydown', (e) => {
             }
         }
 
-        //open toolbar
-        if (input === "Shift") {
-            if (document.getElementById("sidebar").style.opacity === 1) {
-                document.getElementById("sidebar").style.opacity = 0;
-            }
-            else {
-                document.getElementById("sidebar").style.opacity = 1;
-            }
-        }
-
         setTimeout(() => {
             document.getElementById('inputDisplay').textContent = `Awaiting input...`;
         }, 500);
@@ -636,17 +688,17 @@ function addShortcut(block, caller) {
         caller.style.backgroundColor = "rgb(248, 242, 242)";
         favoriteBlocks.splice(favoriteBlocks.indexOf(block), 1);
     }
-    setTimeout(updateToolbar, 10);
+    updateToolbar();
 }
 //update toolbar
 
-const template = document.getElementById('toolDisplayTemplate');
+const toolBarTemplate = document.getElementById('toolDisplayTemplate');
 function updateToolbar() {
     const toolbar = document.getElementById('toolbar');
     toolbar.innerHTML = '';
 
     favoriteBlocks.forEach(favBlock => {
-        const newTool = template.cloneNode(true);
+        const newTool = toolBarTemplate.cloneNode(true);
         newTool.querySelector('#toolDisplayTemplateName').textContent = blocklist[favBlock].title;
         newTool.querySelector('#toolDisplayTemplateButton').onclick = () => {
             createNewElement(favBlock);
@@ -655,6 +707,7 @@ function updateToolbar() {
             favoriteBlocks.splice(favoriteBlocks.indexOf(favBlock), 1);
             e.target.parentElement.parentElement.remove();
             document.querySelector(`#favoriteBtn-${favBlock}`).style.backgroundColor = "rgb(248, 242, 242)";
+            updateToolbar();
         };
         newTool.style.display = 'block';
         newTool.id = `toolDisplay-${favBlock}`;
@@ -663,6 +716,9 @@ function updateToolbar() {
         newTool.querySelector('#toolDisplayTemplateTrash').id = `toolDisplayTrash-${favBlock}`;
         toolbar.appendChild(newTool);
     });
+    if (toolbar.innerHTML === '') {
+        toolbar.innerHTML = "No blocks in favorites list. Add some in the menu.";
+    }
 };
 
 //create blocks
@@ -788,10 +844,6 @@ function clearAllDraggables() {
     draggables = document.querySelectorAll('.draggable');
 }
 
-//on start
-
-addListeners();
-
 let isConnecting = false;
 let startElement = null;
 let connections = [];
@@ -812,10 +864,19 @@ function connectorTool() {
     startElement = null;
 
     let newConnections = [];
-    const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+    const randomColor = {
+        red: Math.floor(Math.random() * 256),
+        green: Math.floor(Math.random() * 256),
+        blue: Math.floor(Math.random() * 256)
+    }
+    let color = `rgb(${randomColor.red}, ${randomColor.green}, ${randomColor.blue})`;
 
     document.querySelectorAll('.connecting').forEach(inout => {
         inout.classList.remove('connecting');
+        inout.style.border = "none";
+        if (!inout.classList.contains("lastInout")) {
+            inout.style.borderBottom = "1px solid black";
+        }
         newConnections.push(inout.id);
     });
 
@@ -823,9 +884,10 @@ function connectorTool() {
 
 
     if (index !== undefined) {
-        newConnections.forEach(element => {
-            document.getElementById(element).style.backgroundColor = 'lightblue';
-
+        newConnections.forEach(id => {
+            const element = document.getElementById(id);
+            element.style.backgroundColor = 'lightblue';
+            element.style.color = "black";
         });
         connections.splice(index, 1);
 
@@ -853,7 +915,12 @@ function connectorTool() {
             }
 
             newConnections.forEach(connection => {
-                document.getElementById(connection).style.backgroundColor = color;
+                const element = document.getElementById(connection);
+                element.style.backgroundColor = color;
+                //check for readability
+                if (randomColor.red < 120 || randomColor.green < 120 || randomColor.blue < 120) {
+                    element.style.color = "white";
+                }
             });
             syncConnections();
         }
@@ -894,6 +961,8 @@ function syncConnections() {
                 displayAlert('Invalid connection. Please check your connections. The first element must be an input, the second must be an output.');
                 document.getElementById(ele1).style.backgroundColor = 'lightblue';
                 document.getElementById(ele2).style.backgroundColor = 'lightblue';
+                document.getElementById(ele1).style.color = "black";
+                document.getElementById(ele2).style.color = "black";
 
                 connections.splice(connections.indexOf(connection), 1);
                 return;
