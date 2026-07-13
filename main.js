@@ -4,6 +4,7 @@ let blocksObject;
 
 let listenInput = true;
 let allowDrag = false;
+let spacebarDown = false;
 
 let activeDraggable = null;
 let offsetX = 0, offsetY = 0;
@@ -543,7 +544,7 @@ function addListeners() {
                 inout.style.border = "1px solid green";
 
                 //check if there are enough connections to create a connection (can be disabled)
-                if (document.querySelectorAll('.connecting').length >= 2 && settings.autoConnect) {
+                if (document.querySelectorAll('.connecting').length >= 2 && settings.autoConnect && !spacebarDown) {
                     useTool("connect");
                 }
             }
@@ -671,8 +672,9 @@ document.addEventListener('keydown', (e) => {
         createNewElement(input);
 
         //connector tool
-        if (input === ' ') {
+        if (input === 'Space') {
             isConnecting = true;
+            spacebarDown = true;
         }
         //menu
         if (input === 'm') {
@@ -695,6 +697,7 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keyup', (e) => {
     if (e.key === ' ' && listenInput) {
         connectorTool();
+        spacebarDown = false;
     }
 });
 
