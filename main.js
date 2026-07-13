@@ -94,8 +94,8 @@ function loadingComplete() {
     updateSettings();
     updateToolbar();
     (async () => {
-        const result = await loadFromLocalStorage("autosave"); //check for autosave file. If there is, it will be loaded.
-        if (result === undefined) { //if there is no autosave file, the user is probably new
+        await loadFromLocalStorage("autosave"); //check for autosave file. If there is, it will be loaded.
+        if (localStorage.getItem("autosave") === undefined || localStorage.getItem("autosave") === null) { //if there is no autosave file, the user is probably new
             displayAlert("Hello! Welcome to Logic Gate Lab. We detected that this is your first time using the application. If you wish to access the tutorial, click <a href='https://github.com/EF0601/Logic-gate-lab/wiki/Starting-off' target='_blank'>here.</a>");
         }
     })();
@@ -458,6 +458,7 @@ function useTool(tool) {
                 -webkit-user-select: none;
                 -ms-user-select: none;
                 user-select: none;
+                -webkit-user-drag: none;
             }`;
             break;
         case 'select':
@@ -492,6 +493,7 @@ function clearUsedTool(resetConnect) {
         -webkit-user-select: text;
         -ms-user-select: text;
         user-select: text;
+        -webkit-user-drag: auto;
     }`;
 }
 
@@ -1003,7 +1005,7 @@ function syncConnections() {
     });
 }
 
-function invalidConnection(ele1, ele2){
+function invalidConnection(ele1, ele2) {
     displayAlert('Invalid connection. Please check your connections. The first element must be an output, the second must be an input. The elements cannot be both inputs or outputs.');
     document.getElementById(ele1).style.backgroundColor = 'lightblue';
     document.getElementById(ele2).style.backgroundColor = 'lightblue';
