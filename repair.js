@@ -14,16 +14,22 @@ function repairFile(filename) {
     if (!JSON.parse(localStorage.getItem(filename))) { return }
     let file = JSON.parse(localStorage.getItem(filename));
 
+    const toolbar = file.specialData === "toolbar";
+
     let missingBlocks = [];
     file.blocks.forEach(element => {
         //detects for outdated blocks or IDs
-        if (validBlocks[element[0]] == null || validBlocks[element[0]] == undefined) {
+        if (toolbar && (validBlocks[element] === undefined || validBlocks[element] === null) ) {
+            missingBlocks.push(element);
+            //toolbar item, so no need to check for comments or position data
+        }
+        else if ((validBlocks[element[0]] === undefined || validBlocks[element[0]] === null) && !toolbar) {
             missingBlocks.push(element);
         }
-        else if ((element[0] === "j" || element[0] === "p") && element.length === 2) {
+        else if (((element[0] === "j" || element[0] === "p") && element.length === 2) && !toolbar) {
             element.push(0);
         }
-        else if (element.length === 2 || ((element[0] === "j" || element[0] === "p") && element.length === 3)) {
+        else if ((element.length === 2 || ((element[0] === "j" || element[0] === "p") && element.length === 3)) && !toolbar) {
             element.push(0);
             element.push(0);
         }
@@ -33,7 +39,7 @@ function repairFile(filename) {
         file.blocks.splice(file.blocks.indexOf(element), 1)
     });
 
-    file.specialData = "repaired";
+    if (!toolbar) { file.specialData = "repaired"; } //if it is a toolbar, the toolbar note must stay
     localStorage.removeItem(filename);
     localStorage.setItem(filename, JSON.stringify(file));
 }

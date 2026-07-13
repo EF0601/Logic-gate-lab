@@ -82,7 +82,7 @@ body {
 }
 
 dialog {
-  z-index: 100;
+  z-index: 4;
   height: 75vh;
   width: 95%;
   overflow-y: scroll;
@@ -120,7 +120,7 @@ dialog button:hover {
 #alertBox {
   text-align: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 5;
 }
 
 /* tr:hover{
@@ -247,7 +247,7 @@ textarea {
   position: absolute;
   background-color: rgb(109, 76, 76);
   min-width: 160px;
-  z-index: 1;
+  z-index: 3;
   top: add(5vh, 10px);
   border-radius: 10px;
 }
@@ -323,7 +323,7 @@ textarea {
 
 #sidebar {
   position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
+  z-index: 2; /* Stay on top */
   top: 40%;
   left: 10px;
   background-color: rgb(238, 231, 231);
@@ -365,13 +365,31 @@ textarea {
   overflow-y: scroll;
   padding: 10px;
   color: white;
+  display: flex;
 }
 
-#toolbar > .tool {
-  margin: 5px;
+#toolbar > .tool,
+#favBlocksSaveBtn,
+#favBlocksLoadBtn {
+  margin: auto;
   background-color: rgb(84, 56, 56);
   padding: 5px;
   border-radius: 10px;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+#favBlocksSaveBtn,
+#favBlocksLoadBtn {
+  width: 100%;
+  color: white;
+  border: none;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#favBlocksSaveBtn:hover,
+#favBlocksLoadBtn:hover {
+  text-decoration: underline;
 }
 
 .toolActionsContainer {
@@ -430,6 +448,9 @@ textarea {
 table#localstorageSavesContainer {
   border-collapse: collapse;
   width: 100%;
+}
+table#localstorageSavesContainer tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
 .commentResizeHandle {
   cursor: nwse-resize;
