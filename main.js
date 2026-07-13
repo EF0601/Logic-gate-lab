@@ -254,6 +254,10 @@ async function loadFromLocalStorage(filename, force) { //if force is TRUE, the f
 
         sandboxState.blocks.forEach(block => {
             createNewElement(block[0], block[1]);
+            if (blocklist[block[0]] === undefined) {
+                displayAlert("The save file is broken. You can try to repair it by using the repair tool (open save files). Alternatively, make sure the blocks used in the save are present. Did you forget to import a modification?");
+                return;
+            }
             if (block[0] === "j") {
                 //this is a comment. The contents must be applied as well.
                 const commentText = block.length > 4 ? block[4] : block[2];
@@ -271,10 +275,12 @@ async function loadFromLocalStorage(filename, force) { //if force is TRUE, the f
         });
         for (let i = 0; i < sandboxState.connections.length; i++) {
             const connection = sandboxState.connections[i];
-            document.getElementById(connection[0]).classList.add('connecting');
-            document.getElementById(connection[1]).classList.add('connecting');
+            if (document.getElementById(connection[0]) !== null && document.getElementById(connection[1]) !== null) {
+                document.getElementById(connection[0]).classList.add('connecting');
+                document.getElementById(connection[1]).classList.add('connecting');
 
-            connectorTool();
+                connectorTool();
+            }
         }
 
         loadSpecialListeners();
