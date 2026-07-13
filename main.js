@@ -193,6 +193,12 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
         }
     }
 
+    if (additionalNotes === "toolbar") {
+        //this save is for the toolbar. It uses separate logic.
+        localStorage.setItem(fileName, JSON.stringify({ blocks: favoriteBlocks, specialData: additionalNotes }));
+        return;
+    }
+
     const sandboxState = {
         blocks: [],
         connections: connections,
@@ -225,11 +231,13 @@ async function saveToLocalStorage(additionalNotes, force, setName) { //additiona
 
 async function loadFromLocalStorage(filename, force) { //if force is TRUE, the file will be loaded without user confirmation
     if (!JSON.parse(localStorage.getItem(filename))) { return }
-
     let confirmLoad;
     if (!force) {
         if (filename === "autosave") {
             confirmLoad = await displayAlert('LGL has detected a past autosave file, allowing you to begin from where you left off. Do you want to continue? Type YES to continue.', true) == "YES"
+        }
+        else if (JSON.parse(localStorage.getItem(filename)).specialData === "toolbar") {
+            confirmLoad = await displayAlert('You are attempting to load a toolbar save. Do you want to continue? This will replace your existing toolbar. Type YES to continue.', true) == "YES"
         }
         else {
             confirmLoad = await displayAlert('Loading a sandbox will overwrite your current sandbox. Do you want to continue? Type YES to continue.', true) == "YES"
@@ -239,11 +247,22 @@ async function loadFromLocalStorage(filename, force) { //if force is TRUE, the f
     if (confirmLoad || force) {
         const sandboxState = JSON.parse(localStorage.getItem(filename));
 
+        //loading toolbar
+        if (sandboxState.specialData === "toolbar") {
+            favoriteBlocks = sandboxState.blocks;
+            updateToolbar();
+            return
+        }
+
         clearAllDraggables();
         clearAllConnections();
 
         sandboxState.blocks.forEach(block => {
             createNewElement(block[0], block[1]);
+            if (blocklist[block[0]] === undefined) {
+                displayAlert("The save file is broken. You can try to repair it by using the repair tool (open save files). Alternatively, make sure the blocks used in the save are present. Did you forget to import a modification?");
+                return;
+            }
             if (block[0] === "j") {
                 //this is a comment. The contents must be applied as well.
                 const commentText = block.length > 4 ? block[4] : block[2];
@@ -261,10 +280,12 @@ async function loadFromLocalStorage(filename, force) { //if force is TRUE, the f
         });
         for (let i = 0; i < sandboxState.connections.length; i++) {
             const connection = sandboxState.connections[i];
-            document.getElementById(connection[0]).classList.add('connecting');
-            document.getElementById(connection[1]).classList.add('connecting');
+            if (document.getElementById(connection[0]) !== null && document.getElementById(connection[1]) !== null) {
+                document.getElementById(connection[0]).classList.add('connecting');
+                document.getElementById(connection[1]).classList.add('connecting');
 
-            connectorTool();
+                connectorTool();
+            }
         }
 
         loadSpecialListeners();
@@ -635,10 +656,10 @@ let counter = 0;
 document.addEventListener('keydown', (e) => {
     if (listenInput) {
         let input;
-        if(e.key === " "){
+        if (e.key === " ") {
             input = "Space";
         }
-        else{
+        else {
             input = e.key;
         }
         //input display
@@ -686,6 +707,7 @@ function addShortcut(block, caller) {
         favoriteBlocks.push(block);
 
         if (favoriteBlocks.length > 10) {
+            document.querySelector(`#favoriteBtn-${favoriteBlocks[0]}`).style.backgroundColor = "rgb(248, 242, 242)";
             favoriteBlocks.shift();
 
             displayAlert('The favorites list has been shifted down!');
@@ -700,6 +722,8 @@ function addShortcut(block, caller) {
 //update toolbar
 
 const toolBarTemplate = document.getElementById('toolDisplayTemplate');
+const favBlocksSaveBtn = document.getElementById('favBlocksSaveBtn');
+const favBlocksLoadBtn = document.getElementById('favBlocksLoadBtn');
 function updateToolbar() {
     const toolbar = document.getElementById('toolbar');
     toolbar.innerHTML = '';
@@ -724,8 +748,10 @@ function updateToolbar() {
         toolbar.appendChild(newTool);
     });
     if (toolbar.innerHTML === '') {
-        toolbar.innerHTML = "No blocks in favorites list. Add some in the menu.";
+        toolbar.innerHTML = "No blocks in favorites list. Add some in the menu. <br>";
     }
+    toolbar.appendChild(favBlocksSaveBtn.cloneNode(true));
+    toolbar.appendChild(favBlocksLoadBtn.cloneNode(true));
 };
 
 //create blocks
