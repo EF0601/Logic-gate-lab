@@ -679,6 +679,7 @@ function addShortcut(block, caller) {
         favoriteBlocks.push(block);
 
         if (favoriteBlocks.length > 10) {
+            document.querySelector(`#favoriteBtn-${favoriteBlocks[0]}`).style.backgroundColor = "rgb(248, 242, 242)";
             favoriteBlocks.shift();
 
             displayAlert('The favorites list has been shifted down!');
